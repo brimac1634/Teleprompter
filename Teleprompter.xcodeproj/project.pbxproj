@@ -8,20 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		D28C16A921A529210012D84D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16A821A529210012D84D /* AppDelegate.swift */; };
-		D28C16AB21A529210012D84D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16AA21A529210012D84D /* ViewController.swift */; };
-		D28C16AE21A529210012D84D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D28C16AC21A529210012D84D /* Main.storyboard */; };
 		D28C16B021A529260012D84D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D28C16AF21A529260012D84D /* Assets.xcassets */; };
 		D28C16B321A529260012D84D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D28C16B121A529260012D84D /* LaunchScreen.storyboard */; };
+		D28C16BB21A530670012D84D /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16BA21A530670012D84D /* HomeController.swift */; };
+		D28C16BD21A533180012D84D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16BC21A533180012D84D /* Extensions.swift */; };
+		D28C16BF21A53D390012D84D /* RollingTextController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16BE21A53D390012D84D /* RollingTextController.swift */; };
+		D28C16C121A53DA10012D84D /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16C021A53DA10012D84D /* BaseView.swift */; };
+		D28C16C321A554C80012D84D /* ControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16C221A554C80012D84D /* ControlBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D28C16A521A529210012D84D /* Teleprompter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teleprompter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28C16A821A529210012D84D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D28C16AA21A529210012D84D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		D28C16AD21A529210012D84D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D28C16AF21A529260012D84D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D28C16B221A529260012D84D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D28C16B421A529260012D84D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D28C16BA21A530670012D84D /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
+		D28C16BC21A533180012D84D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		D28C16BE21A53D390012D84D /* RollingTextController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollingTextController.swift; sourceTree = "<group>"; };
+		D28C16C021A53DA10012D84D /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
+		D28C16C221A554C80012D84D /* ControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,14 +60,49 @@
 		D28C16A721A529210012D84D /* Teleprompter */ = {
 			isa = PBXGroup;
 			children = (
-				D28C16A821A529210012D84D /* AppDelegate.swift */,
-				D28C16AA21A529210012D84D /* ViewController.swift */,
-				D28C16AC21A529210012D84D /* Main.storyboard */,
+				D28C16C721A5576B0012D84D /* Singleton */,
+				D28C16C421A554E80012D84D /* View */,
+				D28C16C621A557580012D84D /* Controller */,
 				D28C16AF21A529260012D84D /* Assets.xcassets */,
 				D28C16B121A529260012D84D /* LaunchScreen.storyboard */,
 				D28C16B421A529260012D84D /* Info.plist */,
+				D28C16C521A554F00012D84D /* Helpers */,
 			);
 			path = Teleprompter;
+			sourceTree = "<group>";
+		};
+		D28C16C421A554E80012D84D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D28C16C221A554C80012D84D /* ControlBar.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D28C16C521A554F00012D84D /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				D28C16BC21A533180012D84D /* Extensions.swift */,
+				D28C16C021A53DA10012D84D /* BaseView.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		D28C16C621A557580012D84D /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				D28C16BA21A530670012D84D /* HomeController.swift */,
+				D28C16BE21A53D390012D84D /* RollingTextController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		D28C16C721A5576B0012D84D /* Singleton */ = {
+			isa = PBXGroup;
+			children = (
+				D28C16A821A529210012D84D /* AppDelegate.swift */,
+			);
+			path = Singleton;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -124,7 +165,6 @@
 			files = (
 				D28C16B321A529260012D84D /* LaunchScreen.storyboard in Resources */,
 				D28C16B021A529260012D84D /* Assets.xcassets in Resources */,
-				D28C16AE21A529210012D84D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,22 +175,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D28C16AB21A529210012D84D /* ViewController.swift in Sources */,
 				D28C16A921A529210012D84D /* AppDelegate.swift in Sources */,
+				D28C16C321A554C80012D84D /* ControlBar.swift in Sources */,
+				D28C16BD21A533180012D84D /* Extensions.swift in Sources */,
+				D28C16C121A53DA10012D84D /* BaseView.swift in Sources */,
+				D28C16BF21A53D390012D84D /* RollingTextController.swift in Sources */,
+				D28C16BB21A530670012D84D /* HomeController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		D28C16AC21A529210012D84D /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D28C16AD21A529210012D84D /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		D28C16B121A529260012D84D /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -292,7 +328,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brianmacpherson.Teleprompter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -310,7 +346,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brianmacpherson.Teleprompter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};
