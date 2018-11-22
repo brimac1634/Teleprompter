@@ -85,6 +85,34 @@ class ControlBar: BaseView {
         return toggle
     }()
     
+    let arrowModeLabel: BaseLabel = {
+        let label = BaseLabel()
+        label.text = "Arrow Mode"
+        label.translatesAutoresizingMaskIntoConstraints = true
+        return label
+    }()
+    
+    let arrowModeSwitch: UISwitch = {
+        let toggle = UISwitch()
+        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
+        toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
+        return toggle
+    }()
+    
+    let highlightModeLabel: BaseLabel = {
+        let label = BaseLabel()
+        label.text = "Highlight Mode"
+        label.translatesAutoresizingMaskIntoConstraints = true
+        return label
+    }()
+    
+    let highlightModeSwitch: UISwitch = {
+        let toggle = UISwitch()
+        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
+        toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
+        return toggle
+    }()
+    
     let startButton: BaseButton = {
         let button = BaseButton()
         button.backgroundColor = .clear
@@ -96,6 +124,16 @@ class ControlBar: BaseView {
     override func setupView() {
        super.setupView()
         
+        let switches = [[mirrorModeLabel, mirrorModeSwitch], [arrowModeLabel, arrowModeSwitch], [highlightModeLabel, highlightModeSwitch]]
+        var stacks: [UIStackView] = []
+        for i in 0..<switches.count {
+            let newStack = UIStackView(arrangedSubviews: [switches[i][0], switches[i][1]])
+            newStack.axis = .horizontal
+            newStack.distribution = .fillEqually
+            newStack.contentMode = .center
+            stacks.append(newStack)
+        }
+        
         backgroundColor = UIColor.netRoadshowGray(a: 1)
         
         let verticalStack1 = UIStackView(arrangedSubviews: [fontSizeLabel, fontSizeSlider, lineSpacingLabel, lineSpacingSlider, scrollSpeedLabel, scrollSpeedSlider])
@@ -103,7 +141,7 @@ class ControlBar: BaseView {
         verticalStack1.distribution = .fillEqually
         verticalStack1.contentMode = .center
         
-        let verticalStack2 = UIStackView(arrangedSubviews: [mirrorModeLabel, mirrorModeSwitch])
+        let verticalStack2 = UIStackView(arrangedSubviews: [stacks[0], stacks[1], stacks[2]])
         verticalStack2.axis = .vertical
         verticalStack2.distribution = .fillEqually
         verticalStack2.contentMode = .center
@@ -140,6 +178,8 @@ class ControlBar: BaseView {
         lineSpacingSlider.value = 40
         scrollSpeedSlider.value = 30
         mirrorModeSwitch.isOn = false
+        arrowModeSwitch.isOn = true
+        highlightModeSwitch.isOn = true
         
 
     }

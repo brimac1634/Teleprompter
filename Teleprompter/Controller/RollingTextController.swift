@@ -18,10 +18,14 @@ class RollingTextController: UIViewController {
     var scrollPoint: CGFloat = 0
     var scrollTimer: Timer?
     
+    var centeredText: UITextRange!
+    
     var style: NSMutableParagraphStyle!
     
     var controlBarTop: NSLayoutConstraint!
     var controlBarBottom: NSLayoutConstraint!
+    var arrowLeading: NSLayoutConstraint!
+    var arrowTrailing: NSLayoutConstraint!
     
     let textView: UITextView = {
         let view = UITextView()
@@ -40,6 +44,14 @@ class RollingTextController: UIViewController {
         return bar
     }()
     
+    let arrow: UIImageView = {
+        let arrow = UIImageView(image: UIImage(named: "right_arrow")?.withRenderingMode(.alwaysTemplate))
+        arrow.tintColor = UIColor.white
+        arrow.contentMode = .scaleAspectFit
+        arrow.translatesAutoresizingMaskIntoConstraints = false
+        return arrow
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -54,19 +66,29 @@ class RollingTextController: UIViewController {
     private func setupView() {
         view.addSubview(textView)
         view.addSubview(controlBar)
+        view.addSubview(arrow)
         
         controlBarTop = controlBar.topAnchor.constraint(equalTo: view.topAnchor)
         controlBarBottom = controlBar.bottomAnchor.constraint(equalTo: view.topAnchor)
         
+        arrowLeading = arrow.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
+        arrowTrailing = arrow.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: -16)
+        
         NSLayoutConstraint.activate([
+            arrowLeading,
+            arrow.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            arrow.widthAnchor.constraint(equalToConstant: 100),
+            arrow.heightAnchor.constraint(equalToConstant: 100),
+            
             textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            textView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            textView.leadingAnchor.constraint(equalTo: arrow.trailingAnchor),
             textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             
             controlBarTop,
             controlBar.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
-            controlBar.heightAnchor.constraint(equalToConstant: 300)
+            controlBar.heightAnchor.constraint(equalToConstant: 300),
+
             ])
         
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
@@ -81,6 +103,8 @@ class RollingTextController: UIViewController {
         controlBar.lineSpacingSlider.addTarget(self, action: #selector(handleLineSpacing(sender:)), for: .allEvents)
         controlBar.scrollSpeedSlider.addTarget(self, action: #selector(handleScrollSpeed(sender:)), for: .allEvents)
         controlBar.mirrorModeSwitch.addTarget(self, action: #selector(handleMirrorMode(sender:)), for: .allEvents)
+        controlBar.arrowModeSwitch.addTarget(self, action: #selector(handleArrowMode(sender:)), for: .allEvents)
+        controlBar.highlightModeSwitch.addTarget(self, action: #selector(handleHighlightMode(sender:)), for: .allEvents)
     }
     
     //MARK: - Gesture Selectors
@@ -132,13 +156,25 @@ class RollingTextController: UIViewController {
     }
     
     @objc func handleMirrorMode(sender: UISwitch!) {
-//        if sender.isOn {
-//            textView.transform =
-//        } else {
-//
-//        }
-//
         textView.transform = sender.isOn ? CGAffineTransform.init(scaleX: -1, y: 1) : CGAffineTransform.init(scaleX: 1, y: 1)
+        arrow.transform = sender.isOn ? CGAffineTransform.init(scaleX: -1, y: 1) : CGAffineTransform.init(scaleX: 1, y: 1)
+    }
+    
+    @objc func handleArrowMode(sender: UISwitch!) {
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+            self.arrowLeading.isActive = !self.arrowLeading.isActive
+            self.arrowTrailing.isActive = !self.arrowTrailing.isActive
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+        
+    }
+    
+    @objc func handleHighlightMode(sender: UISwitch!) {
+        if sender.isOn {
+            let centeredCharacters = textView.characterRange(at: CGPoint(x: view.frame.width / 2, y: textView.contentOffset.y + (view.frame.height / 2)))
+            
+        }
+        
     }
     
     //MARK: - Text Manipulator
