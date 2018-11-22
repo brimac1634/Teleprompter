@@ -56,6 +56,7 @@ class BaseLabel: UILabel {
     }
     
     func setupView() {
+        self.textAlignment = .center
         self.textColor = UIColor.netRoadshowDarkGray(a: 1)
         self.font = UIFont.systemFont(ofSize: 26)
         self.translatesAutoresizingMaskIntoConstraints = false

@@ -27,7 +27,6 @@ class ControlBar: BaseView {
     let fontSizeLabel: BaseLabel = {
         let label = BaseLabel()
         label.text = "Font Size: 80"
-        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = true
         return label
     }()
@@ -44,7 +43,6 @@ class ControlBar: BaseView {
     let lineSpacingLabel: BaseLabel = {
         let label = BaseLabel()
         label.text = "Line Spacing: 40"
-        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = true
         return label
     }()
@@ -61,7 +59,6 @@ class ControlBar: BaseView {
     let scrollSpeedLabel: BaseLabel = {
         let label = BaseLabel()
         label.text = "Scroll Speed: 30"
-        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = true
         return label
     }()
@@ -72,6 +69,20 @@ class ControlBar: BaseView {
         slider.minimumValue = 5
         slider.maximumValue = 100
         return slider
+    }()
+    
+    let mirrorModeLabel: BaseLabel = {
+        let label = BaseLabel()
+        label.text = "Mirror Mode"
+        label.translatesAutoresizingMaskIntoConstraints = true
+        return label
+    }()
+    
+    let mirrorModeSwitch: UISwitch = {
+        let toggle = UISwitch()
+        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
+        toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
+        return toggle
     }()
     
     let startButton: BaseButton = {
@@ -87,12 +98,12 @@ class ControlBar: BaseView {
         
         backgroundColor = UIColor.netRoadshowGray(a: 1)
         
-        let verticalStack1 = UIStackView(arrangedSubviews: [fontSizeLabel, fontSizeSlider, lineSpacingLabel, lineSpacingSlider])
+        let verticalStack1 = UIStackView(arrangedSubviews: [fontSizeLabel, fontSizeSlider, lineSpacingLabel, lineSpacingSlider, scrollSpeedLabel, scrollSpeedSlider])
         verticalStack1.axis = .vertical
         verticalStack1.distribution = .fillEqually
         verticalStack1.contentMode = .center
         
-        let verticalStack2 = UIStackView(arrangedSubviews: [scrollSpeedLabel, scrollSpeedSlider])
+        let verticalStack2 = UIStackView(arrangedSubviews: [mirrorModeLabel, mirrorModeSwitch])
         verticalStack2.axis = .vertical
         verticalStack2.distribution = .fillEqually
         verticalStack2.contentMode = .center
@@ -128,6 +139,7 @@ class ControlBar: BaseView {
         fontSizeSlider.value = 80
         lineSpacingSlider.value = 40
         scrollSpeedSlider.value = 30
+        mirrorModeSwitch.isOn = false
         
 
     }

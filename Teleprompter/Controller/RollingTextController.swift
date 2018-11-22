@@ -30,7 +30,7 @@ class RollingTextController: UIViewController {
         view.isSelectable = false
         view.textAlignment = .center
         view.contentMode = .center
-        view.contentInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        view.contentInset = UIEdgeInsets(top: 0, left: 32, bottom: 0, right: 32)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -80,6 +80,7 @@ class RollingTextController: UIViewController {
         controlBar.fontSizeSlider.addTarget(self, action: #selector(handleFontSize(sender:)), for: .allEvents)
         controlBar.lineSpacingSlider.addTarget(self, action: #selector(handleLineSpacing(sender:)), for: .allEvents)
         controlBar.scrollSpeedSlider.addTarget(self, action: #selector(handleScrollSpeed(sender:)), for: .allEvents)
+        controlBar.mirrorModeSwitch.addTarget(self, action: #selector(handleMirrorMode(sender:)), for: .allEvents)
     }
     
     //MARK: - Gesture Selectors
@@ -130,12 +131,23 @@ class RollingTextController: UIViewController {
         controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
     }
     
+    @objc func handleMirrorMode(sender: UISwitch!) {
+//        if sender.isOn {
+//            textView.transform =
+//        } else {
+//
+//        }
+//
+        textView.transform = sender.isOn ? CGAffineTransform.init(scaleX: -1, y: 1) : CGAffineTransform.init(scaleX: 1, y: 1)
+    }
+    
     //MARK: - Text Manipulator
     
     func updateTextStyle(lineSpacing: CGFloat, fontSize: CGFloat, color: UIColor) {
         let attributedString = NSMutableAttributedString(string: textInput)
         let mutableParagraphStyle = NSMutableParagraphStyle()
         mutableParagraphStyle.lineSpacing = lineSpacing
+        mutableParagraphStyle.alignment = .center
 
         attributedString.addAttributes([NSAttributedString.Key.paragraphStyle: mutableParagraphStyle, NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize)], range: NSMakeRange(0, textInput.count))
         
