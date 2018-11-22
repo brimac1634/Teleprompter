@@ -15,8 +15,8 @@ class RollingTextController: UIViewController {
     var textSize: CGFloat = 80
     var lineSpacing: CGFloat = 40
     var scrollSpeed: CGFloat = 30
+    var scrollPoint: CGFloat = 0
     var scrollTimer: Timer?
-    var isScrolling: Bool = false
     
     var style: NSMutableParagraphStyle!
     
@@ -46,7 +46,7 @@ class RollingTextController: UIViewController {
         setupGestures()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         textView.contentOffset = CGPoint(x: 0, y: -(view.frame.height / 2))
     }
 
@@ -70,7 +70,6 @@ class RollingTextController: UIViewController {
             ])
         
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
-//        textView.font = UIFont.systemFont(ofSize: textSize)
         
     }
     
@@ -102,13 +101,18 @@ class RollingTextController: UIViewController {
     }
     
     @objc func handleStart() {
-        isScrolling = true
         handleControlToggle()
         scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
+        
     }
     
     @objc func fireScroll() {
         textView.contentOffset.y += 1
+        if textView.contentOffset.y > textView.contentSize.height - (view.frame.height / 2) {
+            guard scrollTimer != nil else {return}
+            scrollTimer?.invalidate()
+        }
+
     }
     
     @objc func handleFontSize(sender: UISlider!) {
@@ -139,6 +143,8 @@ class RollingTextController: UIViewController {
 
         controlBar.lineSpacingLabel.text = "Line Height: \(Int(lineSpacing))"
         controlBar.fontSizeLabel.text = "Font Size: \(Int(textSize))"
+        
+        
     }
 
 }
