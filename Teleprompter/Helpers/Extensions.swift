@@ -13,6 +13,9 @@ extension UIColor {
     static func netRoadshowGray(a: CGFloat) -> UIColor {
         return UIColor(red: 249/255, green: 249/255, blue: 249/255, alpha: a)
     }
+    static func netRoadshowDarkGray(a: CGFloat) -> UIColor {
+        return UIColor(red: 118/255, green: 118/255, blue: 118/255, alpha: a)
+    }
     static func netRoadshowBlue(a: CGFloat) -> UIColor {
         return UIColor(red: 40/255, green: 82/255, blue: 152/255, alpha: a)
     }

@@ -44,3 +44,20 @@ class BaseButton: UIButton  {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+class BaseLabel: UILabel {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupView() {
+        self.textColor = UIColor.netRoadshowDarkGray(a: 1)
+        self.font = UIFont.systemFont(ofSize: 26)
+        self.translatesAutoresizingMaskIntoConstraints = false
+    }
+}

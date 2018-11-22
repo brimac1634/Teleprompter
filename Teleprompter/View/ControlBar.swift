@@ -18,6 +18,62 @@ class ControlBar: BaseView {
         return button
     }()
     
+    let controlsView: BaseView = {
+        let view = BaseView()
+        view.backgroundColor = .clear
+        return view
+    }()
+    
+    let fontSizeLabel: BaseLabel = {
+        let label = BaseLabel()
+        label.text = "Font Size: 80"
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = true
+        return label
+    }()
+    
+    let fontSizeSlider: UISlider = {
+        let slider = UISlider()
+        slider.value = 80
+        slider.minimumValue = 18
+        slider.maximumValue = 200
+        slider.tintColor = UIColor.netRoadshowBlue(a: 1)
+        return slider
+    }()
+    
+    let lineSpacingLabel: BaseLabel = {
+        let label = BaseLabel()
+        label.text = "Line Spacing: 40"
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = true
+        return label
+    }()
+    
+    let lineSpacingSlider: UISlider = {
+        let slider = UISlider()
+        slider.value = 80
+        slider.minimumValue = 0
+        slider.maximumValue = 200
+        slider.tintColor = UIColor.netRoadshowBlue(a: 1)
+        return slider
+    }()
+    
+    let scrollSpeedLabel: BaseLabel = {
+        let label = BaseLabel()
+        label.text = "Scroll Speed: 30"
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = true
+        return label
+    }()
+    
+    let scrollSpeedSlider: UISlider = {
+        let slider = UISlider()
+        slider.tintColor = UIColor.netRoadshowBlue(a: 1)
+        slider.minimumValue = 5
+        slider.maximumValue = 100
+        return slider
+    }()
+    
     let startButton: BaseButton = {
         let button = BaseButton()
         button.backgroundColor = .clear
@@ -31,23 +87,51 @@ class ControlBar: BaseView {
         
         backgroundColor = UIColor.netRoadshowGray(a: 1)
         
+        let verticalStack1 = UIStackView(arrangedSubviews: [fontSizeLabel, fontSizeSlider, lineSpacingLabel, lineSpacingSlider])
+        verticalStack1.axis = .vertical
+        verticalStack1.distribution = .fillEqually
+        verticalStack1.contentMode = .center
+        
+        let verticalStack2 = UIStackView(arrangedSubviews: [scrollSpeedLabel, scrollSpeedSlider])
+        verticalStack2.axis = .vertical
+        verticalStack2.distribution = .fillEqually
+        verticalStack2.contentMode = .center
+        
+        let groupedStack = UIStackView(arrangedSubviews: [verticalStack1, verticalStack2])
+        groupedStack.axis = .horizontal
+        groupedStack.distribution = .fillEqually
+        groupedStack.spacing = 32
+        groupedStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        
         addSubview(backButton)
+        addSubview(groupedStack)
         addSubview(startButton)
         
         NSLayoutConstraint.activate([
-            backButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -11),
+            backButton.topAnchor.constraint(equalTo: topAnchor, constant: 52),
             backButton.heightAnchor.constraint(equalToConstant: 28),
             backButton.widthAnchor.constraint(equalToConstant: 28),
             backButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32),
             
             startButton.widthAnchor.constraint(equalToConstant: 120),
             startButton.heightAnchor.constraint(equalToConstant: 60),
-            startButton.bottomAnchor.constraint(equalTo: backButton.bottomAnchor),
-            startButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32)
+            startButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
+            startButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
+            
+            groupedStack.topAnchor.constraint(equalTo: backButton.topAnchor),
+            groupedStack.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 32),
+            groupedStack.trailingAnchor.constraint(equalTo: startButton.leadingAnchor, constant: -32),
+            groupedStack.bottomAnchor.constraint(equalTo: startButton.bottomAnchor),
             ])
         
+        fontSizeSlider.value = 80
+        lineSpacingSlider.value = 40
+        scrollSpeedSlider.value = 30
         
+
     }
     
+
     
 }

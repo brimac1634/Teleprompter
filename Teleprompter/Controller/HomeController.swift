@@ -10,6 +10,16 @@ import UIKit
 
 class HomeController: UIViewController {
     
+    let topLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 32)
+        label.textColor = UIColor.netRoadshowDarkGray(a: 1)
+        label.text = "Teleprompter Text"
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     let textBox: UITextView = {
         let box = UITextView()
         box.layer.cornerRadius = 3
@@ -17,15 +27,9 @@ class HomeController: UIViewController {
         box.clipsToBounds = true
         box.backgroundColor = UIColor.netRoadshowGray(a: 1)
         box.font = UIFont.systemFont(ofSize: 30)
-        box.contentInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        box.contentInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         box.translatesAutoresizingMaskIntoConstraints = false
         return box
-    }()
-    
-    let colorButton: BaseButton = {
-        let button = BaseButton()
-        button.backgroundColor = .black
-        return button
     }()
     
     let startButton: BaseButton = {
@@ -48,13 +52,18 @@ class HomeController: UIViewController {
     private func setupView() {
         view.backgroundColor = .white
         
+        view.addSubview(topLabel)
         view.addSubview(textBox)
-        view.addSubview(colorButton)
         view.addSubview(startButton)
         
         NSLayoutConstraint.activate([
+            topLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            topLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
+            topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
+            topLabel.heightAnchor.constraint(equalToConstant: 40),
+            
             textBox.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            textBox.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
+            textBox.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 16),
             textBox.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -142),
             textBox.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.9),
             
@@ -62,16 +71,9 @@ class HomeController: UIViewController {
             startButton.heightAnchor.constraint(equalToConstant: 60),
             startButton.topAnchor.constraint(equalTo: textBox.bottomAnchor, constant: 16),
             startButton.trailingAnchor.constraint(equalTo: textBox.trailingAnchor),
-            
-//            colorButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
-//            colorButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1),
-//            colorButton.trailingAnchor.constraint(equalTo: startButton.leadingAnchor, constant: -16),
-//            colorButton.topAnchor.constraint(equalTo: startButton.topAnchor)
-            
-            
+
             ])
         
-        colorButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleColor)))
         startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap)))
         view.isUserInteractionEnabled = true
@@ -93,11 +95,6 @@ class HomeController: UIViewController {
     
     @objc func handleBackgroundTap() {
         textBox.resignFirstResponder()
-    }
-    
-    @objc func handleColor() {
-        print(123)
-        
     }
     
     @objc func handleStart() {
