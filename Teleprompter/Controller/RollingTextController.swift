@@ -7,20 +7,26 @@
 //
 
 import UIKit
+import ChromaColorPicker
 
-class RollingTextController: UIViewController {
+
+class RollingTextController: UIViewController, ChromaColorPickerDelegate {
+    
 
     var textInput: String = ""
     var textColor: UIColor = UIColor.white
+    var backgroundColor: UIColor = UIColor.black
     var textSize: CGFloat = 80
     var lineSpacing: CGFloat = 40
     var scrollSpeed: CGFloat = 30
     var scrollPoint: CGFloat = 0
     var scrollTimer: Timer?
+    var backgroundColorChosen: Bool = true
     
     var centeredText: UITextRange!
     
     var style: NSMutableParagraphStyle!
+    var neatColorPicker: ChromaColorPicker!
     
     var controlBarTop: NSLayoutConstraint!
     var controlBarBottom: NSLayoutConstraint!
@@ -52,6 +58,13 @@ class RollingTextController: UIViewController {
         return arrow
     }()
     
+    let shadeView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -67,6 +80,7 @@ class RollingTextController: UIViewController {
         view.addSubview(textView)
         view.addSubview(controlBar)
         view.addSubview(arrow)
+        view.addSubview(shadeView)
         
         controlBarTop = controlBar.topAnchor.constraint(equalTo: view.topAnchor)
         controlBarBottom = controlBar.bottomAnchor.constraint(equalTo: view.topAnchor)
@@ -89,14 +103,21 @@ class RollingTextController: UIViewController {
             controlBar.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
             controlBar.heightAnchor.constraint(equalToConstant: 300),
 
+            shadeView.topAnchor.constraint(equalTo: view.topAnchor),
+            shadeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            shadeView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            shadeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         
+        view.bringSubviewToFront(shadeView)
+        shadeView.alpha = 0
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
         
     }
     
     private func setupGestures() {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleControlToggle)))
+        shadeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap)))
         controlBar.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
         controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBack)))
         controlBar.startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
@@ -106,6 +127,8 @@ class RollingTextController: UIViewController {
         controlBar.mirrorModeSwitch.addTarget(self, action: #selector(handleMirrorMode(sender:)), for: .allEvents)
         controlBar.arrowModeSwitch.addTarget(self, action: #selector(handleArrowMode(sender:)), for: .allEvents)
         controlBar.highlightModeSwitch.addTarget(self, action: #selector(handleHighlightMode(sender:)), for: .allEvents)
+        controlBar.backgroundColorButton.addTarget(self, action: #selector(handleBackgroundColor), for: .touchUpInside)
+        controlBar.textColorButton.addTarget(self, action: #selector(handleTextColor), for: .touchUpInside)
     }
     
     //MARK: - Gesture Selectors
@@ -195,7 +218,20 @@ class RollingTextController: UIViewController {
             let centeredCharacters = textView.characterRange(at: CGPoint(x: view.frame.width / 2, y: textView.contentOffset.y + (view.frame.height / 2)))
             
         }
-        
+    }
+    
+    @objc func handleBackgroundColor() {
+        backgroundColorChosen = true
+        displayColorPicker()
+    }
+    
+    @objc func handleTextColor() {
+        backgroundColorChosen = false
+        displayColorPicker()
+    }
+    
+    @objc func handleShadeViewTap() {
+        dismissColorPicker()
     }
     
     //MARK: - Text Manipulator
@@ -215,5 +251,48 @@ class RollingTextController: UIViewController {
         
         
     }
+    
+    //MARK: - Color Picker Delegate
+    
+    func colorPickerDidChooseColor(_ colorPicker: ChromaColorPicker, color: UIColor) {
+        if backgroundColorChosen {
+            view.backgroundColor = color
+            controlBar.backgroundColorButton.backgroundColor = color
+        } else {
+            updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: color)
+            controlBar.textColorButton.backgroundColor = color
+        }
+        
+        dismissColorPicker()
+    }
+    
+    func dismissColorPicker() {
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+            self.shadeView.alpha = 0
+            self.neatColorPicker.alpha = 0
+            self.neatColorPicker.frame.origin.y = self.neatColorPicker.frame.origin.y - 50
+        }, completion: nil)
+        
+        neatColorPicker.removeFromSuperview()
+    }
 
+    func displayColorPicker() {
+        let width: CGFloat = 480
+        let x = (view.frame.width / 2) - CGFloat(width / 2)
+        let y = (view.frame.height / 2) - CGFloat(width / 2)
+        neatColorPicker = ChromaColorPicker(frame: CGRect(x: x, y: y, width: width, height: width))
+        neatColorPicker.delegate = self
+        neatColorPicker.padding = 5
+        neatColorPicker.stroke = 3
+        neatColorPicker.hexLabel.textColor = UIColor.white
+        neatColorPicker.alpha = 0
+        neatColorPicker.frame.origin.y = neatColorPicker.frame.origin.y + 50
+        view.addSubview(neatColorPicker)
+        
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+            self.shadeView.alpha = 1
+            self.neatColorPicker.alpha = 1
+            self.neatColorPicker.frame.origin.y = self.neatColorPicker.frame.origin.y - 50
+        }, completion: nil)
+    }
 }

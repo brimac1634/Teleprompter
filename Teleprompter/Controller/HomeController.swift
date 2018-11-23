@@ -23,6 +23,8 @@ class HomeController: UIViewController {
     let textBox: UITextView = {
         let box = UITextView()
         box.layer.cornerRadius = 3
+        box.layer.borderWidth = 2
+        box.layer.borderColor = UIColor.netRoadshowDarkGray(a: 1).cgColor
         box.isEditable = true
         box.clipsToBounds = true
         box.backgroundColor = UIColor.netRoadshowGray(a: 1)

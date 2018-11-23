@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		024CC9517648145EA08A89D4 /* Pods_Teleprompter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2550E8CE3A3166563604E647 /* Pods_Teleprompter.framework */; };
 		D28C16A921A529210012D84D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16A821A529210012D84D /* AppDelegate.swift */; };
 		D28C16B021A529260012D84D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D28C16AF21A529260012D84D /* Assets.xcassets */; };
 		D28C16B321A529260012D84D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D28C16B121A529260012D84D /* LaunchScreen.storyboard */; };
@@ -18,6 +19,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2550E8CE3A3166563604E647 /* Pods_Teleprompter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Teleprompter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F678B07C8C57536C0733047 /* Pods-Teleprompter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teleprompter.release.xcconfig"; path = "Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter.release.xcconfig"; sourceTree = "<group>"; };
+		9BDEEB54421D7ECCE7A5CE55 /* Pods-Teleprompter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teleprompter.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter.debug.xcconfig"; sourceTree = "<group>"; };
 		D28C16A521A529210012D84D /* Teleprompter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teleprompter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28C16A821A529210012D84D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D28C16AF21A529260012D84D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -35,17 +39,29 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				024CC9517648145EA08A89D4 /* Pods_Teleprompter.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C1A86DB690402491CD9A92A4 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9BDEEB54421D7ECCE7A5CE55 /* Pods-Teleprompter.debug.xcconfig */,
+				2F678B07C8C57536C0733047 /* Pods-Teleprompter.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		D28C169C21A529200012D84D = {
 			isa = PBXGroup;
 			children = (
 				D28C16A721A529210012D84D /* Teleprompter */,
 				D28C16A621A529210012D84D /* Products */,
+				C1A86DB690402491CD9A92A4 /* Pods */,
+				F6DF7CE1FFE95BE8D1E46D88 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -105,6 +121,14 @@
 			path = Singleton;
 			sourceTree = "<group>";
 		};
+		F6DF7CE1FFE95BE8D1E46D88 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2550E8CE3A3166563604E647 /* Pods_Teleprompter.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -112,9 +136,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D28C16B721A529260012D84D /* Build configuration list for PBXNativeTarget "Teleprompter" */;
 			buildPhases = (
+				1C13E99779C921D73795D8B4 /* [CP] Check Pods Manifest.lock */,
 				D28C16A121A529210012D84D /* Sources */,
 				D28C16A221A529210012D84D /* Frameworks */,
 				D28C16A321A529210012D84D /* Resources */,
+				82E632CC48690D233E765162 /* [CP] Embed Pods Frameworks */,
+				B1355B5D5F4668A0991C040D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -169,6 +196,60 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1C13E99779C921D73795D8B4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Teleprompter-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		82E632CC48690D233E765162 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/ChromaColorPicker/ChromaColorPicker.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChromaColorPicker.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B1355B5D5F4668A0991C040D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D28C16A121A529210012D84D /* Sources */ = {
@@ -316,15 +397,13 @@
 		};
 		D28C16B821A529260012D84D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9BDEEB54421D7ECCE7A5CE55 /* Pods-Teleprompter.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AY47KJ5YA8;
 				INFOPLIST_FILE = Teleprompter/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brianmacpherson.Teleprompter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -334,15 +413,13 @@
 		};
 		D28C16B921A529260012D84D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F678B07C8C57536C0733047 /* Pods-Teleprompter.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AY47KJ5YA8;
 				INFOPLIST_FILE = Teleprompter/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brianmacpherson.Teleprompter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;

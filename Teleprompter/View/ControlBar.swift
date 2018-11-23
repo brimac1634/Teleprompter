@@ -80,7 +80,7 @@ class ControlBar: BaseView {
     
     let mirrorModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
+        toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
         return toggle
     }()
@@ -94,7 +94,7 @@ class ControlBar: BaseView {
     
     let arrowModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
+        toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
         return toggle
     }()
@@ -108,9 +108,43 @@ class ControlBar: BaseView {
     
     let highlightModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
+        toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
         return toggle
+    }()
+    
+    let backgroundColorLabel: BaseLabel = {
+        let label = BaseLabel()
+        label.text = "Background Color"
+        label.translatesAutoresizingMaskIntoConstraints = true
+        return label
+    }()
+    
+    let backgroundColorButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .black
+        button.layer.cornerRadius = 3
+        button.clipsToBounds = true
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.netRoadshowDarkGray(a: 1).cgColor
+        return button
+    }()
+    
+    let textColorLabel: BaseLabel = {
+        let label = BaseLabel()
+        label.text = "Text Color"
+        label.translatesAutoresizingMaskIntoConstraints = true
+        return label
+    }()
+    
+    let textColorButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 3
+        button.clipsToBounds = true
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.netRoadshowDarkGray(a: 1).cgColor
+        return button
     }()
     
     let startButton: BaseButton = {
@@ -129,7 +163,7 @@ class ControlBar: BaseView {
         for i in 0..<switches.count {
             let newStack = UIStackView(arrangedSubviews: [switches[i][0], switches[i][1]])
             newStack.axis = .horizontal
-            newStack.distribution = .fillEqually
+            newStack.distribution = .fillProportionally
             newStack.contentMode = .center
             newStack.alignment = .center
             stacks.append(newStack)
@@ -148,9 +182,14 @@ class ControlBar: BaseView {
         verticalStack2.distribution = .fillEqually
         verticalStack2.contentMode = .center
         
-        let groupedStack = UIStackView(arrangedSubviews: [verticalStack1, verticalStack2])
+        let verticalStack3 = UIStackView(arrangedSubviews: [backgroundColorLabel, backgroundColorButton, textColorLabel, textColorButton])
+        verticalStack3.axis = .vertical
+        verticalStack3.distribution = .fillEqually
+        verticalStack3.contentMode = .center
+        
+        let groupedStack = UIStackView(arrangedSubviews: [verticalStack1, verticalStack2, verticalStack3])
         groupedStack.axis = .horizontal
-        groupedStack.distribution = .fillEqually
+        groupedStack.distribution = .fillProportionally
         groupedStack.spacing = 32
         groupedStack.translatesAutoresizingMaskIntoConstraints = false
         
