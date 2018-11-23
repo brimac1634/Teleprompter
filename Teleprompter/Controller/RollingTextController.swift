@@ -27,6 +27,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
     
     var style: NSMutableParagraphStyle!
     var neatColorPicker: ChromaColorPicker!
+    var gradient: CAGradientLayer!
     
     var controlBarTop: NSLayoutConstraint!
     var controlBarBottom: NSLayoutConstraint!
@@ -127,9 +128,10 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
         shadeView.alpha = 0
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
         
-        let gradient = CAGradientLayer()
+        gradient = CAGradientLayer()
         gradient.frame = view.bounds
-        gradient.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
+        gradient.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
+        gradient.locations = [0,0.4,0.6,1]
         gradientView.layer.addSublayer(gradient)
         gradientView.alpha = 0
         
@@ -277,6 +279,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
         if backgroundColorChosen {
             view.backgroundColor = color
             controlBar.backgroundColorButton.backgroundColor = color
+            if color.isLight {
+                gradient.colors = [UIColor.white.withAlphaComponent(1).cgColor, UIColor.white.withAlphaComponent(0).cgColor, UIColor.white.withAlphaComponent(0).cgColor, UIColor.white.withAlphaComponent(1).cgColor]
+            } else {
+                gradient.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
+            }
         } else {
             updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: color)
             controlBar.textColorButton.backgroundColor = color

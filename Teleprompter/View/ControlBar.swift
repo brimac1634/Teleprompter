@@ -80,7 +80,7 @@ class ControlBar: BaseView {
     
     let mirrorModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
+        toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
         return toggle
     }()
@@ -94,7 +94,7 @@ class ControlBar: BaseView {
     
     let arrowModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
+        toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
         return toggle
     }()
@@ -108,7 +108,7 @@ class ControlBar: BaseView {
     
     let highlightModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
+        toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
         return toggle
     }()
@@ -189,7 +189,7 @@ class ControlBar: BaseView {
         
         let groupedStack = UIStackView(arrangedSubviews: [verticalStack1, verticalStack2, verticalStack3])
         groupedStack.axis = .horizontal
-        groupedStack.distribution = .fillProportionally
+        groupedStack.distribution = .fillEqually
         groupedStack.spacing = 32
         groupedStack.translatesAutoresizingMaskIntoConstraints = false
         
