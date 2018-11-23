@@ -12,6 +12,7 @@ import ChromaColorPicker
 
 class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGestureRecognizerDelegate {
     
+    let defaults = UserDefaults.standard
 
     var textInput: String = ""
     var textColor: UIColor = UIColor.white
@@ -20,10 +21,13 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var lineSpacing: CGFloat = 40
     var scrollSpeed: CGFloat = 30
     var scrollPoint: CGFloat = 0
+    var mirrorIsOn: Bool = false
+    var arrowIsOn: Bool = false
+    var fadeIsOn: Bool = false
     var scrollTimer: Timer?
     var backgroundColorChosen: Bool = true
     
-    var centeredText: UITextRange!
+   
     
     var style: NSMutableParagraphStyle!
     var neatColorPicker: ChromaColorPicker!
@@ -157,7 +161,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         shadeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap)))
         controlBar.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
         controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBack)))
+        controlBar.saveButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSave)))
         controlBar.startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
+        controlBar.defaultButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleDefault)))
         controlBar.fontSizeSlider.addTarget(self, action: #selector(handleFontSize(sender:)), for: .allEvents)
         controlBar.lineSpacingSlider.addTarget(self, action: #selector(handleLineSpacing(sender:)), for: .allEvents)
         controlBar.scrollSpeedSlider.addTarget(self, action: #selector(handleScrollSpeed(sender:)), for: .allEvents)
@@ -224,6 +230,24 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     @objc func handleBack() {
         navigationController?.isNavigationBarHidden = false
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func handleSave() {
+        defaults.set(textSize, forKey: "textSize")
+        defaults.set(lineSpacing, forKey: "lineSpacing")
+        defaults.set(scrollSpeed, forKey: "scrollSpeed")
+        defaults.set(mirrorIsOn, forKey: "mirrorIsOn")
+        defaults.set(arrowIsOn, forKey: "arrowIsOn")
+        defaults.set(fadeIsOn, forKey: "fadeIsOn")
+        defaults.setColor(color: backgroundColor, forKey: "backgroundColor")
+        defaults.setColor(color: textColor, forKey: "textColor")
+    }
+    
+    @objc func handleDefault() {
+        guard let textColor = defaults.colorForKey(key: "textColor") else {return}
+        updateTextStyle(lineSpacing: CGFloat(defaults.float(forKey: "lineSpacing")), fontSize: CGFloat(defaults.float(forKey: "textSize")), color: textColor)
+        
+        
     }
     
     @objc func handleStart() {

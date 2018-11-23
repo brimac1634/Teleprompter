@@ -147,6 +147,22 @@ class ControlBar: BaseView {
         return button
     }()
     
+    let saveButton: BaseButton = {
+        let button = BaseButton()
+        button.backgroundColor = .clear
+        button.setTitle("Save Default", for: .normal)
+        button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
+        return button
+    }()
+    
+    let defaultButton: BaseButton = {
+        let button = BaseButton()
+        button.backgroundColor = .clear
+        button.setTitle("Default", for: .normal)
+        button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
+        return button
+    }()
+    
     let startButton: BaseButton = {
         let button = BaseButton()
         button.backgroundColor = .clear
@@ -196,6 +212,8 @@ class ControlBar: BaseView {
         
         addSubview(backButton)
         addSubview(groupedStack)
+        addSubview(saveButton)
+        addSubview(defaultButton)
         addSubview(startButton)
         
         NSLayoutConstraint.activate([
@@ -209,10 +227,20 @@ class ControlBar: BaseView {
             startButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
             startButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
             
+            defaultButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
+            defaultButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1),
+            defaultButton.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: 16),
+            defaultButton.trailingAnchor.constraint(equalTo: startButton.trailingAnchor),
+            
+            saveButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
+            saveButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1),
+            saveButton.topAnchor.constraint(equalTo: topAnchor, constant: 32),
+            saveButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
+            
             groupedStack.topAnchor.constraint(equalTo: backButton.topAnchor),
             groupedStack.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 32),
             groupedStack.trailingAnchor.constraint(equalTo: startButton.leadingAnchor, constant: -32),
-            groupedStack.bottomAnchor.constraint(equalTo: startButton.bottomAnchor),
+            groupedStack.bottomAnchor.constraint(equalTo: startButton.bottomAnchor)
             ])
         
         fontSizeSlider.value = 80
