@@ -40,7 +40,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
         view.isSelectable = false
         view.textAlignment = .center
         view.contentMode = .center
-        view.contentInset = UIEdgeInsets(top: 0, left: 32, bottom: 0, right: 32)
+        view.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -65,6 +65,14 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
         return view
     }()
     
+    let gradientView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.isUserInteractionEnabled = false
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -78,8 +86,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
     
     private func setupView() {
         view.addSubview(textView)
-        view.addSubview(controlBar)
         view.addSubview(arrow)
+        view.addSubview(gradientView)
+        view.addSubview(controlBar)
         view.addSubview(shadeView)
         
         controlBarTop = controlBar.topAnchor.constraint(equalTo: view.topAnchor)
@@ -89,7 +98,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
         arrowTrailing = arrow.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: -16)
         
         NSLayoutConstraint.activate([
-            arrowLeading,
+            arrowTrailing,
             arrow.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             arrow.widthAnchor.constraint(equalToConstant: 100),
             arrow.heightAnchor.constraint(equalToConstant: 100),
@@ -99,6 +108,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
             textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             
+            gradientView.topAnchor.constraint(equalTo: view.topAnchor),
+            gradientView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            gradientView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            gradientView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
             controlBarTop,
             controlBar.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
             controlBar.heightAnchor.constraint(equalToConstant: 300),
@@ -107,11 +121,17 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
             shadeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             shadeView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             shadeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            
             ])
-        
         view.bringSubviewToFront(shadeView)
         shadeView.alpha = 0
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
+        
+        let gradient = CAGradientLayer()
+        gradient.frame = view.bounds
+        gradient.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
+        gradientView.layer.addSublayer(gradient)
+        gradientView.alpha = 0
         
     }
     
@@ -126,7 +146,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
         controlBar.scrollSpeedSlider.addTarget(self, action: #selector(handleScrollSpeed(sender:)), for: .allEvents)
         controlBar.mirrorModeSwitch.addTarget(self, action: #selector(handleMirrorMode(sender:)), for: .allEvents)
         controlBar.arrowModeSwitch.addTarget(self, action: #selector(handleArrowMode(sender:)), for: .allEvents)
-        controlBar.highlightModeSwitch.addTarget(self, action: #selector(handleHighlightMode(sender:)), for: .allEvents)
+        controlBar.highlightModeSwitch.addTarget(self, action: #selector(handleFadeMode(sender:)), for: .allEvents)
         controlBar.backgroundColorButton.addTarget(self, action: #selector(handleBackgroundColor), for: .touchUpInside)
         controlBar.textColorButton.addTarget(self, action: #selector(handleTextColor), for: .touchUpInside)
     }
@@ -200,8 +220,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
     }
     
     @objc func handleMirrorMode(sender: UISwitch!) {
+        
         textView.transform = sender.isOn ? CGAffineTransform.init(scaleX: -1, y: 1) : CGAffineTransform.init(scaleX: 1, y: 1)
-        arrow.transform = sender.isOn ? CGAffineTransform.init(scaleX: -1, y: 1) : CGAffineTransform.init(scaleX: 1, y: 1)
+//        arrow.transform = sender.isOn ? CGAffineTransform.init(scaleX: -1, y: 1) : CGAffineTransform.init(scaleX: 1, y: 1)
     }
     
     @objc func handleArrowMode(sender: UISwitch!) {
@@ -213,11 +234,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
         
     }
     
-    @objc func handleHighlightMode(sender: UISwitch!) {
-        if sender.isOn {
-            let centeredCharacters = textView.characterRange(at: CGPoint(x: view.frame.width / 2, y: textView.contentOffset.y + (view.frame.height / 2)))
-            
-        }
+    @objc func handleFadeMode(sender: UISwitch!) {
+        gradientView.alpha =  sender.isOn ? 1 : 0
+        
     }
     
     @objc func handleBackgroundColor() {
@@ -261,6 +280,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
         } else {
             updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: color)
             controlBar.textColorButton.backgroundColor = color
+            arrow.tintColor = color
         }
         
         dismissColorPicker()

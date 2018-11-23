@@ -80,7 +80,7 @@ class ControlBar: BaseView {
     
     let mirrorModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
+        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
         return toggle
     }()
@@ -94,21 +94,21 @@ class ControlBar: BaseView {
     
     let arrowModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
+        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
         return toggle
     }()
     
     let highlightModeLabel: BaseLabel = {
         let label = BaseLabel()
-        label.text = "Highlight Mode"
+        label.text = "Fade Mode"
         label.translatesAutoresizingMaskIntoConstraints = true
         return label
     }()
     
     let highlightModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
+        toggle.tintColor = UIColor.netRoadshowGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
         return toggle
     }()
@@ -219,8 +219,8 @@ class ControlBar: BaseView {
         lineSpacingSlider.value = 40
         scrollSpeedSlider.value = 30
         mirrorModeSwitch.isOn = false
-        arrowModeSwitch.isOn = true
-        highlightModeSwitch.isOn = true
+        arrowModeSwitch.isOn = false
+        highlightModeSwitch.isOn = false
         
         
 
