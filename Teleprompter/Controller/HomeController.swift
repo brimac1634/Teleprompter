@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import PDFKit
 
-class HomeController: UIViewController {
+class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     let topLabel: UILabel = {
         let label = UILabel()
@@ -93,7 +94,20 @@ class HomeController: UIViewController {
         logoImage.contentMode = .scaleAspectFit
         navigationItem.titleView = logoImage
         
+        let importImage = UIImage(named: "import")?.withRenderingMode(.alwaysTemplate)
+        let importButton = UIButton()
+        importButton.setImage(importImage, for: .normal)
+        importButton.addTarget(self, action: #selector(handleImport), for: .touchUpInside)
+        importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+        let barItem = UIBarButtonItem(customView: importButton)
+        
+        barItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        barItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        
+        navigationItem.rightBarButtonItem = barItem
     }
+    
+    //MARK: - Gesture Selectors
     
     @objc func handleBackgroundTap() {
         textBox.resignFirstResponder()
@@ -115,5 +129,38 @@ class HomeController: UIViewController {
             
         }
         
+    }
+    
+    @objc func handleImport() {
+        let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.text", "com.apple.iwork.pages.pages", "public.data"], in: .import)
+        
+        documentPicker.delegate = self
+        present(documentPicker, animated: true, completion: nil)
+    }
+    
+    //MARK: - Document Picker Methods
+    
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
+        do {
+            let contents = try String(contentsOfFile: url.path, encoding: String.Encoding.utf8)
+            print(contents)
+            textBox.text = contents
+        } catch {
+            print("no text found")
+        }
+        
+
+        if let pdf = PDFDocument(url: url) {
+            let pageCount = pdf.pageCount
+            let documentContent = NSMutableAttributedString()
+            
+            for i in 1 ..< pageCount {
+                guard let page = pdf.page(at: i) else { continue }
+                guard let pageContent = page.attributedString else { continue }
+                documentContent.append(pageContent)
+            }
+            textBox.attributedText = documentContent
+        }
+
     }
 }

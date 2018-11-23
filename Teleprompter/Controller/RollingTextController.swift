@@ -10,7 +10,7 @@ import UIKit
 import ChromaColorPicker
 
 
-class RollingTextController: UIViewController, ChromaColorPickerDelegate {
+class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGestureRecognizerDelegate {
     
 
     var textInput: String = ""
@@ -131,14 +131,29 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
         gradient = CAGradientLayer()
         gradient.frame = view.bounds
         gradient.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
-        gradient.locations = [0,0.4,0.6,1]
+        gradient.locations = [0,0.2,0.4,1]
         gradientView.layer.addSublayer(gradient)
         gradientView.alpha = 0
         
     }
     
     private func setupGestures() {
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleControlToggle)))
+        let controlToggleGesture = UITapGestureRecognizer(target: self, action: #selector(handleControlToggle))
+        controlToggleGesture.delegate = self
+        controlToggleGesture.numberOfTouchesRequired = 1
+        controlToggleGesture.numberOfTapsRequired = 1
+        view.addGestureRecognizer(controlToggleGesture)
+        
+//        let slowDownGesture = UITapGestureRecognizer(target: self, action: #selector(handleSlowDown))
+//        slowDownGesture.delegate = self
+//        slowDownGesture.numberOfTouchesRequired = 2
+//        slowDownGesture.numberOfTapsRequired = 1
+//        view.addGestureRecognizer(slowDownGesture)
+//
+//        let speedUpGesture = UITapGestureRecognizer(target: self, action: #selector(handleSpeedUp))
+//        speedUpGesture.delegate = self
+//        view.addGestureRecognizer(speedUpGesture)
+        
         shadeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap)))
         controlBar.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
         controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBack)))
@@ -186,6 +201,26 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
         }, completion: nil)
     }
     
+//
+//    @objc func handleSlowDown() {
+//        scrollSpeed = scrollSpeed - 5
+//        print("slow: \(scrollSpeed)")
+//        scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
+//        controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
+//        controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
+//    }
+    
+//    @objc func handleSpeedUp(gesture: UITapGestureRecognizer) {
+//
+//        scrollSpeed = scrollSpeed + 5
+//        print("3 fast: \(scrollSpeed)")
+//        scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
+//
+//        controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
+//        controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
+//
+//    }
+    
     @objc func handleBack() {
         navigationController?.isNavigationBarHidden = false
         navigationController?.popViewController(animated: true)
@@ -224,7 +259,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
     @objc func handleMirrorMode(sender: UISwitch!) {
         
         textView.transform = sender.isOn ? CGAffineTransform.init(scaleX: -1, y: 1) : CGAffineTransform.init(scaleX: 1, y: 1)
-//        arrow.transform = sender.isOn ? CGAffineTransform.init(scaleX: -1, y: 1) : CGAffineTransform.init(scaleX: 1, y: 1)
     }
     
     @objc func handleArrowMode(sender: UISwitch!) {
@@ -254,6 +288,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate {
     @objc func handleShadeViewTap() {
         dismissColorPicker()
     }
+
     
     //MARK: - Text Manipulator
     
