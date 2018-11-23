@@ -97,6 +97,7 @@ class RollingTextController: UIViewController {
     
     private func setupGestures() {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleControlToggle)))
+        controlBar.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
         controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBack)))
         controlBar.startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
         controlBar.fontSizeSlider.addTarget(self, action: #selector(handleFontSize(sender:)), for: .allEvents)
@@ -108,6 +109,26 @@ class RollingTextController: UIViewController {
     }
     
     //MARK: - Gesture Selectors
+    
+    @objc func handlePan(gesture: UIPanGestureRecognizer) {
+        let changeInY = gesture.translation(in: controlBar).y
+        let velocityY = gesture.velocity(in: controlBar).y
+        
+        if changeInY < 0 {
+            controlBarTop.constant = changeInY
+            
+            if gesture.state == .ended {
+                if changeInY < controlBar.frame.height * 0.6 || velocityY > 800 {
+                    handleControlToggle()
+                } else {
+                    UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+                        self.controlBarTop.constant = 0
+                        self.view.layoutIfNeeded()
+                    }, completion: nil)
+                }
+            }
+        }
+    }
     
     @objc func handleControlToggle() {
         if let timer = scrollTimer {

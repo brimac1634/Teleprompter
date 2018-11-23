@@ -131,6 +131,7 @@ class ControlBar: BaseView {
             newStack.axis = .horizontal
             newStack.distribution = .fillEqually
             newStack.contentMode = .center
+            newStack.alignment = .center
             stacks.append(newStack)
         }
         
@@ -140,6 +141,7 @@ class ControlBar: BaseView {
         verticalStack1.axis = .vertical
         verticalStack1.distribution = .fillEqually
         verticalStack1.contentMode = .center
+        
         
         let verticalStack2 = UIStackView(arrangedSubviews: [stacks[0], stacks[1], stacks[2]])
         verticalStack2.axis = .vertical
@@ -181,9 +183,11 @@ class ControlBar: BaseView {
         arrowModeSwitch.isOn = true
         highlightModeSwitch.isOn = true
         
+        
 
     }
     
 
+    
     
 }
