@@ -116,7 +116,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     @objc func handleStart() {
         if textBox.text?.count != 0 {
             let rollingTextController = RollingTextController()
-            rollingTextController.textInput = "\n\n\n\n\(textBox.text)\n\n\n\n\n"
+            guard let text = textBox.text else {return}
+            rollingTextController.textInput = "\n\n\n\n\(text)\n\n\n\n\n"
             rollingTextController.view.backgroundColor = .black
             navigationController?.isNavigationBarHidden = true
             navigationController?.pushViewController(rollingTextController, animated: true)
