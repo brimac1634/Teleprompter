@@ -18,6 +18,15 @@ class ControlBar: BaseView {
         return button
     }()
     
+    let saveButton: BaseButton = {
+        let button = BaseButton()
+        button.backgroundColor = .clear
+        button.setTitle("Save Default", for: .normal)
+        button.titleLabel?.lineBreakMode = .byWordWrapping
+        button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
+        return button
+    }()
+    
     let controlsView: BaseView = {
         let view = BaseView()
         view.backgroundColor = .clear
@@ -147,10 +156,11 @@ class ControlBar: BaseView {
         return button
     }()
     
-    let saveButton: BaseButton = {
+    
+    let topButton: BaseButton = {
         let button = BaseButton()
         button.backgroundColor = .clear
-        button.setTitle("Save Default", for: .normal)
+        button.setTitle("Restart", for: .normal)
         button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
@@ -159,7 +169,8 @@ class ControlBar: BaseView {
     let defaultButton: BaseButton = {
         let button = BaseButton()
         button.backgroundColor = .clear
-        button.setTitle("Default", for: .normal)
+        button.setTitle("Use Default", for: .normal)
+        button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
     }()
@@ -212,8 +223,9 @@ class ControlBar: BaseView {
         
         
         addSubview(backButton)
-        addSubview(groupedStack)
         addSubview(saveButton)
+        addSubview(groupedStack)
+        addSubview(topButton)
         addSubview(defaultButton)
         addSubview(startButton)
         
@@ -224,22 +236,27 @@ class ControlBar: BaseView {
             backButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32),
             
             startButton.widthAnchor.constraint(equalToConstant: 120),
-            startButton.heightAnchor.constraint(equalToConstant: 60),
+            startButton.heightAnchor.constraint(equalToConstant: 40),
             startButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
             startButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
             
-            defaultButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
-            defaultButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1),
-            defaultButton.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8),
-            defaultButton.trailingAnchor.constraint(equalTo: startButton.trailingAnchor),
-            
             saveButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
             saveButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1.5),
-            saveButton.topAnchor.constraint(equalTo: topAnchor, constant: 32),
-            saveButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
+            saveButton.bottomAnchor.constraint(equalTo: startButton.bottomAnchor),
+            saveButton.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
+            
+            topButton.topAnchor.constraint(equalTo: backButton.topAnchor),
+            topButton.trailingAnchor.constraint(equalTo: startButton.trailingAnchor),
+            topButton.widthAnchor.constraint(equalTo: startButton.widthAnchor),
+            topButton.heightAnchor.constraint(equalTo: startButton.heightAnchor),
+            
+            defaultButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
+            defaultButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1.5),
+            defaultButton.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -16),
+            defaultButton.trailingAnchor.constraint(equalTo: startButton.trailingAnchor),
             
             groupedStack.topAnchor.constraint(equalTo: backButton.topAnchor),
-            groupedStack.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 32),
+            groupedStack.leadingAnchor.constraint(equalTo: saveButton.trailingAnchor, constant: 32),
             groupedStack.trailingAnchor.constraint(equalTo: startButton.leadingAnchor, constant: -32),
             groupedStack.bottomAnchor.constraint(equalTo: startButton.bottomAnchor)
             ])

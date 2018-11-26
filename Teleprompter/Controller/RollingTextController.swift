@@ -89,10 +89,12 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     override func viewWillAppear(_ animated: Bool) {
         handleDefault()
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        scrollToTop()
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        updateGradient()
     }
+
     
     private func setupView() {
         view.addSubview(textView)
@@ -125,7 +127,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
 
             controlBarTop,
             controlBar.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
-            controlBar.heightAnchor.constraint(equalToConstant: 300),
+            controlBar.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4),
 
             shadeView.topAnchor.constraint(equalTo: view.topAnchor),
             shadeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -139,11 +141,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
         updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
         
-        gradient = CAGradientLayer()
-        gradient.frame = view.bounds
-        gradient.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
-        gradient.locations = [0,0.2,0.4,1]
-        gradientView.layer.addSublayer(gradient)
+        updateGradient()
         gradientView.alpha = 0
         
         
@@ -180,6 +178,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBar.highlightModeSwitch.addTarget(self, action: #selector(handleFadeMode(sender:)), for: .allEvents)
         controlBar.backgroundColorButton.addTarget(self, action: #selector(handleBackgroundColor), for: .touchUpInside)
         controlBar.textColorButton.addTarget(self, action: #selector(handleTextColor), for: .touchUpInside)
+        controlBar.topButton.addTarget(self, action: #selector(handleTop), for: .touchUpInside)
     }
     
     //MARK: - Gesture Selectors
@@ -344,6 +343,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         dismissColorPicker()
     }
     
+    @objc func handleTop() {
+        scrollToTop()
+        handleStart()
+    }
+    
     //MARK: - Save Method
     
     func saveDefaults() {
@@ -360,16 +364,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     //MARK: - View Updaters
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offset = scrollView.contentOffset.y
-        if offset < 0 {
-            textView.contentOffset.y = offset
-            textView.scrollsToTop = false
-        }
-    }
-    
     func scrollToTop() {
-        textView.contentOffset = CGPoint(x: 0, y: -(view.frame.height / 2))
+        textView.contentOffset = CGPoint(x: 0, y: 0)
     }
     
     func updateTextStyle(lineSpacing: CGFloat, fontSize: CGFloat, color: UIColor) {
@@ -406,6 +402,19 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scroll))"
         
         view.layoutIfNeeded()
+    }
+    
+    func updateGradient() {
+        if gradient != nil {
+            gradient.removeFromSuperlayer()
+        }
+        
+        gradient = CAGradientLayer()
+        gradient.frame = gradientView.bounds
+        gradient.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
+        gradient.locations = [0,0.2,0.4,1]
+        gradientView.layer.addSublayer(gradient)
+        gradientView.setNeedsLayout()
     }
     
     //MARK: - Color Picker Delegate
