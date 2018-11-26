@@ -10,7 +10,7 @@ import UIKit
 import ChromaColorPicker
 
 
-class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGestureRecognizerDelegate {
+class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGestureRecognizerDelegate, UITextViewDelegate {
     
     let defaults = UserDefaults.standard
 
@@ -38,7 +38,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var arrowLeading: NSLayoutConstraint!
     var arrowTrailing: NSLayoutConstraint!
     
-    let textView: UITextView = {
+    lazy var textView: UITextView = {
         let view = UITextView()
         view.backgroundColor = .clear
         view.isEditable = false
@@ -46,6 +46,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         view.textAlignment = .center
         view.contentMode = .center
         view.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -86,10 +87,12 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        textView.contentOffset = CGPoint(x: 0, y: -(view.frame.height / 2))
         handleDefault()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        scrollToTop()
+    }
     
     private func setupView() {
         view.addSubview(textView)
@@ -105,13 +108,13 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         arrowTrailing = arrow.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: -16)
         
         NSLayoutConstraint.activate([
-            arrowTrailing,
+            arrowLeading,
             arrow.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -(view.frame.height / 5)),
             arrow.widthAnchor.constraint(equalToConstant: 100),
             arrow.heightAnchor.constraint(equalToConstant: 100),
             
             textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            textView.leadingAnchor.constraint(equalTo: arrow.trailingAnchor),
+            textView.leadingAnchor.constraint(equalTo: arrow.trailingAnchor, constant: 16),
             textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             
@@ -132,7 +135,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             ])
         view.bringSubviewToFront(shadeView)
         shadeView.alpha = 0
-//        updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
+        
+        updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
+        updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
         
         gradient = CAGradientLayer()
         gradient.frame = view.bounds
@@ -140,6 +145,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         gradient.locations = [0,0.2,0.4,1]
         gradientView.layer.addSublayer(gradient)
         gradientView.alpha = 0
+        
         
     }
     
@@ -186,7 +192,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             controlBarTop.constant = changeInY
             
             if gesture.state == .ended {
-                if changeInY < controlBar.frame.height * 0.6 || velocityY > 800 {
+                if changeInY < -(controlBar.frame.height * 0.6) || velocityY > 800 {
                     handleControlToggle()
                 } else {
                     UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
@@ -205,6 +211,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.controlBarBottom.isActive = !self.controlBarBottom.isActive
             self.controlBarTop.isActive = !self.controlBarTop.isActive
+            self.controlBarTop.constant = 0
             self.view.layoutIfNeeded()
         }, completion: nil)
     }
@@ -235,20 +242,22 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleSave() {
-        defaults.set(textSize, forKey: "textSize")
-        defaults.set(lineSpacing, forKey: "lineSpacing")
-        defaults.set(scrollSpeed, forKey: "scrollSpeed")
-        defaults.set(mirrorIsOn, forKey: "mirrorIsOn")
-        defaults.set(arrowIsOn, forKey: "arrowIsOn")
-        defaults.set(fadeIsOn, forKey: "fadeIsOn")
-        defaults.setColor(color: backgroundColor, forKey: "backgroundColor")
-        defaults.setColor(color: textColor, forKey: "textColor")
         
-        print(arrowIsOn)
         
-        let alert = UIAlertController(title: "Saved", message: "Your default settings have been saved.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+        let alert = UIAlertController(title: "Save Default", message: "Are you sure you want to save these settings?", preferredStyle: .alert)
+        let saveAction = UIAlertAction(title: "Save", style: .default) { (finished) in
+            self.saveDefaults()
+            let alert = UIAlertController(title: "Saved", message: "Your default settings have been saved.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(saveAction)
+        alert.addAction(cancelAction)
+        
         self.present(alert, animated: true, completion: nil)
+        
+        
     }
     
     @objc func handleDefault() {
@@ -308,8 +317,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     @objc func handleArrowMode(sender: UISwitch!) {
         arrowIsOn = sender.isOn
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-            self.arrowLeading.isActive = !self.arrowLeading.isActive
-            self.arrowTrailing.isActive = !self.arrowTrailing.isActive
+            self.arrowLeading.isActive = sender.isOn ? true : false
+            self.arrowTrailing.isActive = sender.isOn ? false : true
             self.view.layoutIfNeeded()
         }, completion: nil)
         
@@ -334,9 +343,34 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     @objc func handleShadeViewTap() {
         dismissColorPicker()
     }
+    
+    //MARK: - Save Method
+    
+    func saveDefaults() {
+        defaults.set(textSize, forKey: "textSize")
+        defaults.set(lineSpacing, forKey: "lineSpacing")
+        defaults.set(scrollSpeed, forKey: "scrollSpeed")
+        defaults.set(mirrorIsOn, forKey: "mirrorIsOn")
+        defaults.set(arrowIsOn, forKey: "arrowIsOn")
+        defaults.set(fadeIsOn, forKey: "fadeIsOn")
+        defaults.setColor(color: backgroundColor, forKey: "backgroundColor")
+        defaults.setColor(color: textColor, forKey: "textColor")
+    }
 
     
     //MARK: - View Updaters
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offset = scrollView.contentOffset.y
+        if offset < 0 {
+            textView.contentOffset.y = offset
+            textView.scrollsToTop = false
+        }
+    }
+    
+    func scrollToTop() {
+        textView.contentOffset = CGPoint(x: 0, y: -(view.frame.height / 2))
+    }
     
     func updateTextStyle(lineSpacing: CGFloat, fontSize: CGFloat, color: UIColor) {
         let attributedString = NSMutableAttributedString(string: textInput)
@@ -347,6 +381,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         attributedString.addAttributes([NSAttributedString.Key.paragraphStyle: mutableParagraphStyle, NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize)], range: NSMakeRange(0, textInput.count))
         
         textView.attributedText = attributedString
+        arrow.tintColor = color
 
         controlBar.fontSizeSlider.value = Float(fontSize)
         controlBar.lineSpacingSlider.value = Float(lineSpacing)

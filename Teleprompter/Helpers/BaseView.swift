@@ -16,7 +16,7 @@ class BaseView: UIView {
     }
     
     func setupView() {
-        self.layer.cornerRadius = 3
+        self.layer.cornerRadius = 12
         self.clipsToBounds = true
         self.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -34,7 +34,7 @@ class BaseButton: UIButton  {
 
     
     func setupView() {
-        self.layer.cornerRadius = 3
+        self.layer.cornerRadius = 12
         self.clipsToBounds = true
         self.translatesAutoresizingMaskIntoConstraints = false
         self.titleLabel?.font = UIFont.systemFont(ofSize: 26)

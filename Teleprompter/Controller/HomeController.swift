@@ -23,7 +23,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     let textBox: UITextView = {
         let box = UITextView()
-        box.layer.cornerRadius = 3
+        box.layer.cornerRadius = 12
         box.layer.borderWidth = 1
         box.layer.borderColor = UIColor.netRoadshowGray(a: 1).cgColor
         box.isEditable = true

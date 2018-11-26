@@ -230,11 +230,11 @@ class ControlBar: BaseView {
             
             defaultButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
             defaultButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1),
-            defaultButton.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: 16),
+            defaultButton.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8),
             defaultButton.trailingAnchor.constraint(equalTo: startButton.trailingAnchor),
             
             saveButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
-            saveButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 2),
+            saveButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1.5),
             saveButton.topAnchor.constraint(equalTo: topAnchor, constant: 32),
             saveButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
             
