@@ -141,26 +141,28 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     //MARK: - Document Picker Methods
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
-        do {
-            let contents = try String(contentsOfFile: url.path, encoding: String.Encoding.utf8)
-            print(contents)
-            textBox.text = contents
-        } catch {
-            presentImportFailAlert()
-        }
+//        do {
+//            let contents = try String(contentsOfFile: url.path, encoding: String.Encoding.utf8)
+//            print(contents)
+//            textBox.text = contents
+//        } catch {
+//            presentImportFailAlert()
+//        }
         
 
         if let pdf = PDFDocument(url: url) {
             let pageCount = pdf.pageCount
-            var documentContent = String()
+            let documentContent = NSMutableAttributedString()
             
             for i in 1 ..< pageCount {
                 guard let page = pdf.page(at: i) else { continue }
-                guard let pageContent = page.string else { continue }
+                guard let pageContent = page.attributedString else { continue }
                 documentContent.append(pageContent)
             }
-            if documentContent.count != 0 {
-                textBox.text = documentContent
+            documentContent.setFontFace(font: UIFont.systemFont(ofSize: 30), color: UIColor.black)
+            
+            if documentContent != nil {
+                textBox.attributedText = documentContent
             } else {
                 presentImportFailAlert()
             }
