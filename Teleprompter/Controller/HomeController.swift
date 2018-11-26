@@ -24,8 +24,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     let textBox: UITextView = {
         let box = UITextView()
         box.layer.cornerRadius = 3
-        box.layer.borderWidth = 2
-        box.layer.borderColor = UIColor.netRoadshowDarkGray(a: 1).cgColor
+        box.layer.borderWidth = 1
+        box.layer.borderColor = UIColor.netRoadshowGray(a: 1).cgColor
         box.isEditable = true
         box.clipsToBounds = true
         box.backgroundColor = UIColor.netRoadshowGray(a: 1)
@@ -146,21 +146,34 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             print(contents)
             textBox.text = contents
         } catch {
-            print("no text found")
+            presentImportFailAlert()
         }
         
 
         if let pdf = PDFDocument(url: url) {
             let pageCount = pdf.pageCount
-            let documentContent = NSMutableAttributedString()
+            var documentContent = String()
             
             for i in 1 ..< pageCount {
                 guard let page = pdf.page(at: i) else { continue }
-                guard let pageContent = page.attributedString else { continue }
+                guard let pageContent = page.string else { continue }
                 documentContent.append(pageContent)
             }
-            textBox.attributedText = documentContent
+            if documentContent.count != 0 {
+                textBox.text = documentContent
+            } else {
+                presentImportFailAlert()
+            }
+            
         }
 
+    }
+    
+    func presentImportFailAlert() {
+        let alert = UIAlertController(title: "Missing Text", message: "The text could not be imported", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (action:UIAlertAction) in
+            self.textBox.selectAll(nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
 }

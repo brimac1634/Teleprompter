@@ -82,10 +82,12 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         super.viewDidLoad()
         setupView()
         setupGestures()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         textView.contentOffset = CGPoint(x: 0, y: -(view.frame.height / 2))
+        handleDefault()
     }
 
     
@@ -104,7 +106,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         NSLayoutConstraint.activate([
             arrowTrailing,
-            arrow.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            arrow.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -(view.frame.height / 5)),
             arrow.widthAnchor.constraint(equalToConstant: 100),
             arrow.heightAnchor.constraint(equalToConstant: 100),
             
@@ -130,7 +132,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             ])
         view.bringSubviewToFront(shadeView)
         shadeView.alpha = 0
-        updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
+//        updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
         
         gradient = CAGradientLayer()
         gradient.frame = view.bounds
@@ -241,13 +243,31 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         defaults.set(fadeIsOn, forKey: "fadeIsOn")
         defaults.setColor(color: backgroundColor, forKey: "backgroundColor")
         defaults.setColor(color: textColor, forKey: "textColor")
+        
+        print(arrowIsOn)
+        
+        let alert = UIAlertController(title: "Saved", message: "Your default settings have been saved.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     @objc func handleDefault() {
-        guard let textColor = defaults.colorForKey(key: "textColor") else {return}
-        updateTextStyle(lineSpacing: CGFloat(defaults.float(forKey: "lineSpacing")), fontSize: CGFloat(defaults.float(forKey: "textSize")), color: textColor)
-        
-        
+        if defaults.bool(forKey: "fadeIsOn") {
+            lineSpacing = CGFloat(defaults.float(forKey: "lineSpacing"))
+            scrollSpeed = CGFloat(defaults.float(forKey: "scrollSpeed"))
+            textSize = CGFloat(defaults.float(forKey: "textSize"))
+            mirrorIsOn = defaults.bool(forKey: "mirrorIsOn")
+            arrowIsOn = defaults.bool(forKey: "arrowIsOn")
+            fadeIsOn = defaults.bool(forKey: "fadeIsOn")
+            textColor = defaults.colorForKey(key: "textColor") ?? .white
+            backgroundColor = defaults.colorForKey(key: "backgroundColor") ?? .black
+            
+            updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
+            updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
+            
+        } else {
+            print("nothing saved")
+        }
     }
     
     @objc func handleStart() {
@@ -258,7 +278,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     @objc func fireScroll() {
         textView.contentOffset.y += 1
-        if textView.contentOffset.y > textView.contentSize.height - (view.frame.height / 2) {
+        if textView.contentOffset.y > textView.contentSize.height - (view.frame.height / 3) {
             guard scrollTimer != nil else {return}
             scrollTimer?.invalidate()
         }
@@ -281,11 +301,12 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleMirrorMode(sender: UISwitch!) {
-        
+        mirrorIsOn = sender.isOn
         textView.transform = sender.isOn ? CGAffineTransform.init(scaleX: -1, y: 1) : CGAffineTransform.init(scaleX: 1, y: 1)
     }
     
     @objc func handleArrowMode(sender: UISwitch!) {
+        arrowIsOn = sender.isOn
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.arrowLeading.isActive = !self.arrowLeading.isActive
             self.arrowTrailing.isActive = !self.arrowTrailing.isActive
@@ -295,6 +316,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleFadeMode(sender: UISwitch!) {
+        fadeIsOn = sender.isOn
         gradientView.alpha =  sender.isOn ? 1 : 0
         
     }
@@ -314,7 +336,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
 
     
-    //MARK: - Text Manipulator
+    //MARK: - View Updaters
     
     func updateTextStyle(lineSpacing: CGFloat, fontSize: CGFloat, color: UIColor) {
         let attributedString = NSMutableAttributedString(string: textInput)
@@ -326,10 +348,29 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         textView.attributedText = attributedString
 
+        controlBar.fontSizeSlider.value = Float(fontSize)
+        controlBar.lineSpacingSlider.value = Float(lineSpacing)
+        controlBar.textColorButton.backgroundColor = color
         controlBar.lineSpacingLabel.text = "Line Height: \(Int(lineSpacing))"
-        controlBar.fontSizeLabel.text = "Font Size: \(Int(textSize))"
+        controlBar.fontSizeLabel.text = "Font Size: \(Int(fontSize))"
+    }
+    
+    func updateViewStyle(scroll: CGFloat, mirror: Bool, arrow: Bool, fade: Bool, backColor: UIColor) {
+        gradientView.alpha =  mirror ? 1 : 0
         
+        controlBar.scrollSpeedSlider.value = Float(scroll)
+        controlBar.mirrorModeSwitch.setOn(mirror, animated: true)
+        controlBar.arrowModeSwitch.setOn(arrow, animated: true)
+        controlBar.highlightModeSwitch.setOn(fade, animated: true)
+        handleFadeMode(sender: controlBar.highlightModeSwitch)
+        handleArrowMode(sender: controlBar.arrowModeSwitch)
+        handleMirrorMode(sender: controlBar.mirrorModeSwitch)
+        controlBar.backgroundColorButton.backgroundColor = backColor
+        view.backgroundColor = backColor
         
+        controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scroll))"
+        
+        view.layoutIfNeeded()
     }
     
     //MARK: - Color Picker Delegate
@@ -337,6 +378,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     func colorPickerDidChooseColor(_ colorPicker: ChromaColorPicker, color: UIColor) {
         if backgroundColorChosen {
             view.backgroundColor = color
+            backgroundColor = color
             controlBar.backgroundColorButton.backgroundColor = color
             if color.isLight {
                 gradient.colors = [UIColor.white.withAlphaComponent(1).cgColor, UIColor.white.withAlphaComponent(0).cgColor, UIColor.white.withAlphaComponent(0).cgColor, UIColor.white.withAlphaComponent(1).cgColor]
@@ -344,6 +386,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
                 gradient.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
             }
         } else {
+            textColor = color
             updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: color)
             controlBar.textColorButton.backgroundColor = color
             arrow.tintColor = color

@@ -151,6 +151,7 @@ class ControlBar: BaseView {
         let button = BaseButton()
         button.backgroundColor = .clear
         button.setTitle("Save Default", for: .normal)
+        button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
     }()
@@ -233,7 +234,7 @@ class ControlBar: BaseView {
             defaultButton.trailingAnchor.constraint(equalTo: startButton.trailingAnchor),
             
             saveButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
-            saveButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1),
+            saveButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 2),
             saveButton.topAnchor.constraint(equalTo: topAnchor, constant: 32),
             saveButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
             
