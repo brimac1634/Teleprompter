@@ -13,6 +13,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     let topLabel: UILabel = {
         let label = UILabel()
+        label.minimumScaleFactor = 0.5
+        label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.systemFont(ofSize: 32)
         label.textColor = UIColor.netRoadshowDarkGray(a: 1)
         label.text = "Teleprompter Text"
@@ -44,12 +46,22 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         return button
     }()
     
+    var keyboardHeight: CGFloat = 0
+    var startButtonBottomConstraint: NSLayoutConstraint!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         setupNavBar()
-        
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
     }
     
     private func setupView() {
@@ -59,15 +71,17 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         view.addSubview(textBox)
         view.addSubview(startButton)
         
+        startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+        
         NSLayoutConstraint.activate([
             topLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            topLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.95),
+            topLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
             topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
             topLabel.heightAnchor.constraint(equalToConstant: 40),
             
             startButton.widthAnchor.constraint(equalToConstant: 120),
             startButton.heightAnchor.constraint(equalToConstant: 40),
-            startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            startButtonBottomConstraint,
             startButton.trailingAnchor.constraint(equalTo: textBox.trailingAnchor),
             
             textBox.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -80,6 +94,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap)))
         view.isUserInteractionEnabled = true
+        textBox.delegate = self
     }
     
     private func setupNavBar() {
@@ -106,6 +121,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         
         navigationItem.rightBarButtonItem = barItem
     }
+    
+    
     
     //MARK: - Gesture Selectors
     
@@ -179,4 +196,10 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         }))
         self.present(alert, animated: true, completion: nil)
     }
+    
+    
 }
+
+
+
+

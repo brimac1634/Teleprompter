@@ -88,3 +88,26 @@ extension NSMutableAttributedString {
         endEditing()
     }
 }
+
+extension HomeController: UITextViewDelegate {
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            keyboardHeight = keyboardRectangle.height
+        }
+    }
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+            self.startButtonBottomConstraint.constant = -self.keyboardHeight - 16
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+            self.startButtonBottomConstraint.constant = -16
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+    }
+}

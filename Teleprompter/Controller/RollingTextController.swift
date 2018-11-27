@@ -26,12 +26,10 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var fadeIsOn: Bool = false
     var scrollTimer: Timer?
     var backgroundColorChosen: Bool = true
-    
    
     
     var style: NSMutableParagraphStyle!
     var neatColorPicker: ChromaColorPicker!
-    var gradient: CAGradientLayer!
     
     var controlBarTop: NSLayoutConstraint!
     var controlBarBottom: NSLayoutConstraint!
@@ -79,6 +77,15 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         return view
     }()
     
+    let gradient: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        layer.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
+        layer.locations = [0,0.2,0.4,1]
+        return layer
+    }()
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -90,18 +97,19 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         handleDefault()
     }
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        updateGradient()
+    override func viewDidLayoutSubviews() {
+        gradient.frame = gradientView.bounds
     }
 
     
     private func setupView() {
+        
         view.addSubview(textView)
         view.addSubview(arrow)
         view.addSubview(gradientView)
         view.addSubview(controlBar)
         view.addSubview(shadeView)
+        gradientView.layer.addSublayer(gradient)
         
         controlBarTop = controlBar.topAnchor.constraint(equalTo: view.topAnchor)
         controlBarBottom = controlBar.bottomAnchor.constraint(equalTo: view.topAnchor)
@@ -141,7 +149,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
         updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
         
-        updateGradient()
+        gradient.frame = gradientView.bounds
         gradientView.alpha = 0
         
         
@@ -310,7 +318,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     @objc func handleMirrorMode(sender: UISwitch!) {
         mirrorIsOn = sender.isOn
-        textView.transform = sender.isOn ? CGAffineTransform.init(scaleX: -1, y: 1) : CGAffineTransform.init(scaleX: 1, y: 1)
+        textView.transform = sender.isOn ? CGAffineTransform.init(scaleX: 1, y: -1) : CGAffineTransform.init(scaleX: 1, y: 1)
+        gradientView.transform = sender.isOn ? CGAffineTransform.init(scaleX: 1, y: -1) : CGAffineTransform.init(scaleX: 1, y: 1)
     }
     
     @objc func handleArrowMode(sender: UISwitch!) {
@@ -404,19 +413,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         view.layoutIfNeeded()
     }
     
-    func updateGradient() {
-        if gradient != nil {
-            gradient.removeFromSuperlayer()
-        }
-        
-        gradient = CAGradientLayer()
-        gradient.frame = gradientView.bounds
-        gradient.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
-        gradient.locations = [0,0.2,0.4,1]
-        gradientView.layer.addSublayer(gradient)
-        gradientView.setNeedsLayout()
-    }
-    
     //MARK: - Color Picker Delegate
     
     func colorPickerDidChooseColor(_ colorPicker: ChromaColorPicker, color: UIColor) {
@@ -440,10 +436,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     func dismissColorPicker() {
+        guard let picker = neatColorPicker else {return}
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
             self.shadeView.alpha = 0
-            self.neatColorPicker.alpha = 0
-            self.neatColorPicker.frame.origin.y = self.neatColorPicker.frame.origin.y - 50
+            picker.alpha = 0
+            picker.frame.origin.y = self.neatColorPicker.frame.origin.y - 50
         }, completion: nil)
         
         neatColorPicker.removeFromSuperview()

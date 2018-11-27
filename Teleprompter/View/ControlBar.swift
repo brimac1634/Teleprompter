@@ -125,6 +125,7 @@ class ControlBar: BaseView {
     let backgroundColorLabel: BaseLabel = {
         let label = BaseLabel()
         label.text = "Background Color"
+        label.lineBreakMode = .byWordWrapping
         label.translatesAutoresizingMaskIntoConstraints = true
         return label
     }()
