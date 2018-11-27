@@ -27,6 +27,8 @@ class BaseView: UIView {
 }
 
 class BaseButton: UIButton  {
+    var universalFontSize: CGFloat = 0
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -34,10 +36,16 @@ class BaseButton: UIButton  {
 
     
     func setupView() {
+        if ( UIDevice.current.model.range(of: "iPad") != nil){
+            universalFontSize = 24
+        } else {
+            universalFontSize = 18
+        }
+        
         self.layer.cornerRadius = 12
         self.clipsToBounds = true
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.titleLabel?.font = UIFont.systemFont(ofSize: 26)
+        self.titleLabel?.font = UIFont.systemFont(ofSize: universalFontSize)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -46,6 +54,8 @@ class BaseButton: UIButton  {
 }
 
 class BaseLabel: UILabel {
+    var universalFontSize: CGFloat = 0
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -56,9 +66,39 @@ class BaseLabel: UILabel {
     }
     
     func setupView() {
+        if ( UIDevice.current.model.range(of: "iPad") != nil){
+            universalFontSize = 24
+        } else {
+            universalFontSize = 18
+        }
+        
         self.textAlignment = .center
         self.textColor = UIColor.netRoadshowDarkGray(a: 1)
-        self.font = UIFont.systemFont(ofSize: 24)
+        self.font = UIFont.systemFont(ofSize: universalFontSize)
         self.translatesAutoresizingMaskIntoConstraints = false
+    }
+}
+
+class BaseTextView: UITextView {
+    var universalFontSize: CGFloat = 0
+    
+    override init(frame: CGRect, textContainer: NSTextContainer?) {
+        super.init(frame: frame, textContainer: textContainer)
+        setupView()
+    }
+    
+    func setupView() {
+        
+        if ( UIDevice.current.model.range(of: "iPad") != nil){
+            universalFontSize = 30
+        } else {
+            universalFontSize = 22
+        }
+        
+        self.font = UIFont.systemFont(ofSize: universalFontSize)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

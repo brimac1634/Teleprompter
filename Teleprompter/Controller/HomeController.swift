@@ -8,6 +8,7 @@
 
 import UIKit
 import PDFKit
+import MobileCoreServices
 
 class HomeController: UIViewController, UIDocumentPickerDelegate {
     
@@ -15,7 +16,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         let label = UILabel()
         label.minimumScaleFactor = 0.5
         label.adjustsFontSizeToFitWidth = true
-        label.font = UIFont.systemFont(ofSize: 32)
+        label.font = UIFont.systemFont(ofSize: 30)
         label.textColor = UIColor.netRoadshowDarkGray(a: 1)
         label.text = "Teleprompter Text"
         label.textAlignment = .center
@@ -23,15 +24,14 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         return label
     }()
     
-    let textBox: UITextView = {
-        let box = UITextView()
+    let textBox: BaseTextView = {
+        let box = BaseTextView()
         box.layer.cornerRadius = 12
         box.layer.borderWidth = 1
         box.layer.borderColor = UIColor.netRoadshowGray(a: 1).cgColor
         box.isEditable = true
         box.clipsToBounds = true
         box.backgroundColor = UIColor.netRoadshowGray(a: 1)
-        box.font = UIFont.systemFont(ofSize: 30)
         box.contentInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         box.translatesAutoresizingMaskIntoConstraints = false
         return box
@@ -76,7 +76,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         NSLayoutConstraint.activate([
             topLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             topLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
-            topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
+            topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             topLabel.heightAnchor.constraint(equalToConstant: 40),
             
             startButton.widthAnchor.constraint(equalToConstant: 120),
@@ -150,7 +150,9 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
     
     @objc func handleImport() {
-        let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.text", "com.apple.iwork.pages.pages", "public.data"], in: .import)
+        // To add more document types:
+        // documentTypes: ["com.microsoft.word.doc","org.openxmlformats.wordprocessingml.document", kUTTypePDF as String]
+        let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypePDF as String], in: UIDocumentPickerMode.import)
         
         documentPicker.delegate = self
         present(documentPicker, animated: true, completion: nil)
@@ -159,16 +161,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     //MARK: - Document Picker Methods
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
-//        do {
-//            let contents = try String(contentsOfFile: url.path, encoding: String.Encoding.utf8)
-//            print(contents)
-//            textBox.text = contents
-//        } catch {
-//            presentImportFailAlert()
-//        }
-        
-
         if let pdf = PDFDocument(url: url) {
+            print("PDF coming")
             let pageCount = pdf.pageCount
             let documentContent = NSMutableAttributedString()
             
@@ -177,14 +171,23 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 guard let pageContent = page.attributedString else { continue }
                 documentContent.append(pageContent)
             }
-            documentContent.setFontFace(font: UIFont.systemFont(ofSize: 30), color: UIColor.black)
+            documentContent.setFontFace(font: UIFont.systemFont(ofSize: textBox.universalFontSize), color: UIColor.black)
             
-            if documentContent != nil {
-                textBox.attributedText = documentContent
-            } else {
+            if documentContent.string == "" {
                 presentImportFailAlert()
+            } else {
+                textBox.attributedText = documentContent
             }
             
+        } else {
+            do {
+                print("non PDF coming")
+                let documentContent = try String(contentsOfFile: url.path, encoding: String.Encoding.utf8)
+                print(documentContent)
+                textBox.text = documentContent
+            } catch {
+                presentImportFailAlert()
+            }
         }
 
     }

@@ -26,6 +26,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var fadeIsOn: Bool = false
     var scrollTimer: Timer?
     var backgroundColorChosen: Bool = true
+    var controlPanelMultiplier: CGFloat = 300
+    var controlPanelIsOn: Bool = false
    
     
     var style: NSMutableParagraphStyle!
@@ -90,12 +92,16 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         super.viewDidLoad()
         setupView()
         setupGestures()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         handleDefault()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        handleControlToggle()
+    }
+    
     
     override func viewDidLayoutSubviews() {
         gradient.frame = gradientView.bounds
@@ -103,6 +109,14 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
 
     
     private func setupView() {
+        
+        if view.frame.width <= 700 {
+            controlPanelMultiplier = 0.8
+        } else if view.frame.width > 700 && view.frame.width <= 1000 {
+            controlPanelMultiplier = 0.5
+        } else {
+            controlPanelMultiplier = 0.4
+        }
         
         view.addSubview(textView)
         view.addSubview(arrow)
@@ -134,8 +148,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             gradientView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             controlBar.heightAnchor.constraint(equalTo: view.heightAnchor),
-            controlBar.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
-            controlBarLeading,
+            controlBar.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: controlPanelMultiplier),
+            controlBarTrailing,
 
             shadeView.topAnchor.constraint(equalTo: view.topAnchor),
             shadeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -151,8 +165,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         gradient.frame = gradientView.bounds
         gradientView.alpha = 0
-        
-        
     }
     
     private func setupGestures() {
@@ -212,6 +224,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleControlToggle() {
+        controlPanelIsOn = !controlPanelIsOn
         if let timer = scrollTimer {
             timer.invalidate()
         }
@@ -447,7 +460,13 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
 
     func displayColorPicker() {
-        let width: CGFloat = 480
+        var width: CGFloat = 0
+        if controlPanelMultiplier >= 0.8 {
+            width = 300
+        } else {
+            width = 480
+        }
+        
         let x = (view.frame.width / 2) - CGFloat(width / 2)
         let y = (view.frame.height / 2) - CGFloat(width / 2)
         neatColorPicker = ChromaColorPicker(frame: CGRect(x: x, y: y, width: width, height: width))

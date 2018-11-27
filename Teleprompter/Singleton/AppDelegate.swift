@@ -17,11 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UINavigationController(rootViewController: HomeController())
+        window?.rootViewController = CustomNavigationController(rootViewController: HomeController())
         window?.makeKeyAndVisible()
         
-        var homeDir = NSHomeDirectory()
-        print(homeDir)
         
         return true
     }

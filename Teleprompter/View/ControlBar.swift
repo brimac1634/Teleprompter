@@ -10,10 +10,14 @@ import UIKit
 
 class ControlBar: BaseView {
     
-    let backButton: UIButton = {
-        let button = UIButton()
-        button.setBackgroundImage(UIImage(named: "back")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = UIColor.netRoadshowBlue(a: 1)
+    var universalFontSize: CGFloat = 24
+    
+    let backButton: BaseButton = {
+        let button = BaseButton()
+        button.setTitle("Edit Text", for: .normal)
+        button.setImage(UIImage(named: "back")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
+        button.tintColor = UIColor.netRoadshowDarkGray(a: 1)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -22,6 +26,7 @@ class ControlBar: BaseView {
         let button = BaseButton()
         button.backgroundColor = .clear
         button.setTitle("Save Default", for: .normal)
+        button.titleLabel?.textAlignment = .center
         button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
@@ -171,6 +176,7 @@ class ControlBar: BaseView {
         let button = BaseButton()
         button.backgroundColor = .clear
         button.setTitle("Use Default", for: .normal)
+        button.titleLabel?.textAlignment = .center
         button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
@@ -192,7 +198,8 @@ class ControlBar: BaseView {
         for i in 0..<switches.count {
             let newStack = UIStackView(arrangedSubviews: [switches[i][0], switches[i][1]])
             newStack.axis = .horizontal
-            newStack.distribution = .fillProportionally
+            newStack.distribution = .fillEqually
+            newStack.spacing = 8
             newStack.contentMode = .center
             newStack.alignment = .center
             stacks.append(newStack)
@@ -202,64 +209,63 @@ class ControlBar: BaseView {
         
         let verticalStack1 = UIStackView(arrangedSubviews: [fontSizeLabel, fontSizeSlider, lineSpacingLabel, lineSpacingSlider, scrollSpeedLabel, scrollSpeedSlider])
         verticalStack1.axis = .vertical
+        verticalStack1.spacing = 8
         verticalStack1.distribution = .fillEqually
         verticalStack1.contentMode = .center
         
         
         let verticalStack2 = UIStackView(arrangedSubviews: [stacks[0], stacks[1], stacks[2]])
         verticalStack2.axis = .vertical
+        verticalStack2.spacing = 8
         verticalStack2.distribution = .fillEqually
         verticalStack2.contentMode = .center
         
         let verticalStack3 = UIStackView(arrangedSubviews: [backgroundColorLabel, backgroundColorButton, textColorLabel, textColorButton])
         verticalStack3.axis = .vertical
+        verticalStack3.spacing = 8
         verticalStack3.distribution = .fillEqually
         verticalStack3.contentMode = .center
         
+        
         let groupedStack = UIStackView(arrangedSubviews: [verticalStack1, verticalStack2, verticalStack3])
-        groupedStack.axis = .horizontal
-        groupedStack.distribution = .fillEqually
-        groupedStack.spacing = 32
+        groupedStack.axis = .vertical
+        groupedStack.distribution = .fillProportionally
+        groupedStack.spacing = 16
         groupedStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        let bottomStack = UIStackView(arrangedSubviews: [saveButton, defaultButton, startButton])
+        bottomStack.axis = .horizontal
+        bottomStack.distribution = .fillEqually
+        bottomStack.contentMode = .center
+        bottomStack.spacing = 8
+        bottomStack.translatesAutoresizingMaskIntoConstraints = false
         
         
         addSubview(backButton)
-        addSubview(saveButton)
         addSubview(groupedStack)
         addSubview(topButton)
-        addSubview(defaultButton)
-        addSubview(startButton)
+        addSubview(bottomStack)
         
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: topAnchor, constant: 52),
-            backButton.heightAnchor.constraint(equalToConstant: 28),
-            backButton.widthAnchor.constraint(equalToConstant: 28),
+            backButton.heightAnchor.constraint(equalToConstant: 40),
+            backButton.widthAnchor.constraint(equalToConstant: 140),
             backButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32),
             
-            startButton.widthAnchor.constraint(equalToConstant: 120),
-            startButton.heightAnchor.constraint(equalToConstant: 40),
-            startButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
-            startButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
-            
-            saveButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
-            saveButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1.5),
-            saveButton.bottomAnchor.constraint(equalTo: startButton.bottomAnchor),
-            saveButton.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
+            bottomStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
+            bottomStack.heightAnchor.constraint(equalToConstant: 60),
+            bottomStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
+            bottomStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
             
             topButton.topAnchor.constraint(equalTo: backButton.topAnchor),
-            topButton.trailingAnchor.constraint(equalTo: startButton.trailingAnchor),
-            topButton.widthAnchor.constraint(equalTo: startButton.widthAnchor),
-            topButton.heightAnchor.constraint(equalTo: startButton.heightAnchor),
+            topButton.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
+            topButton.widthAnchor.constraint(equalToConstant: 80),
+            topButton.heightAnchor.constraint(equalToConstant: 40),
             
-            defaultButton.widthAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 1),
-            defaultButton.heightAnchor.constraint(equalTo: startButton.heightAnchor, multiplier: 1.5),
-            defaultButton.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -16),
-            defaultButton.trailingAnchor.constraint(equalTo: startButton.trailingAnchor),
-            
-            groupedStack.topAnchor.constraint(equalTo: backButton.topAnchor),
-            groupedStack.leadingAnchor.constraint(equalTo: saveButton.trailingAnchor, constant: 32),
-            groupedStack.trailingAnchor.constraint(equalTo: startButton.leadingAnchor, constant: -32),
-            groupedStack.bottomAnchor.constraint(equalTo: startButton.bottomAnchor)
+            groupedStack.topAnchor.constraint(equalTo: topButton.bottomAnchor, constant: 48),
+            groupedStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
+            groupedStack.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
+            groupedStack.bottomAnchor.constraint(equalTo: bottomStack.topAnchor, constant: -48)
             ])
         
         fontSizeSlider.value = 80

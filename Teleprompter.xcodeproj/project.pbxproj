@@ -16,6 +16,7 @@
 		D28C16BF21A53D390012D84D /* RollingTextController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16BE21A53D390012D84D /* RollingTextController.swift */; };
 		D28C16C121A53DA10012D84D /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16C021A53DA10012D84D /* BaseView.swift */; };
 		D28C16C321A554C80012D84D /* ControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16C221A554C80012D84D /* ControlBar.swift */; };
+		D2E4E70C21AD36B800A9E3F9 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E4E70B21AD36B800A9E3F9 /* CustomNavigationController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		D28C16BE21A53D390012D84D /* RollingTextController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollingTextController.swift; sourceTree = "<group>"; };
 		D28C16C021A53DA10012D84D /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		D28C16C221A554C80012D84D /* ControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlBar.swift; sourceTree = "<group>"; };
+		D2E4E70B21AD36B800A9E3F9 /* CustomNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 			children = (
 				D28C16BA21A530670012D84D /* HomeController.swift */,
 				D28C16BE21A53D390012D84D /* RollingTextController.swift */,
+				D2E4E70B21AD36B800A9E3F9 /* CustomNavigationController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -267,6 +270,7 @@
 				D28C16C121A53DA10012D84D /* BaseView.swift in Sources */,
 				D28C16BF21A53D390012D84D /* RollingTextController.swift in Sources */,
 				D28C16BB21A530670012D84D /* HomeController.swift in Sources */,
+				D2E4E70C21AD36B800A9E3F9 /* CustomNavigationController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +412,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AY47KJ5YA8;
 				INFOPLIST_FILE = Teleprompter/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -415,7 +420,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brianmacpherson.Teleprompter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -427,6 +432,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AY47KJ5YA8;
 				INFOPLIST_FILE = Teleprompter/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -434,7 +440,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brianmacpherson.Teleprompter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
