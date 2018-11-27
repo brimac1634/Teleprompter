@@ -13,6 +13,7 @@ import ChromaColorPicker
 class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGestureRecognizerDelegate, UITextViewDelegate {
     
     let defaults = UserDefaults.standard
+    var usingIpad: Bool = true
 
     var textInput: String = ""
     var textColor: UIColor = UIColor.white
@@ -92,10 +93,17 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         super.viewDidLoad()
         setupView()
         setupGestures()
+        
+        if ( UIDevice.current.model.range(of: "iPad") != nil){
+            usingIpad = true
+        } else {
+            usingIpad = false
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         handleDefault()
+        adjustControlPanelForIphone()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -105,6 +113,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     override func viewDidLayoutSubviews() {
         gradient.frame = gradientView.bounds
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        adjustControlPanelForIphone()
     }
 
     
@@ -138,7 +151,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             arrow.heightAnchor.constraint(equalToConstant: 100),
             
             textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            textView.leadingAnchor.constraint(equalTo: arrow.trailingAnchor, constant: 16),
+            textView.leadingAnchor.constraint(equalTo: arrow.trailingAnchor, constant: 32),
             textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             
@@ -424,6 +437,20 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scroll))"
         
         view.layoutIfNeeded()
+    }
+    
+    func adjustControlPanelForIphone() {
+        guard let groupStack = controlBar.groupedStack else {return}
+        guard usingIpad == false else {return}
+        if UIDevice.current.orientation.isLandscape {
+            groupStack.axis = .horizontal
+            controlPanelMultiplier = 0.9
+        } else {
+            groupStack.axis = .vertical
+            controlPanelMultiplier = 0.8
+        }
+        view.layoutIfNeeded()
+        controlBar.layoutSubviews()
     }
     
     //MARK: - Color Picker Delegate

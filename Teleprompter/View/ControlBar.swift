@@ -11,6 +11,7 @@ import UIKit
 class ControlBar: BaseView {
     
     var universalFontSize: CGFloat = 24
+    var groupedStack: UIStackView!
     
     let backButton: BaseButton = {
         let button = BaseButton()
@@ -227,7 +228,7 @@ class ControlBar: BaseView {
         verticalStack3.contentMode = .center
         
         
-        let groupedStack = UIStackView(arrangedSubviews: [verticalStack1, verticalStack2, verticalStack3])
+        groupedStack = UIStackView(arrangedSubviews: [verticalStack1, verticalStack2, verticalStack3])
         groupedStack.axis = .vertical
         groupedStack.distribution = .fillProportionally
         groupedStack.spacing = 16
@@ -262,10 +263,10 @@ class ControlBar: BaseView {
             topButton.widthAnchor.constraint(equalToConstant: 80),
             topButton.heightAnchor.constraint(equalToConstant: 40),
             
-            groupedStack.topAnchor.constraint(equalTo: topButton.bottomAnchor, constant: 48),
+            groupedStack.topAnchor.constraint(equalTo: topButton.bottomAnchor, constant: 32),
             groupedStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
             groupedStack.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
-            groupedStack.bottomAnchor.constraint(equalTo: bottomStack.topAnchor, constant: -48)
+            groupedStack.bottomAnchor.constraint(equalTo: bottomStack.topAnchor, constant: -32)
             ])
         
         fontSizeSlider.value = 80
