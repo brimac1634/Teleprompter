@@ -31,8 +31,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var style: NSMutableParagraphStyle!
     var neatColorPicker: ChromaColorPicker!
     
-    var controlBarTop: NSLayoutConstraint!
-    var controlBarBottom: NSLayoutConstraint!
+    var controlBarLeading: NSLayoutConstraint!
+    var controlBarTrailing: NSLayoutConstraint!
     var arrowLeading: NSLayoutConstraint!
     var arrowTrailing: NSLayoutConstraint!
     
@@ -111,8 +111,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         view.addSubview(shadeView)
         gradientView.layer.addSublayer(gradient)
         
-        controlBarTop = controlBar.topAnchor.constraint(equalTo: view.topAnchor)
-        controlBarBottom = controlBar.bottomAnchor.constraint(equalTo: view.topAnchor)
+        controlBarLeading = controlBar.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+        controlBarTrailing = controlBar.trailingAnchor.constraint(equalTo: view.leadingAnchor)
         
         arrowLeading = arrow.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
         arrowTrailing = arrow.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: -16)
@@ -133,9 +133,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             gradientView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             gradientView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            controlBarTop,
-            controlBar.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
-            controlBar.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4),
+            controlBar.heightAnchor.constraint(equalTo: view.heightAnchor),
+            controlBar.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
+            controlBarLeading,
 
             shadeView.topAnchor.constraint(equalTo: view.topAnchor),
             shadeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -192,18 +192,18 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     //MARK: - Gesture Selectors
     
     @objc func handlePan(gesture: UIPanGestureRecognizer) {
-        let changeInY = gesture.translation(in: controlBar).y
-        let velocityY = gesture.velocity(in: controlBar).y
+        let changeInX = gesture.translation(in: controlBar).x
+        let velocityX = gesture.velocity(in: controlBar).x
         
-        if changeInY < 0 {
-            controlBarTop.constant = changeInY
+        if changeInX < 0 {
+            controlBarLeading.constant = changeInX
             
             if gesture.state == .ended {
-                if changeInY < -(controlBar.frame.height * 0.6) || velocityY > 800 {
+                if changeInX < -(controlBar.frame.width * 0.6) || velocityX > 800 {
                     handleControlToggle()
                 } else {
                     UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-                        self.controlBarTop.constant = 0
+                        self.controlBarLeading.constant = 0
                         self.view.layoutIfNeeded()
                     }, completion: nil)
                 }
@@ -216,9 +216,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             timer.invalidate()
         }
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-            self.controlBarBottom.isActive = !self.controlBarBottom.isActive
-            self.controlBarTop.isActive = !self.controlBarTop.isActive
-            self.controlBarTop.constant = 0
+            self.controlBarTrailing.isActive = !self.controlBarTrailing.isActive
+            self.controlBarLeading.isActive = !self.controlBarLeading.isActive
+            self.controlBarLeading.constant = 0
             self.view.layoutIfNeeded()
         }, completion: nil)
     }
