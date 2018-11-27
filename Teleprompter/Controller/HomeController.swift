@@ -152,10 +152,17 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     @objc func handleImport() {
         // To add more document types:
         // documentTypes: ["com.microsoft.word.doc","org.openxmlformats.wordprocessingml.document", kUTTypePDF as String]
-        let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypePDF as String], in: UIDocumentPickerMode.import)
         
-        documentPicker.delegate = self
-        present(documentPicker, animated: true, completion: nil)
+        
+        let alert = UIAlertController(title: "Import Text", message: "Text can only be imported from pdf files at this time.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (finished) in
+            let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypePDF as String], in: UIDocumentPickerMode.import)
+            documentPicker.delegate = self
+            self.present(documentPicker, animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
+        
     }
     
     //MARK: - Document Picker Methods
