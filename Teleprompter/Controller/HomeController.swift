@@ -161,6 +161,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             documentPicker.delegate = self
             self.present(documentPicker, animated: true, completion: nil)
         }))
+        alert.preferredAction = alert.actions[1]
         self.present(alert, animated: true, completion: nil)
         
     }
@@ -173,7 +174,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             let pageCount = pdf.pageCount
             let documentContent = NSMutableAttributedString()
             
-            for i in 1 ..< pageCount {
+            for i in 0 ..< pageCount {
                 guard let page = pdf.page(at: i) else { continue }
                 guard let pageContent = page.attributedString else { continue }
                 documentContent.append(pageContent)

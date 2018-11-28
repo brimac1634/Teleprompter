@@ -124,7 +124,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     private func setupView() {
         
         if view.frame.width <= 700 {
-            controlPanelMultiplier = 0.8
+            controlPanelMultiplier = 1
         } else if view.frame.width > 700 && view.frame.width <= 1000 {
             controlPanelMultiplier = 0.5
         } else {
@@ -170,6 +170,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             shadeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             
             ])
+        
+        arrow.alpha = 1
         view.bringSubviewToFront(shadeView)
         shadeView.alpha = 0
         
@@ -185,7 +187,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlToggleGesture.delegate = self
         controlToggleGesture.numberOfTouchesRequired = 1
         controlToggleGesture.numberOfTapsRequired = 1
-        view.addGestureRecognizer(controlToggleGesture)
+        textView.addGestureRecognizer(controlToggleGesture)
         
 //        let slowDownGesture = UITapGestureRecognizer(target: self, action: #selector(handleSlowDown))
 //        slowDownGesture.delegate = self
@@ -199,7 +201,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         shadeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap)))
         controlBar.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
-        controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBack)))
+        controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleControlToggle)))
+        controlBar.editButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleEditText)))
         controlBar.saveButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSave)))
         controlBar.startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
         controlBar.defaultButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleDefault)))
@@ -269,7 +272,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
 //
 //    }
     
-    @objc func handleBack() {
+    @objc func handleEditText() {
+        arrow.alpha = 0
         navigationController?.isNavigationBarHidden = false
         navigationController?.popViewController(animated: true)
     }
@@ -287,7 +291,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alert.addAction(saveAction)
         alert.addAction(cancelAction)
-        
+        alert.preferredAction = alert.actions[0]
         self.present(alert, animated: true, completion: nil)
         
         
@@ -444,10 +448,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         guard usingIpad == false else {return}
         if UIDevice.current.orientation.isLandscape {
             groupStack.axis = .horizontal
-            controlPanelMultiplier = 0.9
+            groupStack.distribution = .fillEqually
         } else {
             groupStack.axis = .vertical
-            controlPanelMultiplier = 0.8
         }
         view.layoutIfNeeded()
         controlBar.layoutSubviews()
