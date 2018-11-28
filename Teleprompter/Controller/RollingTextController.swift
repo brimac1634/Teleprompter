@@ -28,7 +28,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var scrollTimer: Timer?
     var backgroundColorChosen: Bool = true
     var controlPanelMultiplier: CGFloat = 300
-    var controlPanelIsOn: Bool = false
+//    var controlPanelIsOn: Bool = false
    
     
     var style: NSMutableParagraphStyle!
@@ -38,6 +38,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var controlBarTrailing: NSLayoutConstraint!
     var arrowLeading: NSLayoutConstraint!
     var arrowTrailing: NSLayoutConstraint!
+    
+    var scrollSpeedPanGesture: UIPanGestureRecognizer!
     
     lazy var textView: UITextView = {
         let view = UITextView()
@@ -91,19 +93,19 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
-        setupGestures()
         
         if ( UIDevice.current.model.range(of: "iPad") != nil){
             usingIpad = true
         } else {
             usingIpad = false
         }
+        
+        setupView()
+        setupGestures()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         handleDefault()
-        adjustControlPanelForIphone()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -123,13 +125,17 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     private func setupView() {
         
-        if view.frame.width <= 700 {
-            controlPanelMultiplier = 1
-        } else if view.frame.width > 700 && view.frame.width <= 1000 {
-            controlPanelMultiplier = 0.5
-        } else {
-            controlPanelMultiplier = 0.4
-        }
+//        if view.frame.width <= 700 {
+//            controlPanelMultiplier = 1
+//        } else if view.frame.width > 700 && view.frame.width <= 1000 {
+//            controlPanelMultiplier = 0.5
+//        } else {
+//            controlPanelMultiplier = 0.4
+//        }
+        controlPanelMultiplier = usingIpad ? 0.4 : 1
+        let arrowSize: CGFloat = usingIpad ? 100 : 40
+        let textViewLeadingConstant: CGFloat = usingIpad ? 32 : 8
+        adjustControlPanelForIphone()
         
         view.addSubview(textView)
         view.addSubview(arrow)
@@ -146,12 +152,12 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         NSLayoutConstraint.activate([
             arrowLeading,
-            arrow.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -(view.frame.height / 5)),
-            arrow.widthAnchor.constraint(equalToConstant: 100),
-            arrow.heightAnchor.constraint(equalToConstant: 100),
+            arrow.centerYAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height / 3),
+            arrow.widthAnchor.constraint(equalToConstant: arrowSize),
+            arrow.heightAnchor.constraint(equalToConstant: arrowSize),
             
             textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            textView.leadingAnchor.constraint(equalTo: arrow.trailingAnchor, constant: 32),
+            textView.leadingAnchor.constraint(equalTo: arrow.trailingAnchor, constant: textViewLeadingConstant),
             textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             
@@ -189,15 +195,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlToggleGesture.numberOfTapsRequired = 1
         textView.addGestureRecognizer(controlToggleGesture)
         
-//        let slowDownGesture = UITapGestureRecognizer(target: self, action: #selector(handleSlowDown))
-//        slowDownGesture.delegate = self
-//        slowDownGesture.numberOfTouchesRequired = 2
-//        slowDownGesture.numberOfTapsRequired = 1
-//        view.addGestureRecognizer(slowDownGesture)
-//
-//        let speedUpGesture = UITapGestureRecognizer(target: self, action: #selector(handleSpeedUp))
-//        speedUpGesture.delegate = self
-//        view.addGestureRecognizer(speedUpGesture)
+        scrollSpeedPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleScrollPan))
+        view.addGestureRecognizer(scrollSpeedPanGesture)
         
         shadeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap)))
         controlBar.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
@@ -240,7 +239,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleControlToggle() {
-        controlPanelIsOn = !controlPanelIsOn
+//        controlPanelIsOn = !controlPanelIsOn
+        if let scrollPan = scrollSpeedPanGesture {
+            scrollPan.isEnabled = !scrollPan.isEnabled
+        }
+        
         if let timer = scrollTimer {
             timer.invalidate()
         }
@@ -252,25 +255,20 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         }, completion: nil)
     }
     
-//
-//    @objc func handleSlowDown() {
-//        scrollSpeed = scrollSpeed - 5
-//        print("slow: \(scrollSpeed)")
-//        scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
-//        controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
-//        controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
-//    }
-    
-//    @objc func handleSpeedUp(gesture: UITapGestureRecognizer) {
-//
-//        scrollSpeed = scrollSpeed + 5
-//        print("3 fast: \(scrollSpeed)")
-//        scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
-//
-//        controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
-//        controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
-//
-//    }
+    @objc func handleScrollPan(gesture: UIPanGestureRecognizer) {
+        guard scrollTimer != nil else {return}
+        let changeInX = gesture.translation(in: view).x
+        print(changeInX)
+        if changeInX < 0 && gesture.state == .ended {
+            scrollSpeed = scrollSpeed - 5
+        } else if changeInX > 0 && gesture.state == .ended {
+            scrollSpeed = scrollSpeed + 5
+        }
+        scrollTimer?.invalidate()
+        scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
+        controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
+        controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
+    }
     
     @objc func handleEditText() {
         arrow.alpha = 0
@@ -446,7 +444,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     func adjustControlPanelForIphone() {
         guard let groupStack = controlBar.groupedStack else {return}
         guard usingIpad == false else {return}
-        if UIDevice.current.orientation.isLandscape {
+        if UIDevice.current.orientation.isLandscape || view.frame.width > view.frame.height {
             groupStack.axis = .horizontal
             groupStack.distribution = .fillEqually
         } else {

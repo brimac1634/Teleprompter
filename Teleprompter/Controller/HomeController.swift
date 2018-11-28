@@ -12,6 +12,8 @@ import MobileCoreServices
 
 class HomeController: UIViewController, UIDocumentPickerDelegate {
     
+    var usingIpad: Bool = true
+    
     let topLabel: UILabel = {
         let label = UILabel()
         label.minimumScaleFactor = 0.5
@@ -51,6 +53,13 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if ( UIDevice.current.model.range(of: "iPad") != nil) {
+            usingIpad = true
+        } else {
+            usingIpad = false
+        }
+        
         setupView()
         setupNavBar()
     }
@@ -66,6 +75,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     private func setupView() {
         view.backgroundColor = .white
+        topLabel.font = usingIpad ? UIFont.systemFont(ofSize: 30) : UIFont.systemFont(ofSize: 24)
         
         view.addSubview(topLabel)
         view.addSubview(textBox)
