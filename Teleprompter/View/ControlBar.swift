@@ -26,7 +26,6 @@ class ControlBar: BaseView {
         button.backgroundColor = .clear
         button.setTitle("Edit Text", for: .normal)
         button.titleLabel?.lineBreakMode = .byWordWrapping
-        button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
     }()

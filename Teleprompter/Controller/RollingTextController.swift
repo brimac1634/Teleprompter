@@ -28,7 +28,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var scrollTimer: Timer?
     var backgroundColorChosen: Bool = true
     var controlPanelMultiplier: CGFloat = 300
-//    var controlPanelIsOn: Bool = false
    
     
     var style: NSMutableParagraphStyle!
@@ -125,14 +124,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     private func setupView() {
         
-//        if view.frame.width <= 700 {
-//            controlPanelMultiplier = 1
-//        } else if view.frame.width > 700 && view.frame.width <= 1000 {
-//            controlPanelMultiplier = 0.5
-//        } else {
-//            controlPanelMultiplier = 0.4
-//        }
-        controlPanelMultiplier = usingIpad ? 0.4 : 1
+        controlPanelMultiplier = usingIpad ? 0.5 : 1
         let arrowSize: CGFloat = usingIpad ? 100 : 40
         let textViewLeadingConstant: CGFloat = usingIpad ? 32 : 8
         adjustControlPanelForIphone()
