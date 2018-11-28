@@ -37,6 +37,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var controlBarTrailing: NSLayoutConstraint!
     var arrowLeading: NSLayoutConstraint!
     var arrowTrailing: NSLayoutConstraint!
+    var arrowCenterY: NSLayoutConstraint!
     
     var scrollSpeedPanGesture: UIPanGestureRecognizer!
     
@@ -68,6 +69,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     let shadeView: UIView = {
         let view = UIView()
+        view.isUserInteractionEnabled = false
         view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -130,8 +132,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         adjustControlPanelForIphone()
         
         view.addSubview(textView)
-        view.addSubview(arrow)
         view.addSubview(gradientView)
+        view.addSubview(arrow)
         view.addSubview(controlBar)
         view.addSubview(shadeView)
         gradientView.layer.addSublayer(gradient)
@@ -141,10 +143,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         arrowLeading = arrow.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
         arrowTrailing = arrow.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: -16)
+        arrowCenterY = arrow.centerYAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height / 3)
         
         NSLayoutConstraint.activate([
             arrowLeading,
-            arrow.centerYAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height / 3),
+            arrowCenterY,
             arrow.widthAnchor.constraint(equalToConstant: arrowSize),
             arrow.heightAnchor.constraint(equalToConstant: arrowSize),
             
@@ -206,6 +209,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBar.backgroundColorButton.addTarget(self, action: #selector(handleBackgroundColor), for: .touchUpInside)
         controlBar.textColorButton.addTarget(self, action: #selector(handleTextColor), for: .touchUpInside)
         controlBar.topButton.addTarget(self, action: #selector(handleTop), for: .touchUpInside)
+        arrow.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleArrowPan)))
     }
     
     //MARK: - Gesture Selectors
@@ -231,7 +235,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleControlToggle() {
-//        controlPanelIsOn = !controlPanelIsOn
         if let scrollPan = scrollSpeedPanGesture {
             scrollPan.isEnabled = !scrollPan.isEnabled
         }
@@ -302,7 +305,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
             
         } else {
-            print("nothing saved")
+            let alert = UIAlertController(title: "No Defaults", message: "There are no default settings saved.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
@@ -377,6 +382,12 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         handleStart()
     }
     
+    @objc func handleArrowPan(gesture: UIPanGestureRecognizer) {
+        let changeInY = gesture.translation(in: arrow).y
+        print(changeInY)
+        arrowCenterY.constant = changeInY
+    }
+    
     //MARK: - Save Method
     
     func saveDefaults() {
@@ -436,13 +447,17 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     func adjustControlPanelForIphone() {
         guard let groupStack = controlBar.groupedStack else {return}
         guard usingIpad == false else {return}
+        if let arrowY = arrowCenterY {
+            arrowY.constant = view.frame.height / 3
+        }
         if UIDevice.current.orientation.isLandscape || view.frame.width > view.frame.height {
             groupStack.axis = .horizontal
             groupStack.distribution = .fillEqually
+            
         } else {
             groupStack.axis = .vertical
         }
-        view.layoutIfNeeded()
+        view.layoutSubviews()
         controlBar.layoutSubviews()
     }
     
@@ -469,6 +484,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     func dismissColorPicker() {
+        shadeView.isUserInteractionEnabled = false
         guard let picker = neatColorPicker else {return}
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
             self.shadeView.alpha = 0
@@ -497,6 +513,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         neatColorPicker.alpha = 0
         neatColorPicker.frame.origin.y = neatColorPicker.frame.origin.y + 50
         view.addSubview(neatColorPicker)
+        shadeView.isUserInteractionEnabled = true
         
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
             self.shadeView.alpha = 1
