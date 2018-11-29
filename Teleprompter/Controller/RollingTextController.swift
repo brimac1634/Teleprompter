@@ -513,7 +513,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     func dismissColorPicker() {
         arrowPanGesture.isEnabled = true
-        scrollSpeedDoubleTapGesture.isEnabled = true
+        
         shadeView.isUserInteractionEnabled = false
         
         guard let picker = neatColorPicker else {return}
@@ -528,7 +528,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
 
     func displayColorPicker() {
         arrowPanGesture.isEnabled = false
-        scrollSpeedDoubleTapGesture.isEnabled = false
         
         var width: CGFloat = 0
         if controlPanelMultiplier >= 0.8 {
