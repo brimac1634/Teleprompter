@@ -203,12 +203,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     private func setupGestures() {
         let controlToggleGesture = UITapGestureRecognizer(target: self, action: #selector(handleControlToggle))
-//        controlToggleGesture.delegate = self
-//        controlToggleGesture.numberOfTouchesRequired = 1
-//        controlToggleGesture.numberOfTapsRequired = 1
         textView.addGestureRecognizer(controlToggleGesture)
         
-//        scrollSpeedPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleScrollPan))
         scrollSpeedDoubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleScrollTap))
         scrollSpeedDoubleTapGesture.delegate = self
         scrollSpeedDoubleTapGesture.numberOfTouchesRequired = 2
