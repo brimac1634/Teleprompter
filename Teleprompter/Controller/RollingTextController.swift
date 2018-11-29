@@ -28,6 +28,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var scrollTimer: Timer?
     var backgroundColorChosen: Bool = true
     var controlPanelMultiplier: CGFloat = 300
+    let startingArrowLocation: CGFloat = 4
    
     
     var style: NSMutableParagraphStyle!
@@ -35,9 +36,10 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     var controlBarLeading: NSLayoutConstraint!
     var controlBarTrailing: NSLayoutConstraint!
-    var arrowLeading: NSLayoutConstraint!
-    var arrowTrailing: NSLayoutConstraint!
-    var arrowCenterY: NSLayoutConstraint!
+    var arrowContainerLeading: NSLayoutConstraint!
+    var arrowContainerTrailing: NSLayoutConstraint!
+    var arrowContainerCenterY: NSLayoutConstraint!
+    var arrowTop: NSLayoutConstraint!
     
     var scrollSpeedPanGesture: UIPanGestureRecognizer!
     
@@ -65,6 +67,13 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         arrow.contentMode = .scaleAspectFit
         arrow.translatesAutoresizingMaskIntoConstraints = false
         return arrow
+    }()
+    
+    let arrowContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
     let shadeView: UIView = {
@@ -106,7 +115,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        handleDefault()
+        if defaults.bool(forKey: "fadeIsOn") {
+            loadDefaults()
+        } else {
+            print("no defaults found")
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -128,12 +141,13 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         controlPanelMultiplier = usingIpad ? 0.5 : 1
         let arrowSize: CGFloat = usingIpad ? 100 : 40
-        let textViewLeadingConstant: CGFloat = usingIpad ? 32 : 8
-        adjustControlPanelForIphone()
+        let textViewLeadingConstant: CGFloat = usingIpad ? 16 : 8
+        adjustControlPanelOnLaunch()
         
         view.addSubview(textView)
         view.addSubview(gradientView)
-        view.addSubview(arrow)
+        view.addSubview(arrowContainer)
+        arrowContainer.addSubview(arrow)
         view.addSubview(controlBar)
         view.addSubview(shadeView)
         gradientView.layer.addSublayer(gradient)
@@ -141,18 +155,25 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBarLeading = controlBar.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         controlBarTrailing = controlBar.trailingAnchor.constraint(equalTo: view.leadingAnchor)
         
-        arrowLeading = arrow.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
-        arrowTrailing = arrow.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: -16)
-        arrowCenterY = arrow.centerYAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height / 3)
+        arrowContainerLeading = arrow.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8)
+        arrowContainerTrailing = arrow.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: -8)
+        arrowContainerCenterY = arrowContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        arrowTop = arrow.topAnchor.constraint(equalTo: arrowContainer.topAnchor, constant: view.frame.height / startingArrowLocation)
+        
         
         NSLayoutConstraint.activate([
-            arrowLeading,
-            arrowCenterY,
+            arrowContainerCenterY,
+            arrowContainer.widthAnchor.constraint(equalToConstant: arrowSize),
+            arrowContainer.heightAnchor.constraint(equalTo: view.heightAnchor),
+            arrowContainerTrailing,
+            
+            arrowTop,
+            arrow.leadingAnchor.constraint(equalTo: arrowContainer.leadingAnchor),
             arrow.widthAnchor.constraint(equalToConstant: arrowSize),
             arrow.heightAnchor.constraint(equalToConstant: arrowSize),
             
             textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            textView.leadingAnchor.constraint(equalTo: arrow.trailingAnchor, constant: textViewLeadingConstant),
+            textView.leadingAnchor.constraint(equalTo: arrowContainer.trailingAnchor, constant: textViewLeadingConstant),
             textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             
@@ -209,7 +230,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBar.backgroundColorButton.addTarget(self, action: #selector(handleBackgroundColor), for: .touchUpInside)
         controlBar.textColorButton.addTarget(self, action: #selector(handleTextColor), for: .touchUpInside)
         controlBar.topButton.addTarget(self, action: #selector(handleTop), for: .touchUpInside)
-        arrow.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleArrowPan)))
     }
     
     //MARK: - Gesture Selectors
@@ -251,18 +271,27 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleScrollPan(gesture: UIPanGestureRecognizer) {
-        guard scrollTimer != nil else {return}
-        let changeInX = gesture.translation(in: view).x
-        print(changeInX)
-        if changeInX < 0 && gesture.state == .ended {
-            scrollSpeed = scrollSpeed - 5
-        } else if changeInX > 0 && gesture.state == .ended {
-            scrollSpeed = scrollSpeed + 5
+        let point = gesture.location(in: view)
+        if arrowContainer.frame.contains(point) && arrowContainerLeading.isActive {
+            let changeInY = gesture.translation(in: view).y - arrowContainerCenterY.constant
+            arrowContainerCenterY.constant += changeInY
+        } else {
+            guard let timer = scrollTimer else {return}
+            guard timer.isValid else {return}
+            let changeInX = gesture.translation(in: textView).x
+            if changeInX < 0 && gesture.state == .ended {
+                scrollSpeed = scrollSpeed - 5
+            } else if changeInX > 0 && gesture.state == .ended {
+                scrollSpeed = scrollSpeed + 5
+            }
+            let newTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
+            timer.invalidate()
+            scrollTimer = newTimer
+            
+            controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
+            controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
         }
-        scrollTimer?.invalidate()
-        scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
-        controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
-        controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
+        
     }
     
     @objc func handleEditText() {
@@ -292,18 +321,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     @objc func handleDefault() {
         if defaults.bool(forKey: "fadeIsOn") {
-            lineSpacing = CGFloat(defaults.float(forKey: "lineSpacing"))
-            scrollSpeed = CGFloat(defaults.float(forKey: "scrollSpeed"))
-            textSize = CGFloat(defaults.float(forKey: "textSize"))
-            mirrorIsOn = defaults.bool(forKey: "mirrorIsOn")
-            arrowIsOn = defaults.bool(forKey: "arrowIsOn")
-            fadeIsOn = defaults.bool(forKey: "fadeIsOn")
-            textColor = defaults.colorForKey(key: "textColor") ?? .white
-            backgroundColor = defaults.colorForKey(key: "backgroundColor") ?? .black
-            
-            updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
-            updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
-            
+            loadDefaults()
         } else {
             let alert = UIAlertController(title: "No Defaults", message: "There are no default settings saved.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
@@ -350,8 +368,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     @objc func handleArrowMode(sender: UISwitch!) {
         arrowIsOn = sender.isOn
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-            self.arrowLeading.isActive = sender.isOn ? true : false
-            self.arrowTrailing.isActive = sender.isOn ? false : true
+            self.arrowContainerLeading.isActive = sender.isOn ? true : false
+            self.arrowContainerTrailing.isActive = sender.isOn ? false : true
             self.view.layoutIfNeeded()
         }, completion: nil)
         
@@ -380,12 +398,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     @objc func handleTop() {
         scrollToTop()
         handleStart()
-    }
-    
-    @objc func handleArrowPan(gesture: UIPanGestureRecognizer) {
-        let changeInY = gesture.translation(in: arrow).y
-        print(changeInY)
-        arrowCenterY.constant = changeInY
     }
     
     //MARK: - Save Method
@@ -445,12 +457,12 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     func adjustControlPanelForIphone() {
+        if let arrowContainerY = arrowContainerCenterY {
+            arrowContainerY.constant = 0
+        }
         guard let groupStack = controlBar.groupedStack else {return}
         guard usingIpad == false else {return}
-        if let arrowY = arrowCenterY {
-            arrowY.constant = view.frame.height / 3
-        }
-        if UIDevice.current.orientation.isLandscape || view.frame.width > view.frame.height {
+        if UIDevice.current.orientation.isLandscape {
             groupStack.axis = .horizontal
             groupStack.distribution = .fillEqually
             
@@ -459,6 +471,17 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         }
         view.layoutSubviews()
         controlBar.layoutSubviews()
+    }
+    
+    func adjustControlPanelOnLaunch() {
+        guard let groupStack = controlBar.groupedStack else {return}
+        guard usingIpad == false else {return}
+        if view.frame.width > view.frame.height {
+            groupStack.axis = .horizontal
+            groupStack.distribution = .fillEqually
+        } else {
+            groupStack.axis = .vertical
+        }
     }
     
     //MARK: - Color Picker Delegate
@@ -520,5 +543,23 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             self.neatColorPicker.alpha = 1
             self.neatColorPicker.frame.origin.y = self.neatColorPicker.frame.origin.y - 50
         }, completion: nil)
+    }
+    
+    //MARK: - Load Defaults
+    
+    func loadDefaults() {
+
+        lineSpacing = CGFloat(defaults.float(forKey: "lineSpacing"))
+        scrollSpeed = CGFloat(defaults.float(forKey: "scrollSpeed"))
+        textSize = CGFloat(defaults.float(forKey: "textSize"))
+        mirrorIsOn = defaults.bool(forKey: "mirrorIsOn")
+        arrowIsOn = defaults.bool(forKey: "arrowIsOn")
+        fadeIsOn = defaults.bool(forKey: "fadeIsOn")
+        textColor = defaults.colorForKey(key: "textColor") ?? .white
+        backgroundColor = defaults.colorForKey(key: "backgroundColor") ?? .black
+        
+        updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
+        updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
+        
     }
 }

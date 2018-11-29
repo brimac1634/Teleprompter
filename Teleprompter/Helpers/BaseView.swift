@@ -37,7 +37,7 @@ class BaseButton: UIButton  {
     
     func setupView() {
         if ( UIDevice.current.model.range(of: "iPad") != nil){
-            universalFontSize = 24
+            universalFontSize = 26
         } else {
             universalFontSize = 18
         }
@@ -67,7 +67,7 @@ class BaseLabel: UILabel {
     
     func setupView() {
         if ( UIDevice.current.model.range(of: "iPad") != nil){
-            universalFontSize = 24
+            universalFontSize = 26
         } else {
             universalFontSize = 18
         }
