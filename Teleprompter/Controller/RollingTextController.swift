@@ -28,7 +28,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var scrollTimer: Timer?
     var backgroundColorChosen: Bool = true
     var controlPanelMultiplier: CGFloat = 300
-    let startingArrowLocation: CGFloat = 4
    
     
     var style: NSMutableParagraphStyle!
@@ -39,9 +38,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var arrowContainerLeading: NSLayoutConstraint!
     var arrowContainerTrailing: NSLayoutConstraint!
     var arrowContainerCenterY: NSLayoutConstraint!
-    var arrowTop: NSLayoutConstraint!
     
-    var scrollSpeedPanGesture: UIPanGestureRecognizer!
+    var scrollSpeedDoubleTapGesture: UITapGestureRecognizer!
     
     lazy var textView: UITextView = {
         let view = UITextView()
@@ -155,10 +153,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBarLeading = controlBar.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         controlBarTrailing = controlBar.trailingAnchor.constraint(equalTo: view.leadingAnchor)
         
-        arrowContainerLeading = arrow.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8)
-        arrowContainerTrailing = arrow.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: -8)
+        arrowContainerLeading = arrow.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8)
+        arrowContainerTrailing = arrow.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: -8)
         arrowContainerCenterY = arrowContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        arrowTop = arrow.topAnchor.constraint(equalTo: arrowContainer.topAnchor, constant: view.frame.height / startingArrowLocation)
         
         
         NSLayoutConstraint.activate([
@@ -167,7 +164,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             arrowContainer.heightAnchor.constraint(equalTo: view.heightAnchor),
             arrowContainerTrailing,
             
-            arrowTop,
+            arrow.topAnchor.constraint(equalTo: arrowContainer.topAnchor, constant: view.frame.height / 4),
             arrow.leadingAnchor.constraint(equalTo: arrowContainer.leadingAnchor),
             arrow.widthAnchor.constraint(equalToConstant: arrowSize),
             arrow.heightAnchor.constraint(equalToConstant: arrowSize),
@@ -206,13 +203,19 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     private func setupGestures() {
         let controlToggleGesture = UITapGestureRecognizer(target: self, action: #selector(handleControlToggle))
-        controlToggleGesture.delegate = self
-        controlToggleGesture.numberOfTouchesRequired = 1
-        controlToggleGesture.numberOfTapsRequired = 1
+//        controlToggleGesture.delegate = self
+//        controlToggleGesture.numberOfTouchesRequired = 1
+//        controlToggleGesture.numberOfTapsRequired = 1
         textView.addGestureRecognizer(controlToggleGesture)
         
-        scrollSpeedPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleScrollPan))
-        view.addGestureRecognizer(scrollSpeedPanGesture)
+//        scrollSpeedPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleScrollPan))
+        scrollSpeedDoubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleScrollTap))
+        scrollSpeedDoubleTapGesture.delegate = self
+        scrollSpeedDoubleTapGesture.numberOfTouchesRequired = 2
+        
+        let arrowPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleArrowPan))
+        view.addGestureRecognizer(scrollSpeedDoubleTapGesture)
+        view.addGestureRecognizer(arrowPanGesture)
         
         shadeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap)))
         controlBar.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
@@ -255,8 +258,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleControlToggle() {
-        if let scrollPan = scrollSpeedPanGesture {
-            scrollPan.isEnabled = !scrollPan.isEnabled
+        if let scrollTap = scrollSpeedDoubleTapGesture {
+            scrollTap.isEnabled = !scrollTap.isEnabled
         }
         
         if let timer = scrollTimer {
@@ -270,28 +273,32 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         }, completion: nil)
     }
     
-    @objc func handleScrollPan(gesture: UIPanGestureRecognizer) {
-        let point = gesture.location(in: view)
-        if arrowContainer.frame.contains(point) && arrowContainerLeading.isActive {
-            let changeInY = gesture.translation(in: view).y - arrowContainerCenterY.constant
-            arrowContainerCenterY.constant += changeInY
-        } else {
-            guard let timer = scrollTimer else {return}
-            guard timer.isValid else {return}
-            let changeInX = gesture.translation(in: textView).x
-            if changeInX < 0 && gesture.state == .ended {
-                scrollSpeed = scrollSpeed - 5
-            } else if changeInX > 0 && gesture.state == .ended {
-                scrollSpeed = scrollSpeed + 5
-            }
-            let newTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
-            timer.invalidate()
-            scrollTimer = newTimer
-            
-            controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
-            controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
-        }
+    @objc func handleScrollTap(gesture: UITapGestureRecognizer) {
+        guard let timer = scrollTimer else {return}
+        guard timer.isValid else {return}
+        let point1 = gesture.location(ofTouch: 0, in: view)
+        let point2 = gesture.location(ofTouch: 1, in: view)
+        let rightSide = CGRect(x: view.frame.width / 2, y: 0, width: view.frame.width / 2, height: view.frame.height)
+        let leftSide = CGRect(x: 0, y: 0, width: view.frame.width / 2, height: view.frame.height)
         
+        if leftSide.contains(point1) && leftSide.contains(point2) {
+            scrollSpeed = scrollSpeed - 5
+        } else if rightSide.contains(point1) && rightSide.contains(point2) {
+            scrollSpeed = scrollSpeed + 5
+        }
+        let newTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
+        timer.invalidate()
+        scrollTimer = newTimer
+
+        controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
+        controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
+    }
+    
+    @objc func handleArrowPan(gesture: UIPanGestureRecognizer) {
+        let point = gesture.location(in: view)
+        guard arrowContainer.frame.contains(point) && arrowContainerLeading.isActive else {return}
+        let changeInY = gesture.translation(in: view).y - arrowContainerCenterY.constant
+        arrowContainerCenterY.constant += changeInY
     }
     
     @objc func handleEditText() {
