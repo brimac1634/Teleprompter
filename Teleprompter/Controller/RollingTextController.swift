@@ -40,6 +40,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var arrowContainerCenterY: NSLayoutConstraint!
     
     var scrollSpeedDoubleTapGesture: UITapGestureRecognizer!
+    var arrowPanGesture: UIPanGestureRecognizer!
     
     lazy var textView: UITextView = {
         let view = UITextView()
@@ -209,11 +210,12 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         scrollSpeedDoubleTapGesture.delegate = self
         scrollSpeedDoubleTapGesture.numberOfTouchesRequired = 2
         
-        let arrowPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleArrowPan))
+        arrowPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleArrowPan))
         view.addGestureRecognizer(scrollSpeedDoubleTapGesture)
         view.addGestureRecognizer(arrowPanGesture)
         
-        shadeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap)))
+        let shadeViewGesture = UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap))
+        shadeView.addGestureRecognizer(shadeViewGesture)
         controlBar.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
         controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleControlToggle)))
         controlBar.editButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleEditText)))
@@ -510,7 +512,10 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     func dismissColorPicker() {
+        arrowPanGesture.isEnabled = true
+        scrollSpeedDoubleTapGesture.isEnabled = true
         shadeView.isUserInteractionEnabled = false
+        
         guard let picker = neatColorPicker else {return}
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
             self.shadeView.alpha = 0
@@ -522,6 +527,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
 
     func displayColorPicker() {
+        arrowPanGesture.isEnabled = false
+        scrollSpeedDoubleTapGesture.isEnabled = false
+        
         var width: CGFloat = 0
         if controlPanelMultiplier >= 0.8 {
             width = 300
