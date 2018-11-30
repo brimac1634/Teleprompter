@@ -41,10 +41,9 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     let startButton: BaseButton = {
         let button = BaseButton()
-        button.dropShadow()
-        button.backgroundColor = UIColor.netRoadshowGray(a: 1)
+        button.backgroundColor = UIColor.netRoadshowBlue(a: 1)
         button.setTitle("Start", for: .normal)
-        button.setTitleColor(UIColor.netRoadshowBlue(a: 1), for: .normal)
+        button.setTitleColor(UIColor.netRoadshowGray(a: 1), for: .normal)
         return button
     }()
     

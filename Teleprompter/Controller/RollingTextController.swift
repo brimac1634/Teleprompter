@@ -35,6 +35,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     var controlBarLeading: NSLayoutConstraint!
     var controlBarTrailing: NSLayoutConstraint!
+    var settingsButtonLeading: NSLayoutConstraint!
+    var settingsButtonTrailing: NSLayoutConstraint!
     var arrowContainerLeading: NSLayoutConstraint!
     var arrowContainerTrailing: NSLayoutConstraint!
     var arrowContainerCenterY: NSLayoutConstraint!
@@ -53,6 +55,14 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+    
+    let settingsButton: UIImageView = {
+        let button = UIImageView(image: UIImage(named: "settings")?.withRenderingMode(.alwaysTemplate))
+        button.tintColor = UIColor.white
+        button.contentMode = .scaleAspectFit
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     let controlBar: ControlBar = {
@@ -147,6 +157,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         view.addSubview(gradientView)
         view.addSubview(arrowContainer)
         arrowContainer.addSubview(arrow)
+        view.addSubview(settingsButton)
         view.addSubview(controlBar)
         view.addSubview(shadeView)
         gradientView.layer.addSublayer(gradient)
@@ -154,12 +165,20 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBarLeading = controlBar.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         controlBarTrailing = controlBar.trailingAnchor.constraint(equalTo: view.leadingAnchor)
         
+        settingsButtonLeading = settingsButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 16)
+        settingsButtonTrailing = settingsButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
+        
         arrowContainerLeading = arrow.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8)
         arrowContainerTrailing = arrow.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: -8)
         arrowContainerCenterY = arrowContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         
         
         NSLayoutConstraint.activate([
+            settingsButton.widthAnchor.constraint(equalToConstant: 40),
+            settingsButton.heightAnchor.constraint(equalToConstant: 40),
+            settingsButtonTrailing,
+            settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            
             arrowContainerCenterY,
             arrowContainer.widthAnchor.constraint(equalToConstant: arrowSize),
             arrowContainer.heightAnchor.constraint(equalTo: view.heightAnchor),
@@ -270,6 +289,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         }
         
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+            self.settingsButtonTrailing.isActive = !self.settingsButtonTrailing.isActive
+            self.settingsButtonLeading.isActive = !self.settingsButtonLeading.isActive
             self.controlBarTrailing.isActive = true
             self.controlBarLeading.isActive = false
             self.controlBarLeading.constant = 0
