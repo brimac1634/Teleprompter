@@ -256,7 +256,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBar.highlightModeSwitch.addTarget(self, action: #selector(handleFadeMode(sender:)), for: .allEvents)
         controlBar.backgroundColorButton.addTarget(self, action: #selector(handleBackgroundColor), for: .touchUpInside)
         controlBar.textColorButton.addTarget(self, action: #selector(handleTextColor), for: .touchUpInside)
-        controlBar.topButton.addTarget(self, action: #selector(handleTop), for: .touchUpInside)
+        controlBar.topButton.addTarget(self, action: #selector(handleRestart), for: .touchUpInside)
     }
     
     //MARK: - Gesture Selectors
@@ -282,17 +282,18 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handlePauseStart() {
-        if let scrollTap = scrollSpeedDoubleTapGesture {
-            scrollTap.isEnabled = !scrollTap.isEnabled
-        }
+        guard let scrollTap = scrollSpeedDoubleTapGesture else {return}
         if let timer = scrollTimer {
             if timer.isValid {
                 timer.invalidate()
+                scrollTap.isEnabled = false
             } else {
                 startScroll()
+                scrollTap.isEnabled = true
             }
         } else {
             startScroll()
+            scrollTap.isEnabled = true
         }
         
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
@@ -396,14 +397,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleStart() {
-        toggleControlPanel()
-        startScroll()
-        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-            self.settingsButtonTrailing.isActive = false
-            self.settingsButtonLeading.isActive = true
-            self.view.layoutIfNeeded()
-        }, completion: nil)
-        
+        handlePauseStart()
     }
     
     @objc func fireScroll() {
@@ -466,9 +460,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         dismissColorPicker()
     }
     
-    @objc func handleTop() {
+    @objc func handleRestart() {
         scrollToTop()
-        handleStart()
+        handlePauseStart()
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
