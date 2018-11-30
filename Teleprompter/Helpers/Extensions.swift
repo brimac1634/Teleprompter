@@ -19,14 +19,7 @@ extension UIColor {
     static func netRoadshowBlue(a: CGFloat) -> UIColor {
         return UIColor(red: 40/255, green: 82/255, blue: 152/255, alpha: a)
     }
-    
-    
-    var isLight: Bool {
-        var white: CGFloat = 0
-        getWhite(&white, alpha: nil)
-        return white > 0.5
-    }
-    
+
 }
 
 extension UIView {

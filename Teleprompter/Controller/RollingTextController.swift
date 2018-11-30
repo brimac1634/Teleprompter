@@ -178,7 +178,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             settingsButton.widthAnchor.constraint(equalToConstant: settingSize),
             settingsButton.heightAnchor.constraint(equalToConstant: settingSize),
             settingsButtonTrailing,
-            settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             
             arrowContainerCenterY,
             arrowContainer.widthAnchor.constraint(equalToConstant: arrowSize),
@@ -565,11 +565,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             view.backgroundColor = color
             backgroundColor = color
             controlBar.backgroundColorButton.backgroundColor = color
-            if color.isLight {
-                gradient.colors = [UIColor.white.withAlphaComponent(1).cgColor, UIColor.white.withAlphaComponent(0).cgColor, UIColor.white.withAlphaComponent(0).cgColor, UIColor.white.withAlphaComponent(1).cgColor]
-            } else {
-                gradient.colors = [UIColor.black.withAlphaComponent(1).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(0).cgColor, UIColor.black.withAlphaComponent(1).cgColor]
-            }
         } else {
             textColor = color
             updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: color)
