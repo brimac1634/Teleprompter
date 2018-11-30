@@ -122,7 +122,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        handleControlToggle()
+        handleSettings()
     }
     
     
@@ -217,7 +217,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         let shadeViewGesture = UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap))
         shadeView.addGestureRecognizer(shadeViewGesture)
         controlBar.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
-        controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleControlToggle)))
+        controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSettings)))
         controlBar.editButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleEditText)))
         controlBar.saveButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSave)))
         controlBar.startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
@@ -244,7 +244,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             
             if gesture.state == .ended {
                 if changeInX < -(controlBar.frame.width * 0.6) || velocityX > 800 {
-                    handleControlToggle()
+                    handleSettings()
                 } else {
                     UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
                         self.controlBarLeading.constant = 0
@@ -269,16 +269,21 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             startScroll()
         }
         
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+            self.controlBarTrailing.isActive = true
+            self.controlBarLeading.isActive = false
+            self.controlBarLeading.constant = 0
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+        
+        
     }
     
     func startScroll() {
         scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
     }
     
-    @objc func handleControlToggle() {
-        
-        
-        
+    @objc func handleSettings() {
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.controlBarTrailing.isActive = !self.controlBarTrailing.isActive
             self.controlBarLeading.isActive = !self.controlBarLeading.isActive
@@ -351,8 +356,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleStart() {
-        handleControlToggle()
-        scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
+        handleSettings()
+        startScroll()
         
     }
     
