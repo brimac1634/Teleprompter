@@ -150,6 +150,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         controlPanelMultiplier = usingIpad ? 0.5 : 1
         let arrowSize: CGFloat = usingIpad ? 100 : 40
+        let settingSize: CGFloat = usingIpad ? 60 : 40
         let textViewLeadingConstant: CGFloat = usingIpad ? 16 : 8
         adjustControlPanelOnLaunch()
         
@@ -174,8 +175,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         
         NSLayoutConstraint.activate([
-            settingsButton.widthAnchor.constraint(equalToConstant: 40),
-            settingsButton.heightAnchor.constraint(equalToConstant: 40),
+            settingsButton.widthAnchor.constraint(equalToConstant: settingSize),
+            settingsButton.heightAnchor.constraint(equalToConstant: settingSize),
             settingsButtonTrailing,
             settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             
@@ -191,7 +192,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             
             textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             textView.leadingAnchor.constraint(equalTo: arrowContainer.trailingAnchor, constant: textViewLeadingConstant),
-            textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -56),
+            textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16 - settingSize),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             
             gradientView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -468,9 +469,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         handleStart()
     }
     
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        return true
-//    }
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
     
     //MARK: - Save Method
     
@@ -502,6 +503,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         textView.attributedText = attributedString
         arrow.tintColor = color
+        settingsButton.tintColor = color
 
         controlBar.fontSizeSlider.value = Float(fontSize)
         controlBar.lineSpacingSlider.value = Float(lineSpacing)
