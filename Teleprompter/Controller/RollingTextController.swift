@@ -132,7 +132,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        handleSettings()
+        toggleControlPanel()
     }
     
     
@@ -191,7 +191,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             
             textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             textView.leadingAnchor.constraint(equalTo: arrowContainer.trailingAnchor, constant: textViewLeadingConstant),
-            textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -56),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             
             gradientView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -229,8 +229,14 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         scrollSpeedDoubleTapGesture.delegate = self
         scrollSpeedDoubleTapGesture.numberOfTouchesRequired = 2
         
+        let settingsTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSettings))
+        settingsTapGesture.delegate = self
+        settingsTapGesture.numberOfTouchesRequired = 1
+        settingsTapGesture.require(toFail: scrollSpeedDoubleTapGesture)
+        
         arrowPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleArrowPan))
         view.addGestureRecognizer(scrollSpeedDoubleTapGesture)
+        view.addGestureRecognizer(settingsTapGesture)
         view.addGestureRecognizer(arrowPanGesture)
         
         let shadeViewGesture = UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap))
@@ -263,7 +269,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             
             if gesture.state == .ended {
                 if changeInX < -(controlBar.frame.width * 0.6) || velocityX > 800 {
-                    handleSettings()
+                    toggleControlPanel()
                 } else {
                     UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
                         self.controlBarLeading.constant = 0
@@ -304,13 +310,23 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
     }
     
-    @objc func handleSettings() {
+    func toggleControlPanel() {
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.controlBarTrailing.isActive = !self.controlBarTrailing.isActive
             self.controlBarLeading.isActive = !self.controlBarLeading.isActive
             self.controlBarLeading.constant = 0
             self.view.layoutIfNeeded()
         }, completion: nil)
+    }
+    
+    @objc func handleSettings(gesture: UITapGestureRecognizer) {
+        print("settings gesture called")
+        let point = gesture.location(in: view)
+        if settingsButton.frame.contains(point) {
+            print("settings Tapped")
+            toggleControlPanel()
+        }
+        
     }
     
     @objc func handleScrollTap(gesture: UITapGestureRecognizer) {
@@ -377,8 +393,13 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleStart() {
-        handleSettings()
+        toggleControlPanel()
         startScroll()
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+            self.settingsButtonTrailing.isActive = false
+            self.settingsButtonLeading.isActive = true
+            self.view.layoutIfNeeded()
+        }, completion: nil)
         
     }
     
@@ -446,6 +467,10 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         scrollToTop()
         handleStart()
     }
+    
+//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+//        return true
+//    }
     
     //MARK: - Save Method
     
