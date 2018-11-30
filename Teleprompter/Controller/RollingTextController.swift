@@ -203,8 +203,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     private func setupGestures() {
-        let controlToggleGesture = UITapGestureRecognizer(target: self, action: #selector(handleControlToggle))
-        textView.addGestureRecognizer(controlToggleGesture)
+        let pauseStartGesture = UITapGestureRecognizer(target: self, action: #selector(handlePauseStart))
+        textView.addGestureRecognizer(pauseStartGesture)
         
         scrollSpeedDoubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleScrollTap))
         scrollSpeedDoubleTapGesture.delegate = self
@@ -255,14 +255,30 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         }
     }
     
-    @objc func handleControlToggle() {
+    @objc func handlePauseStart() {
         if let scrollTap = scrollSpeedDoubleTapGesture {
             scrollTap.isEnabled = !scrollTap.isEnabled
         }
-        
         if let timer = scrollTimer {
-            timer.invalidate()
+            if timer.isValid {
+                timer.invalidate()
+            } else {
+                startScroll()
+            }
+        } else {
+            startScroll()
         }
+        
+    }
+    
+    func startScroll() {
+        scrollTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
+    }
+    
+    @objc func handleControlToggle() {
+        
+        
+        
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.controlBarTrailing.isActive = !self.controlBarTrailing.isActive
             self.controlBarLeading.isActive = !self.controlBarLeading.isActive
