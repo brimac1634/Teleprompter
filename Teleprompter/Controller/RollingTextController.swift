@@ -340,9 +340,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         let rightSide = CGRect(x: view.frame.width / 2, y: 0, width: view.frame.width / 2, height: view.frame.height)
         let leftSide = CGRect(x: 0, y: 0, width: view.frame.width / 2, height: view.frame.height)
         
-        if leftSide.contains(point1) && leftSide.contains(point2) {
+        if leftSide.contains(point1) && leftSide.contains(point2) && scrollSpeed > 5 {
+            print("slow down")
             scrollSpeed = scrollSpeed - 5
-        } else if rightSide.contains(point1) && rightSide.contains(point2) {
+        } else if rightSide.contains(point1) && rightSide.contains(point2) && scrollSpeed <= 95 {
+            print("speed up")
             scrollSpeed = scrollSpeed + 5
         }
         let newTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
