@@ -269,7 +269,7 @@ class ControlBar: BaseView {
             
             topButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
             topButton.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
-            topButton.widthAnchor.constraint(equalToConstant: 80),
+            topButton.widthAnchor.constraint(equalToConstant: 100),
             topButton.heightAnchor.constraint(equalToConstant: 55),
             
             editButton.centerXAnchor.constraint(equalTo: centerXAnchor),
