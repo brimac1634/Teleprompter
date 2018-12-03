@@ -22,7 +22,6 @@
 		2550E8CE3A3166563604E647 /* Pods_Teleprompter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Teleprompter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F678B07C8C57536C0733047 /* Pods-Teleprompter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teleprompter.release.xcconfig"; path = "Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter.release.xcconfig"; sourceTree = "<group>"; };
 		9BDEEB54421D7ECCE7A5CE55 /* Pods-Teleprompter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teleprompter.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter.debug.xcconfig"; sourceTree = "<group>"; };
-		D223C54321B147D700CED57C /* Teleprompter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Teleprompter.entitlements; sourceTree = "<group>"; };
 		D28C16A521A529210012D84D /* Teleprompter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teleprompter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28C16A821A529210012D84D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D28C16AF21A529260012D84D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -77,7 +76,6 @@
 		D28C16A721A529210012D84D /* Teleprompter */ = {
 			isa = PBXGroup;
 			children = (
-				D223C54321B147D700CED57C /* Teleprompter.entitlements */,
 				D28C16C721A5576B0012D84D /* Singleton */,
 				D28C16C421A554E80012D84D /* View */,
 				D28C16C621A557580012D84D /* Controller */,
@@ -168,10 +166,10 @@
 						CreatedOnToolsVersion = 10.1;
 						SystemCapabilities = {
 							com.apple.Keychain = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.iCloud = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
@@ -410,11 +408,10 @@
 			baseConfigurationReference = 9BDEEB54421D7ECCE7A5CE55 /* Pods-Teleprompter.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Teleprompter/Teleprompter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AY47KJ5YA8;
 				INFOPLIST_FILE = Teleprompter/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -431,11 +428,10 @@
 			baseConfigurationReference = 2F678B07C8C57536C0733047 /* Pods-Teleprompter.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Teleprompter/Teleprompter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AY47KJ5YA8;
 				INFOPLIST_FILE = Teleprompter/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -603,6 +603,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         neatColorPicker.padding = 5
         neatColorPicker.stroke = 3
         neatColorPicker.hexLabel.textColor = UIColor.white
+        neatColorPicker.hexLabel.alpha = 0
         neatColorPicker.alpha = 0
         neatColorPicker.frame.origin.y = neatColorPicker.frame.origin.y + 50
         view.addSubview(neatColorPicker)

@@ -26,6 +26,7 @@ class ControlBar: BaseView {
         button.backgroundColor = .clear
         button.setTitle("Edit Text", for: .normal)
         button.titleLabel?.lineBreakMode = .byWordWrapping
+        button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
     }()
@@ -34,7 +35,7 @@ class ControlBar: BaseView {
         let button = BaseButton()
         button.backgroundColor = .clear
         button.setTitle("Save Default", for: .normal)
-        button.titleLabel?.textAlignment = .left
+        button.titleLabel?.textAlignment = .center
         button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
@@ -96,54 +97,43 @@ class ControlBar: BaseView {
     let mirrorModeLabel: BaseLabel = {
         let label = BaseLabel()
         label.text = "Mirror Mode"
-        label.textAlignment = .center
         label.lineBreakMode = .byWordWrapping
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.translatesAutoresizingMaskIntoConstraints = true
         return label
     }()
     
     let mirrorModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.contentVerticalAlignment = .center
         toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
-        toggle.translatesAutoresizingMaskIntoConstraints = false
         return toggle
     }()
     
     let arrowModeLabel: BaseLabel = {
         let label = BaseLabel()
         label.text = "Arrow Mode"
-        label.textAlignment = .center
-        label.lineBreakMode = .byWordWrapping
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.translatesAutoresizingMaskIntoConstraints = true
         return label
     }()
     
     let arrowModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.contentVerticalAlignment = .center
         toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
-        toggle.translatesAutoresizingMaskIntoConstraints = false
         return toggle
     }()
     
     let highlightModeLabel: BaseLabel = {
         let label = BaseLabel()
         label.text = "Fade Mode"
-        label.textAlignment = .center
-        label.lineBreakMode = .byWordWrapping
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.translatesAutoresizingMaskIntoConstraints = true
         return label
     }()
     
     let highlightModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.contentVerticalAlignment = .center
         toggle.tintColor = UIColor.netRoadshowDarkGray(a: 1)
         toggle.onTintColor = UIColor.netRoadshowBlue(a: 1)
-        toggle.translatesAutoresizingMaskIntoConstraints = false
         return toggle
     }()
     
@@ -187,7 +177,6 @@ class ControlBar: BaseView {
         let button = BaseButton()
         button.backgroundColor = .clear
         button.setTitle("Restart", for: .normal)
-        button.titleLabel?.textAlignment = .center
         button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
@@ -207,7 +196,6 @@ class ControlBar: BaseView {
         let button = BaseButton()
         button.backgroundColor = .clear
         button.setTitle("Start", for: .normal)
-        button.titleLabel?.textAlignment = .right
         button.setTitleColor(UIColor.netRoadshowBlue(a: 1), for: .normal)
         return button
     }()
@@ -216,25 +204,15 @@ class ControlBar: BaseView {
        super.setupView()
         
         let switches = [[mirrorModeLabel, mirrorModeSwitch], [arrowModeLabel, arrowModeSwitch], [highlightModeLabel, highlightModeSwitch]]
-        var switchViews: [UIView] = []
+        var stacks: [UIStackView] = []
         for i in 0..<switches.count {
-            let containerView = UIView()
-            let label = switches[i][0]
-            let switchView = switches[i][1]
-            containerView.addSubview(label)
-            containerView.addSubview(switchView)
-            NSLayoutConstraint.activate([
-                label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-                label.heightAnchor.constraint(equalTo: containerView.heightAnchor),
-                label.widthAnchor.constraint(equalTo: containerView.widthAnchor, multiplier: 0.55),
-                label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-                
-                switchView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-                switchView.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.7),
-                switchView.widthAnchor.constraint(equalTo: containerView.widthAnchor, multiplier: 0.35),
-                switchView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-                ])
-            switchViews.append(containerView)
+            let newStack = UIStackView(arrangedSubviews: [switches[i][0], switches[i][1]])
+            newStack.axis = .horizontal
+            newStack.distribution = .fillEqually
+            newStack.spacing = 32
+            newStack.contentMode = .left
+            newStack.alignment = .center
+            stacks.append(newStack)
         }
         
         backgroundColor = UIColor.netRoadshowGray(a: 1)
@@ -246,7 +224,7 @@ class ControlBar: BaseView {
         verticalStack1.contentMode = .center
         
         
-        let verticalStack2 = UIStackView(arrangedSubviews: [switchViews[0], switchViews[1], switchViews[2]])
+        let verticalStack2 = UIStackView(arrangedSubviews: [stacks[0], stacks[1], stacks[2]])
         verticalStack2.axis = .vertical
         verticalStack2.spacing = 8
         verticalStack2.distribution = .fillEqually
@@ -283,27 +261,27 @@ class ControlBar: BaseView {
             backButton.topAnchor.constraint(equalTo: topAnchor, constant: 52),
             backButton.heightAnchor.constraint(equalToConstant: 28),
             backButton.widthAnchor.constraint(equalToConstant: 28),
-            backButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 32),
+            backButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32),
             
             bottomStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
             bottomStack.heightAnchor.constraint(equalToConstant: 60),
             bottomStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
-            bottomStack.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -32),
+            bottomStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
             
-            topButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            topButton.topAnchor.constraint(equalTo: backButton.topAnchor),
             topButton.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
-            topButton.widthAnchor.constraint(equalToConstant: 100),
-            topButton.heightAnchor.constraint(equalTo: bottomStack.heightAnchor),
+            topButton.widthAnchor.constraint(equalToConstant: 80),
+            topButton.heightAnchor.constraint(equalToConstant: 40),
             
             editButton.centerXAnchor.constraint(equalTo: centerXAnchor),
             editButton.widthAnchor.constraint(equalTo: topButton.widthAnchor),
             editButton.heightAnchor.constraint(equalTo: topButton.heightAnchor),
-            editButton.centerYAnchor.constraint(equalTo: topButton.centerYAnchor),
+            editButton.topAnchor.constraint(equalTo: topButton.topAnchor),
             
-            groupedStack.topAnchor.constraint(equalTo: topButton.bottomAnchor, constant: 16),
+            groupedStack.topAnchor.constraint(equalTo: topButton.bottomAnchor, constant: 32),
             groupedStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
             groupedStack.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
-            groupedStack.bottomAnchor.constraint(equalTo: bottomStack.topAnchor, constant: -16)
+            groupedStack.bottomAnchor.constraint(equalTo: bottomStack.topAnchor, constant: -32)
             ])
         
         fontSizeSlider.value = 80
