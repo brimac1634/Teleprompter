@@ -26,7 +26,6 @@ class ControlBar: BaseView {
         button.backgroundColor = .clear
         button.setTitle("Edit Text", for: .normal)
         button.titleLabel?.lineBreakMode = .byWordWrapping
-        button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
     }()
@@ -268,15 +267,15 @@ class ControlBar: BaseView {
             bottomStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
             bottomStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
             
-            topButton.topAnchor.constraint(equalTo: backButton.topAnchor),
+            topButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
             topButton.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
             topButton.widthAnchor.constraint(equalToConstant: 80),
-            topButton.heightAnchor.constraint(equalToConstant: 40),
+            topButton.heightAnchor.constraint(equalToConstant: 55),
             
             editButton.centerXAnchor.constraint(equalTo: centerXAnchor),
             editButton.widthAnchor.constraint(equalTo: topButton.widthAnchor),
             editButton.heightAnchor.constraint(equalTo: topButton.heightAnchor),
-            editButton.topAnchor.constraint(equalTo: topButton.topAnchor),
+            editButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
             
             groupedStack.topAnchor.constraint(equalTo: topButton.bottomAnchor, constant: 32),
             groupedStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),

@@ -28,6 +28,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var scrollTimer: Timer?
     var backgroundColorChosen: Bool = true
     var controlPanelMultiplier: CGFloat = 300
+    var lastScale: CGFloat = 0
    
     
     var style: NSMutableParagraphStyle!
@@ -225,6 +226,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     private func setupGestures() {
         let pauseStartGesture = UITapGestureRecognizer(target: self, action: #selector(handlePauseStart))
         textView.addGestureRecognizer(pauseStartGesture)
+    
+        textView.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(handlePinchZoom)))
         
         scrollSpeedDoubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleScrollTap))
         scrollSpeedDoubleTapGesture.delegate = self
@@ -333,6 +336,25 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
     }
     
+    @objc func handlePinchZoom(gesture: UIPinchGestureRecognizer) {
+        let scale = gesture.scale
+        if scale > lastScale {
+            textSize += scale
+        } else if scale < lastScale && textSize >= 18 {
+            textSize -= scale
+        }
+        updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
+        print(textSize)
+    
+        if gesture.state == .ended {
+            lastScale = 0
+        } else {
+            lastScale = scale
+        }
+        
+        
+    }
+    
     @objc func handleScrollTap(gesture: UITapGestureRecognizer) {
         guard let timer = scrollTimer else {return}
         guard timer.isValid else {return}
@@ -342,10 +364,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         let leftSide = CGRect(x: 0, y: 0, width: view.frame.width / 2, height: view.frame.height)
         
         if leftSide.contains(point1) && leftSide.contains(point2) && scrollSpeed > 5 {
-            print("slow down")
             scrollSpeed = scrollSpeed - 5
         } else if rightSide.contains(point1) && rightSide.contains(point2) && scrollSpeed <= 95 {
-            print("speed up")
             scrollSpeed = scrollSpeed + 5
         }
         let newTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
