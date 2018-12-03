@@ -167,7 +167,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         let alert = UIAlertController(title: "Import Text", message: "Text can only be imported from pdf files at this time.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (finished) in
-            let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.microsoft.word.doc","org.openxmlformats.wordprocessingml.document", ".txt", kUTTypePDF as String], in: UIDocumentPickerMode.import)
+            let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypePDF as String], in: UIDocumentPickerMode.import)
             documentPicker.delegate = self
             self.present(documentPicker, animated: true, completion: nil)
         }))
@@ -199,34 +199,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             
         } else {
             print("non PDF coming")
-            let fileURL = NSURL.fileURL(withPath: url.path)
-            print(fileURL)
-            var fileString = String()
-            do {
-                let fileData = try Data(contentsOf: fileURL)
-                if let tryForString = String(data: fileData, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue)) {
-                    fileString = tryForString
-                } else {
-                    fileString = "Data conversion error."
-                }
-                fileString = fileString.trimmingCharacters(in: .whitespacesAndNewlines)
-                print(fileString)
-            } catch {
-                print("Word Document File Not Found")
-            }
-            
-            
-            
-//            let fileURL = NSURL.fileURL(withPath: url.path)
-//            do {
-//                let fileContent = try? NSString(contentsOfFile: fileURL.path, encoding: String.Encoding.utf8.rawValue)
-//                print(fileContent)
-////                let documentContent = try String(contentsOfFile: url.path, encoding: String.Encoding.utf8)
-////                print(documentContent)
-////                textBox.text = documentContent
-//            } catch {
-//                presentImportFailAlert()
-//            }
+
         }
 
     }
