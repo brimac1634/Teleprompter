@@ -137,6 +137,13 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             toggleControlPanel()
         } else {
             let guide = FirstTimeGuide()
+            view.addSubview(guide)
+            NSLayoutConstraint.activate([
+                guide.topAnchor.constraint(equalTo: view.topAnchor),
+                guide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                guide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                guide.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                ])
             guide.presentGuide()
         }
         
