@@ -29,6 +29,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     let textBox: BaseTextView = {
         let box = BaseTextView()
+        box.text = "Type of paste your script here"
+        box.textColor = UIColor.lightGray
         box.layer.cornerRadius = 12
         box.layer.borderWidth = 1
         box.layer.borderColor = UIColor.netRoadshowGray(a: 1).cgColor
@@ -211,7 +213,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         }))
         self.present(alert, animated: true, completion: nil)
     }
-    
+
+
     
 }
 

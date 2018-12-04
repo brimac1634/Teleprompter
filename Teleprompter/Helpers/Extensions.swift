@@ -95,6 +95,11 @@ extension HomeController: UITextViewDelegate {
             self.startButtonBottomConstraint.constant = -self.keyboardHeight - 16
             self.view.layoutIfNeeded()
         }, completion: nil)
+        
+        if textBox.textColor == .lightGray {
+            textBox.text = nil
+            textBox.textColor = .black
+        }
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
@@ -102,5 +107,10 @@ extension HomeController: UITextViewDelegate {
             self.startButtonBottomConstraint.constant = -16
             self.view.layoutIfNeeded()
         }, completion: nil)
+        
+        if textBox.text.isEmpty {
+            textBox.text = "Type or paste your script here"
+            textBox.textColor = .lightGray
+        }
     }
 }
