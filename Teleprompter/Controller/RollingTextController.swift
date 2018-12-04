@@ -167,11 +167,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBarLeading = controlBar.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         controlBarTrailing = controlBar.trailingAnchor.constraint(equalTo: view.leadingAnchor)
         
-        settingsButtonLeading = settingsButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 16)
+        settingsButtonLeading = settingsButton.leadingAnchor.constraint(equalTo: view.trailingAnchor, constant: 16)
         settingsButtonTrailing = settingsButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
         
         arrowContainerLeading = arrow.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8)
-        arrowContainerTrailing = arrow.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: -8)
+        arrowContainerTrailing = arrow.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: -8)
         arrowContainerCenterY = arrowContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         
         

@@ -92,7 +92,7 @@ extension HomeController: UITextViewDelegate {
 
     func textViewDidBeginEditing(_ textView: UITextView) {
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-            self.startButtonBottomConstraint.constant = -self.keyboardHeight - 16
+            self.startButtonBottomConstraint.constant = -self.keyboardHeight - 8
             self.view.layoutIfNeeded()
         }, completion: nil)
         
@@ -104,12 +104,12 @@ extension HomeController: UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-            self.startButtonBottomConstraint.constant = -16
+            self.startButtonBottomConstraint.constant = -8
             self.view.layoutIfNeeded()
         }, completion: nil)
         
         if textBox.text.isEmpty {
-            textBox.text = "Type or paste your script here"
+            textBox.text = "type or paste your script here"
             textBox.textColor = .lightGray
         }
     }

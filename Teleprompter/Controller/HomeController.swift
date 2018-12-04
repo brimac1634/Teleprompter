@@ -83,13 +83,13 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         view.addSubview(textBox)
         view.addSubview(startButton)
         
-        startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+        startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
         
         NSLayoutConstraint.activate([
             topLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             topLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
-            topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            topLabel.heightAnchor.constraint(equalToConstant: 40),
+            topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            topLabel.heightAnchor.constraint(equalToConstant: 35),
             
             startButton.widthAnchor.constraint(equalToConstant: 120),
             startButton.heightAnchor.constraint(equalToConstant: 40),
@@ -97,8 +97,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             startButton.trailingAnchor.constraint(equalTo: textBox.trailingAnchor),
             
             textBox.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            textBox.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 16),
-            textBox.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -16),
+            textBox.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 8),
+            textBox.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8),
             textBox.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.95)
 
             ])
