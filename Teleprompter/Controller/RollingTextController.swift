@@ -168,7 +168,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlPanelMultiplier = usingIpad ? 0.5 : 1
         let arrowSize: CGFloat = usingIpad ? 100 : 40
         let settingSize: CGFloat = usingIpad ? 60 : 40
-        let textViewLeadingConstant: CGFloat = usingIpad ? 16 : 8
         adjustControlPanelOnLaunch()
         
         view.addSubview(textView)
@@ -208,7 +207,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             arrow.heightAnchor.constraint(equalToConstant: arrowSize),
             
             textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            textView.leadingAnchor.constraint(equalTo: arrowContainer.trailingAnchor, constant: textViewLeadingConstant),
+            textView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: arrowSize),
             textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16 - settingSize),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             

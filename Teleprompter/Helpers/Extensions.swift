@@ -109,7 +109,7 @@ extension HomeController: UITextViewDelegate {
         }, completion: nil)
         
         if textBox.text.isEmpty {
-            textBox.text = "type or paste your script here"
+            textBox.text = "Type or paste your script here..."
             textBox.textColor = .lightGray
         }
     }

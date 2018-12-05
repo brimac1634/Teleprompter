@@ -29,7 +29,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     let textBox: BaseTextView = {
         let box = BaseTextView()
-        box.text = "type or paste your script here"
+        box.text = "Type or paste your script here..."
         box.textColor = UIColor.lightGray
         box.layer.cornerRadius = 12
         box.layer.borderWidth = 1
