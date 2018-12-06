@@ -176,7 +176,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         if textBox.text?.count != 0 && textBox.text != "Type or paste your script here..." {
             let rollingTextController = RollingTextController()
             guard let text = textBox.text else {return}
-            rollingTextController.textInput = "\n\n\n\n\(text)\n\n\n\n\n"
+            rollingTextController.textInput = "\n\n\n\n\(text)\n\n\n\n\n\n\n\n\n\n\n"
             rollingTextController.view.backgroundColor = .black
             rollingTextController.homeController = self
             rollingTextController.scrollStart = scrolledPosition
