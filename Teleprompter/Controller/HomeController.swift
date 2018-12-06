@@ -61,6 +61,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }()
     
     var keyboardHeight: CGFloat = 0
+    var scrolledPosition: CGFloat = 0
+    
     var startButtonBottomConstraint: NSLayoutConstraint!
     var saveButtonBottomConstraint: NSLayoutConstraint!
     
@@ -176,6 +178,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             guard let text = textBox.text else {return}
             rollingTextController.textInput = "\n\n\n\n\(text)\n\n\n\n\n"
             rollingTextController.view.backgroundColor = .black
+            rollingTextController.homeController = self
+            rollingTextController.scrollStart = scrolledPosition
             navigationController?.isNavigationBarHidden = true
             navigationController?.pushViewController(rollingTextController, animated: true)
         } else {
@@ -259,6 +263,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 presentImportFailAlert()
             } else {
                 textBox.attributedText = documentContent
+                scrolledPosition = 0
             }
             
         } else {

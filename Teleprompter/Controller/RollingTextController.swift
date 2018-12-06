@@ -21,7 +21,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var textSize: CGFloat = 80
     var lineSpacing: CGFloat = 40
     var scrollSpeed: CGFloat = 30
-    var scrollPoint: CGFloat = 0
     var mirrorIsOn: Bool = false
     var arrowIsOn: Bool = false
     var fadeIsOn: Bool = false
@@ -29,6 +28,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var backgroundColorChosen: Bool = true
     var controlPanelMultiplier: CGFloat = 300
     var lastScale: CGFloat = 0
+    var scrollPosition: CGFloat = 0
+    var scrollStart: CGFloat = 0
    
     
     var style: NSMutableParagraphStyle!
@@ -44,6 +45,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     var scrollSpeedDoubleTapGesture: UITapGestureRecognizer!
     var arrowPanGesture: UIPanGestureRecognizer!
+    
+    var homeController: HomeController!
     
     lazy var textView: UITextView = {
         let view = UITextView()
@@ -133,6 +136,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        textView.contentOffset = CGPoint(x: 0, y: scrollStart)
         if defaults.bool(forKey: "isFirstTime") == true {
             toggleControlPanel()
         } else {
@@ -149,6 +153,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             
             defaults.set(true, forKey: "isFirstTime")
         }
+        
         
     }
     
@@ -359,7 +364,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             textSize -= scale
         }
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
-        print(textSize)
     
         if gesture.state == .ended {
             lastScale = 0
@@ -400,6 +404,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     @objc func handleEditText() {
         arrow.alpha = 0
+        if let home = homeController {
+            home.scrolledPosition = scrollPosition
+        }
         navigationController?.isNavigationBarHidden = false
         navigationController?.popViewController(animated: true)
     }
@@ -667,5 +674,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
         updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
         
+    }
+    
+    //MARK: TextView Methods
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollPosition = scrollView.contentOffset.y
     }
 }

@@ -51,6 +51,7 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
                 guard let home = self.homeController else {return}
                 home.textBox.text = script.scriptBody
                 home.textBox.textColor = .black
+                home.scrolledPosition = 0
                 self.navigationController?.popViewController(animated: true)
             }
             let editAction = UIAlertAction(title: "Edit Name", style: .default) { (_) in
