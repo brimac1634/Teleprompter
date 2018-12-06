@@ -51,6 +51,8 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
                 guard let home = self.homeController else {return}
                 home.textBox.text = script.scriptBody
                 home.textBox.textColor = .black
+                home.currentScriptName = script.scriptName
+                home.topLabel.text = script.scriptName
                 home.scrolledPosition = 0
                 self.navigationController?.popViewController(animated: true)
             }

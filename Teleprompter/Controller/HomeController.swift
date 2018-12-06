@@ -54,14 +54,15 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     let saveButton: BaseButton = {
         let button = BaseButton()
-        button.backgroundColor = UIColor.netRoadshowGray(a: 1)
+        button.backgroundColor = UIColor.netRoadshowDarkGray(a: 1)
         button.setTitle("Save", for: .normal)
-        button.setTitleColor(UIColor.netRoadshowBlue(a: 1), for: .normal)
+        button.setTitleColor(UIColor.white, for: .normal)
         return button
     }()
     
     var keyboardHeight: CGFloat = 0
     var scrolledPosition: CGFloat = 0
+    var currentScriptName: String = ""
     
     var startButtonBottomConstraint: NSLayoutConstraint!
     var saveButtonBottomConstraint: NSLayoutConstraint!
@@ -164,8 +165,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         navigationItem.leftBarButtonItem = folderBarItem
     }
     
-    
-    
+
     //MARK: - Gesture Selectors
     
     @objc func handleBackgroundTap() {
@@ -190,30 +190,12 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     @objc func handleSave() {
         if textBox.text.count != 0 && textBox.text != "Type or paste your script here..." {
-            let alert = UIAlertController(title: "Script Name", message: "Give your script a unique name", preferredStyle: .alert)
-            alert.addTextField { (textField) in
-                textField.placeholder = "Ex.: Company Speech"
-            }
-            let saveAction = UIAlertAction(title: "Save", style: .default) { (action) in
-                guard let textField = alert.textFields else {return}
-                let field = textField[0]
-                try! self.realm.write {
-                    let script = Script()
-                    script.scriptName = field.text ?? "Untitled"
-                    script.scriptBody = self.textBox.text
-                    self.realm.add(script)
-                }
-            }
             
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
-                alert.dismiss(animated: true, completion: nil)
+            if let currentScript = realm.objects(Script.self).filter("scriptName = %@", currentScriptName).first {
+                overWriteAlert(script: currentScript)
+            } else {
+                saveNewScript()
             }
-            
-            alert.addAction(saveAction)
-            alert.addAction(cancelAction)
-            alert.preferredAction = saveAction
-            self.present(alert, animated: true, completion: nil)
-            
         } else {
             noTextFoundAlert()
         }
@@ -272,6 +254,41 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         }
 
     }
+    
+    //MARK: - Alert Methods
+    
+    fileprivate func saveNewScript() {
+        let alert = UIAlertController(title: "Script Name", message: "Give your script a unique name", preferredStyle: .alert)
+        alert.addTextField { (textField) in
+            textField.placeholder = "Ex.: Company Speech"
+        }
+        let saveAction = UIAlertAction(title: "Save", style: .default) { (action) in
+            guard let textField = alert.textFields else {return}
+            let field = textField[0]
+            if let chosenScript = self.realm.objects(Script.self).filter("scriptName = %@", field.text!).first {
+                self.overWriteAlert(script: chosenScript)
+            } else {
+                try! self.realm.write {
+                    let script = Script()
+                    script.scriptName = field.text ?? "Untitled"
+                    script.scriptBody = self.textBox.text
+                    self.realm.add(script)
+                }
+                self.topLabel.text = field.text
+                self.currentScriptName = field.text ?? ""
+                self.savedConfirmation()
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        alert.addAction(saveAction)
+        alert.addAction(cancelAction)
+        alert.preferredAction = saveAction
+        self.present(alert, animated: true, completion: nil)
+    }
 
     func presentImportFailAlert() {
         let alert = UIAlertController(title: "Missing Text", message: "The text could not be imported", preferredStyle: .alert)
@@ -288,7 +305,28 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         }))
         self.present(alert, animated: true, completion: nil)
     }
+    
+    private func overWriteAlert(script: Script) {
+        let alert = UIAlertController(title: "\"\(script.scriptName)\" Script", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Overwrite \"\(script.scriptName)\"", style: .default, handler: { (_) in
+            try! self.realm.write {
+                script.scriptBody = self.textBox.text
+            }
+            self.savedConfirmation()
+        }))
+        alert.addAction(UIAlertAction(title: "Save As New Script", style: .default
+            , handler: { (_) in
+                self.saveNewScript()
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
 
+    private func savedConfirmation() {
+        let alert = UIAlertController(title: "Saved", message: "Your script has been saved", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
     
 }
 

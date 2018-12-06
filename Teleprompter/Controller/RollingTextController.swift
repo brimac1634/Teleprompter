@@ -136,7 +136,10 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        print("rolling start: \(scrollStart)")
         textView.contentOffset = CGPoint(x: 0, y: scrollStart)
+        
+        
         if defaults.bool(forKey: "isFirstTime") == true {
             toggleControlPanel()
         } else {
@@ -153,7 +156,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             
             defaults.set(true, forKey: "isFirstTime")
         }
-        
         
     }
     
@@ -406,6 +408,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         arrow.alpha = 0
         if let home = homeController {
             home.scrolledPosition = scrollPosition
+            print("rolling send: \(scrollPosition)")
         }
         navigationController?.isNavigationBarHidden = false
         navigationController?.popViewController(animated: true)
