@@ -13,6 +13,7 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
     
     let realm = try! Realm()
     var homeController: HomeController?
+    var usingIpad: Bool = true
 
     var scriptList: Results<Script>? {
         didSet {
@@ -22,6 +23,11 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if ( UIDevice.current.model.range(of: "iPad") != nil) {
+            usingIpad = true
+        } else {
+            usingIpad = false
+        }
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellID")
         self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
@@ -40,7 +46,7 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let script = scriptList?[indexPath.row] {
-            let alert = UIAlertController(title: script.scriptName, message: "Script Options", preferredStyle: .actionSheet)
+            let alert = UIAlertController(title: script.scriptName, message: nil, preferredStyle: .actionSheet)
             let useAction = UIAlertAction(title: "Use Script", style: .default) { (_) in
                 guard let home = self.homeController else {return}
                 home.textBox.text = script.scriptBody
@@ -63,9 +69,11 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
                 editAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                 self.present(editAlert, animated: true, completion: nil)
             }
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             
             alert.addAction(useAction)
             alert.addAction(editAction)
+            alert.addAction(cancelAction)
             
             if let popoverController = alert.popoverPresentationController {
                 guard let cell = tableView.cellForRow(at: indexPath) else {return}
@@ -85,7 +93,7 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellID", for: indexPath)
         cell.textLabel?.textColor = UIColor.netRoadshowBlue(a: 1)
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 24)
+        cell.textLabel?.font = usingIpad ? UIFont.systemFont(ofSize: 28) : UIFont.systemFont(ofSize: 18)
         if let script = scriptList?[indexPath.row] {
             let formatter = DateFormatter()
             formatter.timeStyle = .short
@@ -99,22 +107,22 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard let script = scriptList?[indexPath.row] else {return}
         if editingStyle == .delete {
-            try! realm.write {
-                realm.delete(script)
-            }
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            let alert = UIAlertController(title: "Delete Script", message: "Are you sure?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_) in
+                try! self.realm.write {
+                    self.realm.delete(script)
+                }
+                tableView.deleteRows(at: [indexPath], with: .fade)
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        let height: CGFloat = usingIpad ? 100 : 60
+        return height
     }
-
-    
-    // MARK: - Navigation
-
-
- 
 
     
 }

@@ -235,7 +235,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     @objc func handleFolder() {
         let savedScripts = SavedScriptsController()
-        savedScripts.scriptList = realm.objects(Script.self)
+        savedScripts.scriptList = realm.objects(Script.self).sorted(byKeyPath: "dateCreated", ascending: false)
         savedScripts.homeController = self
         navigationController?.pushViewController(savedScripts, animated: true)
     }
