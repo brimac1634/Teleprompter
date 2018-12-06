@@ -17,6 +17,8 @@
 		D28C16C121A53DA10012D84D /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16C021A53DA10012D84D /* BaseView.swift */; };
 		D28C16C321A554C80012D84D /* ControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16C221A554C80012D84D /* ControlBar.swift */; };
 		D2903D0D21B66314009EBF3C /* FirstTimeGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2903D0C21B66314009EBF3C /* FirstTimeGuide.swift */; };
+		D2AFE19121B8CD5E0020E736 /* Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2AFE19021B8CD5E0020E736 /* Script.swift */; };
+		D2AFE19321B8D7BB0020E736 /* SavedScriptsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2AFE19221B8D7BB0020E736 /* SavedScriptsController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,8 @@
 		D28C16C021A53DA10012D84D /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		D28C16C221A554C80012D84D /* ControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlBar.swift; sourceTree = "<group>"; };
 		D2903D0C21B66314009EBF3C /* FirstTimeGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstTimeGuide.swift; sourceTree = "<group>"; };
+		D2AFE19021B8CD5E0020E736 /* Script.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Script.swift; sourceTree = "<group>"; };
+		D2AFE19221B8D7BB0020E736 /* SavedScriptsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedScriptsController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +82,7 @@
 		D28C16A721A529210012D84D /* Teleprompter */ = {
 			isa = PBXGroup;
 			children = (
+				D2AFE18F21B8CD4E0020E736 /* Model */,
 				D28C16C721A5576B0012D84D /* Singleton */,
 				D28C16C421A554E80012D84D /* View */,
 				D28C16C621A557580012D84D /* Controller */,
@@ -111,6 +116,7 @@
 			children = (
 				D28C16BA21A530670012D84D /* HomeController.swift */,
 				D28C16BE21A53D390012D84D /* RollingTextController.swift */,
+				D2AFE19221B8D7BB0020E736 /* SavedScriptsController.swift */,
 				D2903D0C21B66314009EBF3C /* FirstTimeGuide.swift */,
 			);
 			path = Controller;
@@ -122,6 +128,14 @@
 				D28C16A821A529210012D84D /* AppDelegate.swift */,
 			);
 			path = Singleton;
+			sourceTree = "<group>";
+		};
+		D2AFE18F21B8CD4E0020E736 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D2AFE19021B8CD5E0020E736 /* Script.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		F6DF7CE1FFE95BE8D1E46D88 /* Frameworks */ = {
@@ -235,10 +249,14 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/ChromaColorPicker/ChromaColorPicker.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChromaColorPicker.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -269,8 +287,10 @@
 			files = (
 				D28C16A921A529210012D84D /* AppDelegate.swift in Sources */,
 				D28C16C321A554C80012D84D /* ControlBar.swift in Sources */,
+				D2AFE19321B8D7BB0020E736 /* SavedScriptsController.swift in Sources */,
 				D28C16BD21A533180012D84D /* Extensions.swift in Sources */,
 				D28C16C121A53DA10012D84D /* BaseView.swift in Sources */,
+				D2AFE19121B8CD5E0020E736 /* Script.swift in Sources */,
 				D28C16BF21A53D390012D84D /* RollingTextController.swift in Sources */,
 				D2903D0D21B66314009EBF3C /* FirstTimeGuide.swift in Sources */,
 				D28C16BB21A530670012D84D /* HomeController.swift in Sources */,

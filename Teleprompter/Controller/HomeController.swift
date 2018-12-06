@@ -9,9 +9,11 @@
 import UIKit
 import PDFKit
 import MobileCoreServices
+import RealmSwift
 
 class HomeController: UIViewController, UIDocumentPickerDelegate {
     
+    let realm = try! Realm()
     
     var usingIpad: Bool = true
     
@@ -50,8 +52,17 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         return button
     }()
     
+    let saveButton: BaseButton = {
+        let button = BaseButton()
+        button.backgroundColor = UIColor.netRoadshowGray(a: 1)
+        button.setTitle("Save", for: .normal)
+        button.setTitleColor(UIColor.netRoadshowBlue(a: 1), for: .normal)
+        return button
+    }()
+    
     var keyboardHeight: CGFloat = 0
     var startButtonBottomConstraint: NSLayoutConstraint!
+    var saveButtonBottomConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,8 +93,10 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         view.addSubview(topLabel)
         view.addSubview(textBox)
         view.addSubview(startButton)
+        view.addSubview(saveButton)
         
         startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
+        saveButtonBottomConstraint = saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
         
         NSLayoutConstraint.activate([
             topLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -99,11 +112,16 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             textBox.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             textBox.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 8),
             textBox.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8),
-            textBox.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.95)
-
+            textBox.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.95),
+            
+            saveButton.widthAnchor.constraint(equalToConstant: 120),
+            saveButton.heightAnchor.constraint(equalToConstant: 40),
+            saveButtonBottomConstraint,
+            saveButton.leadingAnchor.constraint(equalTo: textBox.leadingAnchor),
             ])
         
         startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
+        saveButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSave)))
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap)))
         view.isUserInteractionEnabled = true
         textBox.delegate = self
@@ -128,10 +146,20 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
         let barItem = UIBarButtonItem(customView: importButton)
         
+        let folderImage = UIImage(named: "folder")?.withRenderingMode(.alwaysTemplate)
+        let folderButton = UIButton()
+        folderButton.setImage(folderImage, for: .normal)
+        folderButton.addTarget(self, action: #selector(handleFolder), for: .touchUpInside)
+        folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+        let folderBarItem = UIBarButtonItem(customView: folderButton)
+        
         barItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
         barItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        folderBarItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        folderBarItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
         
         navigationItem.rightBarButtonItem = barItem
+        navigationItem.leftBarButtonItem = folderBarItem
     }
     
     
@@ -143,7 +171,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
     
     @objc func handleStart() {
-        if textBox.text?.count != 0 {
+        if textBox.text?.count != 0 && textBox.text != "Type or paste your script here..." {
             let rollingTextController = RollingTextController()
             guard let text = textBox.text else {return}
             rollingTextController.textInput = "\n\n\n\n\(text)\n\n\n\n\n"
@@ -151,14 +179,41 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             navigationController?.isNavigationBarHidden = true
             navigationController?.pushViewController(rollingTextController, animated: true)
         } else {
-            let alert = UIAlertController(title: "Missing Text", message: "Add to the textfield before proceeding", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (action:UIAlertAction) in
-                self.textBox.selectAll(nil)
-            }))
-            self.present(alert, animated: true, completion: nil)
-            
+            noTextFoundAlert()
         }
         
+    }
+    
+    @objc func handleSave() {
+        if textBox.text.count != 0 && textBox.text != "Type or paste your script here..." {
+            let alert = UIAlertController(title: "Script Name", message: "Give your script a unique name", preferredStyle: .alert)
+            alert.addTextField { (textField) in
+                textField.placeholder = "Ex.: Company Speech"
+            }
+            let saveAction = UIAlertAction(title: "Save", style: .default) { (action) in
+                guard let textField = alert.textFields else {return}
+                let field = textField[0]
+                try! self.realm.write {
+                    let script = Script()
+                    script.scriptName = field.text ?? "Untitled"
+                    script.scriptBody = self.textBox.text
+                    self.realm.add(script)
+                }
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }
+            
+            alert.addAction(saveAction)
+            alert.addAction(cancelAction)
+            alert.preferredAction = saveAction
+            self.present(alert, animated: true, completion: nil)
+            
+        } else {
+            noTextFoundAlert()
+        }
+
     }
     
     @objc func handleImport() {
@@ -176,6 +231,13 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         alert.preferredAction = alert.actions[1]
         self.present(alert, animated: true, completion: nil)
         
+    }
+    
+    @objc func handleFolder() {
+        let savedScripts = SavedScriptsController()
+        savedScripts.scriptList = realm.objects(Script.self)
+        savedScripts.homeController = self
+        navigationController?.pushViewController(savedScripts, animated: true)
     }
     
     //MARK: - Document Picker Methods
@@ -214,6 +276,13 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         self.present(alert, animated: true, completion: nil)
     }
 
+    private func noTextFoundAlert() {
+        let alert = UIAlertController(title: "Missing Text", message: "Add to the textfield before proceeding", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (action:UIAlertAction) in
+            self.textBox.selectAll(nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
 
     
 }
