@@ -170,20 +170,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         
     }
     
-    @objc func handleSave() {
-        if textBox.text.count != 0 && textBox.text != "Type or paste your script here..." {
-            
-            if let currentScript = realm.objects(Script.self).filter("scriptName = %@", currentScriptName).first {
-                overWriteAlert(script: currentScript)
-            } else {
-                saveNewScript()
-            }
-        } else {
-            noTextFoundAlert()
-        }
-
-    }
-    
     @objc func handleImport() {
         // To add more document types:
         // documentTypes: ["com.microsoft.word.doc","org.openxmlformats.wordprocessingml.document", kUTTypePDF as String]
