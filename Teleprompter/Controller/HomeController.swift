@@ -82,18 +82,26 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     private func setupView() {
         view.backgroundColor = .white
-        topLabel.font = usingIpad ? UIFont.systemFont(ofSize: 30) : UIFont.systemFont(ofSize: 24)
+        topLabel.font = usingIpad ? UIFont.systemFont(ofSize: 28) : UIFont.systemFont(ofSize: 22)
         
         view.addSubview(topLabel)
         view.addSubview(textBox)
         view.addSubview(startButton)
         
-        startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
+        if #available(iOS 11.0, *) {
+            startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
+            topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8).isActive = true
+            textBox.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.95).isActive = true
+        } else {
+            // Fallback on earlier versions
+            startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8)
+            topLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 70).isActive = true
+            textBox.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.95).isActive = true
+        }
         
         NSLayoutConstraint.activate([
             topLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             topLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
-            topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             topLabel.heightAnchor.constraint(equalToConstant: 35),
             
             startButton.widthAnchor.constraint(equalToConstant: 120),
@@ -103,8 +111,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             
             textBox.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             textBox.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 8),
-            textBox.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8),
-            textBox.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.95),
+            textBox.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8)
 
             ])
         
@@ -126,27 +133,35 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         logoImage.contentMode = .scaleAspectFit
         navigationItem.titleView = logoImage
         
-        let importImage = UIImage(named: "import")?.withRenderingMode(.alwaysTemplate)
-        let importButton = UIButton()
-        importButton.setImage(importImage, for: .normal)
-        importButton.addTarget(self, action: #selector(handleImport), for: .touchUpInside)
-        importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-        let barItem = UIBarButtonItem(customView: importButton)
+        if #available(iOS 11.0, *) {
+            let importImage = UIImage(named: "import")?.withRenderingMode(.alwaysTemplate)
+            let importButton = UIButton()
+            importButton.setImage(importImage, for: .normal)
+            importButton.addTarget(self, action: #selector(handleImport), for: .touchUpInside)
+            importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+            let barItem = UIBarButtonItem(customView: importButton)
+            
+            let folderImage = UIImage(named: "folder")?.withRenderingMode(.alwaysTemplate)
+            let folderButton = UIButton()
+            folderButton.setImage(folderImage, for: .normal)
+            folderButton.addTarget(self, action: #selector(handleFolder), for: .touchUpInside)
+            folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+            let folderBarItem = UIBarButtonItem(customView: folderButton)
+            
+            barItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
+            barItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
+            folderBarItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
+            folderBarItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
+            
+            navigationItem.rightBarButtonItem = barItem
+            navigationItem.leftBarButtonItem = folderBarItem
+        } else {
+            let folderButton = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(handleFolder))
+            folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+            navigationItem.leftBarButtonItem = folderButton
+        }
         
-        let folderImage = UIImage(named: "folder")?.withRenderingMode(.alwaysTemplate)
-        let folderButton = UIButton()
-        folderButton.setImage(folderImage, for: .normal)
-        folderButton.addTarget(self, action: #selector(handleFolder), for: .touchUpInside)
-        folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-        let folderBarItem = UIBarButtonItem(customView: folderButton)
         
-        barItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        barItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
-        folderBarItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        folderBarItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
-        
-        navigationItem.rightBarButtonItem = barItem
-        navigationItem.leftBarButtonItem = folderBarItem
     }
 
 
@@ -235,27 +250,34 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     //MARK: - Document Picker Methods
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
-        if let pdf = PDFDocument(url: url) {
-            print("PDF coming")
-            let pageCount = pdf.pageCount
-            let documentContent = NSMutableAttributedString()
-            
-            for i in 0 ..< pageCount {
-                guard let page = pdf.page(at: i) else { continue }
-                guard let pageContent = page.attributedString else { continue }
-                documentContent.append(pageContent)
-            }
-            documentContent.setFontFace(font: UIFont.systemFont(ofSize: textBox.universalFontSize), color: UIColor.black)
-            
-            if documentContent.string == "" {
-                presentImportFailAlert()
+        if #available(iOS 11.0, *) {
+            if let pdf = PDFDocument(url: url) {
+                print("PDF coming")
+                let pageCount = pdf.pageCount
+                let documentContent = NSMutableAttributedString()
+                
+                for i in 0 ..< pageCount {
+                    guard let page = pdf.page(at: i) else { continue }
+                    guard let pageContent = page.attributedString else { continue }
+                    documentContent.append(pageContent)
+                }
+                documentContent.setFontFace(font: UIFont.systemFont(ofSize: textBox.universalFontSize), color: UIColor.black)
+                
+                if documentContent.string == "" {
+                    presentImportFailAlert()
+                } else {
+                    textBox.attributedText = documentContent
+                }
+                
             } else {
-                textBox.attributedText = documentContent
+                print("non PDF coming")
+                
             }
-            
         } else {
-            print("non PDF coming")
-
+            // Fallback on earlier versions
+            let alert = UIAlertController(title: "Not Available", message: "This function is not available for iOS 10 and under", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
         }
 
     }
