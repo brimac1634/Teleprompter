@@ -342,11 +342,13 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 createNew()
             }
         } else {
-            //we have a saved script open
-            //ask to save then create new
-            let alert = UIAlertController(title: "\"\(currentScriptName)\" Script", message: "Would you like to save your current script?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
-                if let currentScript = self.realm.objects(Script.self).filter("scriptName = %@", self.currentScriptName).first {
+            guard let currentScript = self.realm.objects(Script.self).filter("scriptName = %@", self.currentScriptName).first else {return}
+            if currentScript.scriptBody != textBox.text {
+                //we have a saved script open
+                //ask to save then create new
+                let alert = UIAlertController(title: "\"\(currentScriptName)\" Script", message: "Would you like to save your current script?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
+                    
                     //save over current
                     try! self.realm.write {
                         currentScript.scriptBody = self.textBox.text
@@ -357,16 +359,17 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                         self.createNew()
                     }))
                     self.present(alert, animated: true, completion: nil)
-                } else {
-                    //save as new
-                    self.saveNewScript()
-                }
-            }))
-            alert.addAction(UIAlertAction(title: "Do Not Save", style: .default, handler: { (_) in
-                self.createNew()
-            }))
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+                    
+                }))
+                alert.addAction(UIAlertAction(title: "Do Not Save", style: .default, handler: { (_) in
+                    self.createNew()
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                createNew()
+            }
+            
         }
     }
     
