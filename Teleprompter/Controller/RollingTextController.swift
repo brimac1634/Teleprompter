@@ -259,7 +259,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         let shadeViewGesture = UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap))
         shadeView.addGestureRecognizer(shadeViewGesture)
-        controlBar.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
         controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBack)))
         controlBar.editButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleEditText)))
         controlBar.saveButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSave)))
@@ -277,26 +276,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     //MARK: - Gesture Selectors
-    
-    @objc func handlePan(gesture: UIPanGestureRecognizer) {
-        let changeInX = gesture.translation(in: controlBar).x
-        let velocityX = gesture.velocity(in: controlBar).x
-        
-        if changeInX < 0 {
-            controlBarLeading.constant = changeInX
-            
-            if gesture.state == .ended {
-                if changeInX < -(controlBar.frame.width * 0.6) || velocityX > 800 {
-                    toggleControlPanel()
-                } else {
-                    UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-                        self.controlBarLeading.constant = 0
-                        self.view.layoutIfNeeded()
-                    }, completion: nil)
-                }
-            }
-        }
-    }
     
     @objc func handlePauseStart() {
         guard let scrollTap = scrollSpeedDoubleTapGesture else {return}
