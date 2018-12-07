@@ -670,12 +670,17 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
     }
     
-    //MARK - ScrollView Methods
+    //MARK: - ScrollView Methods
+    
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("scrolling called")
-        if scrollView.contentOffset.x != 0 {
-            scrollView.contentOffset.x = 0
+        if #available(iOS 11.0, *) {
+            print("no contentOffset needed")
+        } else {
+            if scrollView.contentOffset.x != 0 {
+                scrollView.contentOffset.x = 0
+            }
         }
+        
     }
 }

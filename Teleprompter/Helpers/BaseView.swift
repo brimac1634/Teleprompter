@@ -90,9 +90,9 @@ class BaseTextView: UITextView {
     func setupView() {
         
         if ( UIDevice.current.model.range(of: "iPad") != nil){
-            universalFontSize = 26
+            universalFontSize = 22
         } else {
-            universalFontSize = 20
+            universalFontSize = 18
         }
         
         self.font = UIFont.systemFont(ofSize: universalFontSize)

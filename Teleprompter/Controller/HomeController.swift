@@ -38,6 +38,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         box.layer.borderColor = UIColor.netRoadshowGray(a: 1).cgColor
         box.isEditable = true
         box.clipsToBounds = true
+        box.showsHorizontalScrollIndicator = false
         box.backgroundColor = UIColor.netRoadshowGray(a: 1)
         box.contentInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         box.translatesAutoresizingMaskIntoConstraints = false
@@ -82,7 +83,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     private func setupView() {
         view.backgroundColor = .white
-        topLabel.font = usingIpad ? UIFont.systemFont(ofSize: 28) : UIFont.systemFont(ofSize: 22)
+        topLabel.font = usingIpad ? UIFont.systemFont(ofSize: 26) : UIFont.systemFont(ofSize: 20)
         
         view.addSubview(topLabel)
         view.addSubview(textBox)
@@ -159,6 +160,10 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             let folderButton = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(handleFolder))
             folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
             navigationItem.leftBarButtonItem = folderButton
+            
+            let importButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleImport))
+            importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+            navigationItem.rightBarButtonItem = importButton
         }
         
         
@@ -260,10 +265,15 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 
             }
         } else {
+            print(url)
+//            let webView = UIWebView(frame: .zero)
+//            let urlRequest = URLRequest(url: url)
+//            webView.loadRequest(urlRequest)
+            
             // Fallback on earlier versions
-            let alert = UIAlertController(title: "Not Available", message: "This function is not available for iOS 10 and under", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+//            let alert = UIAlertController(title: "Not Available", message: "This function is not available for iOS 10 and under", preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+//            self.present(alert, animated: true, completion: nil)
         }
 
     }
@@ -451,7 +461,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         self.present(alert, animated: true, completion: nil)
     }
     
-    
+
     
 }
 
