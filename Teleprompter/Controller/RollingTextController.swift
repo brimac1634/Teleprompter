@@ -28,8 +28,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var backgroundColorChosen: Bool = true
     var controlPanelMultiplier: CGFloat = 300
     var lastScale: CGFloat = 0
-    var scrollPosition: CGFloat = 0
-    var scrollStart: CGFloat = 0
    
     
     var style: NSMutableParagraphStyle!
@@ -45,8 +43,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     var scrollSpeedDoubleTapGesture: UITapGestureRecognizer!
     var arrowPanGesture: UIPanGestureRecognizer!
-    
-    var homeController: HomeController!
     
     lazy var textView: UITextView = {
         let view = UITextView()
@@ -136,10 +132,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        print("rolling start: \(scrollStart)")
-        textView.contentOffset = CGPoint(x: 0, y: scrollStart)
-        
-        
         if defaults.bool(forKey: "isFirstTime") == true {
             toggleControlPanel()
         } else {
@@ -406,10 +398,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     @objc func handleEditText() {
         arrow.alpha = 0
-        if let home = homeController {
-            home.scrolledPosition = scrollPosition
-            print("rolling send: \(scrollPosition)")
-        }
         navigationController?.isNavigationBarHidden = false
         navigationController?.popViewController(animated: true)
     }
@@ -677,11 +665,5 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
         updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
         
-    }
-    
-    //MARK: TextView Methods
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        scrollPosition = scrollView.contentOffset.y
     }
 }

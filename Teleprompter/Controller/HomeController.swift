@@ -53,7 +53,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }()
     
     var keyboardHeight: CGFloat = 0
-    var scrolledPosition: CGFloat = 0
     var currentScriptName: String = ""
     
     var startButtonBottomConstraint: NSLayoutConstraint!
@@ -163,8 +162,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             guard let text = textBox.text else {return}
             rollingTextController.textInput = "\n\n\n\n\(text)\n\n\n\n\n\n\n\n\n\n\n"
             rollingTextController.view.backgroundColor = .black
-            rollingTextController.homeController = self
-            rollingTextController.scrollStart = scrolledPosition
             navigationController?.isNavigationBarHidden = true
             navigationController?.pushViewController(rollingTextController, animated: true)
         } else {
@@ -254,7 +251,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 presentImportFailAlert()
             } else {
                 textBox.attributedText = documentContent
-                scrolledPosition = 0
             }
             
         } else {
@@ -287,13 +283,10 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
             try! self.realm.write {
                 script.scriptBody = self.textBox.text
+                script.dateCreated = Date()
             }
             self.savedConfirmation()
         }))
-//        alert.addAction(UIAlertAction(title: "Save As New Script", style: .default
-//            , handler: { (_) in
-//                self.saveNewScript()
-//        }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
             self.saveNewScript()
         }))
@@ -344,6 +337,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             //save over current
             try! realm.write {
                 currentScript.scriptBody = textBox.text
+                currentScript.dateCreated = Date()
             }
             savedConfirmation()
         } else {
@@ -370,6 +364,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                     //save over current
                     try! self.realm.write {
                         currentScript.scriptBody = self.textBox.text
+                        currentScript.dateCreated = Date()
                     }
                     let alert = UIAlertController(title: "Saved", message: "Your script has been saved", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
