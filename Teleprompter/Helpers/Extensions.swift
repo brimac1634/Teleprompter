@@ -93,7 +93,6 @@ extension HomeController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.startButtonBottomConstraint.constant = -self.keyboardHeight - 8
-            self.saveButtonBottomConstraint.constant = -self.keyboardHeight - 8
             self.view.layoutIfNeeded()
         }, completion: nil)
         
@@ -106,7 +105,6 @@ extension HomeController: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.startButtonBottomConstraint.constant = -8
-            self.saveButtonBottomConstraint.constant = -8
             self.view.layoutIfNeeded()
         }, completion: nil)
         

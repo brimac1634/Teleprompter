@@ -52,14 +52,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         return button
     }()
     
-    let saveButton: BaseButton = {
-        let button = BaseButton()
-        button.backgroundColor = UIColor.netRoadshowDarkGray(a: 1)
-        button.setTitle("Save", for: .normal)
-        button.setTitleColor(UIColor.white, for: .normal)
-        return button
-    }()
-    
     var keyboardHeight: CGFloat = 0
     var scrolledPosition: CGFloat = 0
     var currentScriptName: String = ""
@@ -96,10 +88,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         view.addSubview(topLabel)
         view.addSubview(textBox)
         view.addSubview(startButton)
-        view.addSubview(saveButton)
         
         startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
-        saveButtonBottomConstraint = saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
         
         NSLayoutConstraint.activate([
             topLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -116,15 +106,10 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             textBox.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 8),
             textBox.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8),
             textBox.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.95),
-            
-            saveButton.widthAnchor.constraint(equalToConstant: 120),
-            saveButton.heightAnchor.constraint(equalToConstant: 40),
-            saveButtonBottomConstraint,
-            saveButton.leadingAnchor.constraint(equalTo: textBox.leadingAnchor),
+
             ])
         
         startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
-        saveButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSave)))
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap)))
         view.isUserInteractionEnabled = true
         textBox.delegate = self
@@ -164,7 +149,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         navigationItem.rightBarButtonItem = barItem
         navigationItem.leftBarButtonItem = folderBarItem
     }
-    
+
 
     //MARK: - Gesture Selectors
     
@@ -230,9 +215,11 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         }))
         actionAlert.addAction(UIAlertAction(title: "New", style: .default, handler: { (_) in
             //New
+            self.createNewScriptButton()
         }))
         actionAlert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
             //Save
+            self.saveCurrentScript()
         }))
         actionAlert.addAction(UIAlertAction(title: "Save As", style: .default, handler: { (_) in
             //Save As
@@ -320,7 +307,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
     
     fileprivate func saveNewScript() {
-        let alert = UIAlertController(title: "Script Name", message: "Give your script a unique name", preferredStyle: .alert)
+        let alert = UIAlertController(title: "New Script", message: "Give your script a unique name", preferredStyle: .alert)
         alert.addTextField { (textField) in
             textField.placeholder = "Ex.: Company Speech"
         }
@@ -353,8 +340,111 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
     
     fileprivate func saveCurrentScript() {
-        
+        if let currentScript = self.realm.objects(Script.self).filter("scriptName = %@", currentScriptName).first {
+            //save over current
+            try! realm.write {
+                currentScript.scriptBody = textBox.text
+            }
+            savedConfirmation()
+        } else {
+            //save as new
+            saveNewScript()
+        }
     }
+    
+    fileprivate func createNewScriptButton() {
+        if currentScriptName == "" {
+            if textBox.text.count != 0 && textBox.text != "Type or paste your script here..." {
+                //ask to save as then create new
+                currentScriptHasNotBeenSavedAlert()
+            } else {
+                //create new
+                createNew()
+            }
+        } else {
+            //we have a saved script open
+            //ask to save then create new
+            let alert = UIAlertController(title: "\"\(currentScriptName)\" Script", message: "Would you like to save your current script?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
+                if let currentScript = self.realm.objects(Script.self).filter("scriptName = %@", self.currentScriptName).first {
+                    //save over current
+                    try! self.realm.write {
+                        currentScript.scriptBody = self.textBox.text
+                    }
+                    let alert = UIAlertController(title: "Saved", message: "Your script has been saved", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
+                        self.createNew()
+                    }))
+                    self.present(alert, animated: true, completion: nil)
+                } else {
+                    //save as new
+                    self.saveNewScript()
+                }
+            }))
+            alert.addAction(UIAlertAction(title: "Do Not Save", style: .default, handler: { (_) in
+                self.createNew()
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    //create new
+    fileprivate func createNew() {
+        saveNewScript()
+        textBox.text = ""
+    }
+    
+    //ask to save then create new
+    fileprivate func currentScriptHasNotBeenSavedAlert() {
+        let alert = UIAlertController(title: "Your current script has not been saved", message: "Would you like to save now?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
+            //Save as
+            let alert = UIAlertController(title: "New Script", message: "Give your script a unique name", preferredStyle: .alert)
+            alert.addTextField { (textField) in
+                textField.placeholder = "Ex.: Company Speech"
+            }
+            let saveAction = UIAlertAction(title: "Save", style: .default) { (action) in
+                guard let textField = alert.textFields else {return}
+                let field = textField[0]
+                if let chosenScript = self.realm.objects(Script.self).filter("scriptName = %@", field.text!).first {
+                    self.overWriteAlert(script: chosenScript)
+                } else {
+                    try! self.realm.write {
+                        let script = Script()
+                        script.scriptName = field.text ?? "Untitled"
+                        script.scriptBody = self.textBox.text
+                        self.realm.add(script)
+                    }
+                    self.topLabel.text = field.text
+                    self.currentScriptName = field.text ?? ""
+                    let alert = UIAlertController(title: "Saved", message: "Your script has been saved", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
+                        self.createNew()
+                    }))
+                    self.present(alert, animated: true, completion: nil)
+                }
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }
+            
+            alert.addAction(saveAction)
+            alert.addAction(cancelAction)
+            alert.preferredAction = saveAction
+            self.present(alert, animated: true, completion: nil)
+        }))
+        alert.addAction(UIAlertAction(title: "Do Not Save", style: .default, handler: { (_) in
+            //do not save
+            self.textBox.text = ""
+            self.createNew()
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
     
 }
 
