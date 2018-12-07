@@ -388,6 +388,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     fileprivate func createNew() {
         saveNewScript()
         textBox.text = ""
+        topLabel.text = ""
     }
     
     //ask to save then create new
