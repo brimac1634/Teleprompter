@@ -220,10 +220,32 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
     
     @objc func handleFolder() {
-        let savedScripts = SavedScriptsController()
-        savedScripts.scriptList = realm.objects(Script.self).sorted(byKeyPath: "dateCreated", ascending: false)
-        savedScripts.homeController = self
-        navigationController?.pushViewController(savedScripts, animated: true)
+        let actionAlert = UIAlertController(title: "Scripts", message: nil, preferredStyle: .actionSheet)
+        actionAlert.addAction(UIAlertAction(title: "Open", style: .default, handler: { (_) in
+            //Open
+            let savedScripts = SavedScriptsController()
+            savedScripts.scriptList = self.realm.objects(Script.self).sorted(byKeyPath: "dateCreated", ascending: false)
+            savedScripts.homeController = self
+            self.navigationController?.pushViewController(savedScripts, animated: true)
+        }))
+        actionAlert.addAction(UIAlertAction(title: "New", style: .default, handler: { (_) in
+            //New
+        }))
+        actionAlert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
+            //Save
+        }))
+        actionAlert.addAction(UIAlertAction(title: "Save As", style: .default, handler: { (_) in
+            //Save As
+            self.saveNewScript()
+        }))
+        actionAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        if let popoverController = actionAlert.popoverPresentationController {
+            popoverController.barButtonItem = navigationItem.leftBarButtonItem
+        }
+        
+        self.present(actionAlert, animated: true, completion: nil)
+
     }
     
     //MARK: - Document Picker Methods
@@ -256,6 +278,46 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
     
     //MARK: - Alert Methods
+
+    fileprivate func presentImportFailAlert() {
+        let alert = UIAlertController(title: "Missing Text", message: "The text could not be imported", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (action:UIAlertAction) in
+            self.textBox.selectAll(nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    fileprivate func noTextFoundAlert() {
+        let alert = UIAlertController(title: "Missing Text", message: "Add to the textfield before proceeding", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (action:UIAlertAction) in
+            self.textBox.selectAll(nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    fileprivate func overWriteAlert(script: Script) {
+        let alert = UIAlertController(title: "There is already a script named \"\(script.scriptName)\"", message: "Do you wish to save over it?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
+            try! self.realm.write {
+                script.scriptBody = self.textBox.text
+            }
+            self.savedConfirmation()
+        }))
+//        alert.addAction(UIAlertAction(title: "Save As New Script", style: .default
+//            , handler: { (_) in
+//                self.saveNewScript()
+//        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
+            self.saveNewScript()
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    fileprivate func savedConfirmation() {
+        let alert = UIAlertController(title: "Saved", message: "Your script has been saved", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
     
     fileprivate func saveNewScript() {
         let alert = UIAlertController(title: "Script Name", message: "Give your script a unique name", preferredStyle: .alert)
@@ -289,43 +351,9 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         alert.preferredAction = saveAction
         self.present(alert, animated: true, completion: nil)
     }
-
-    func presentImportFailAlert() {
-        let alert = UIAlertController(title: "Missing Text", message: "The text could not be imported", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (action:UIAlertAction) in
-            self.textBox.selectAll(nil)
-        }))
-        self.present(alert, animated: true, completion: nil)
-    }
-
-    private func noTextFoundAlert() {
-        let alert = UIAlertController(title: "Missing Text", message: "Add to the textfield before proceeding", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (action:UIAlertAction) in
-            self.textBox.selectAll(nil)
-        }))
-        self.present(alert, animated: true, completion: nil)
-    }
     
-    private func overWriteAlert(script: Script) {
-        let alert = UIAlertController(title: "\"\(script.scriptName)\" Script", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Overwrite \"\(script.scriptName)\"", style: .default, handler: { (_) in
-            try! self.realm.write {
-                script.scriptBody = self.textBox.text
-            }
-            self.savedConfirmation()
-        }))
-        alert.addAction(UIAlertAction(title: "Save As New Script", style: .default
-            , handler: { (_) in
-                self.saveNewScript()
-        }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
-    }
-
-    private func savedConfirmation() {
-        let alert = UIAlertController(title: "Saved", message: "Your script has been saved", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+    fileprivate func saveCurrentScript() {
+        
     }
     
 }
