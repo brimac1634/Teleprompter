@@ -191,14 +191,17 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
 
     @objc func handleImport() {
-        // To add more document types:
-        // documentTypes: ["com.microsoft.word.doc","org.openxmlformats.wordprocessingml.document", kUTTypePDF as String]
+        var alert: UIAlertController!
         
-        
-        let alert = UIAlertController(title: "Import Text", message: "Text can only be imported from pdf files at this time.", preferredStyle: .alert)
+        if #available(iOS 11.0, *) {
+            alert = UIAlertController(title: "Import Text", message: "Text can only be imported from .pdf, .txt, and .rtf files at this time.", preferredStyle: .alert)
+        } else {
+            alert = UIAlertController(title: "Import Text", message: "Text can only be imported from .txt and .rtf files at this time.", preferredStyle: .alert)
+        }
+
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (finished) in
-            let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypePDF as String], in: UIDocumentPickerMode.import)
+            let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.text", kUTTypeText as String, kUTTypeRTF as String, kUTTypePDF as String], in: UIDocumentPickerMode.import)
             documentPicker.delegate = self
             self.present(documentPicker, animated: true, completion: nil)
         }))
@@ -262,14 +265,33 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 
             } else {
                 print("non PDF coming")
+                var readString = ""
+                do {
+                    let attributedStringWithRtf: NSAttributedString = try NSAttributedString(url: url, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)
+                    readString = attributedStringWithRtf.string
+                    textBox.text = readString
+                } catch {
+                    print("Failed to read file: \(error)")
+                }
                 
             }
         } else {
-            print(url)
-//            let webView = UIWebView(frame: .zero)
-//            let urlRequest = URLRequest(url: url)
-//            webView.loadRequest(urlRequest)
+            var readString = ""
+            do {
+                let attributedStringWithRtf: NSAttributedString = try NSAttributedString(url: url, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)
+                readString = attributedStringWithRtf.string
+                textBox.text = readString
+            } catch {
+                print("Failed to read file: \(error)")
+            }
             
+//            do {
+//                readString = try String(contentsOf: url)
+//            } catch {
+//                print("Failed to read file: \(error)")
+//            }
+            
+
             // Fallback on earlier versions
 //            let alert = UIAlertController(title: "Not Available", message: "This function is not available for iOS 10 and under", preferredStyle: .alert)
 //            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
