@@ -21,15 +21,6 @@ class ControlBar: BaseView {
         return button
     }()
     
-    let editButton: BaseButton = {
-        let button = BaseButton()
-        button.backgroundColor = .clear
-        button.setTitle("Edit Text", for: .normal)
-        button.titleLabel?.lineBreakMode = .byWordWrapping
-        button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
-        return button
-    }()
-    
     let saveButton: BaseButton = {
         let button = BaseButton()
         button.backgroundColor = .clear
@@ -272,7 +263,6 @@ class ControlBar: BaseView {
         
         
         addSubview(backButton)
-        addSubview(editButton)
         addSubview(groupedStack)
         addSubview(topButton)
         addSubview(bottomStack)
@@ -292,11 +282,6 @@ class ControlBar: BaseView {
             topButton.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
             topButton.widthAnchor.constraint(equalToConstant: 100),
             topButton.heightAnchor.constraint(equalToConstant: 55),
-            
-            editButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            editButton.widthAnchor.constraint(equalTo: topButton.widthAnchor),
-            editButton.heightAnchor.constraint(equalTo: topButton.heightAnchor),
-            editButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
             
             groupedStack.topAnchor.constraint(equalTo: topButton.bottomAnchor, constant: 32),
             groupedStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),

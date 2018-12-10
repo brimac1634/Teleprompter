@@ -182,18 +182,44 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBarTrailing = controlBar.trailingAnchor.constraint(equalTo: view.leadingAnchor)
         
         settingsButtonLeading = settingsButton.leadingAnchor.constraint(equalTo: view.trailingAnchor, constant: 16)
-        settingsButtonTrailing = settingsButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
+        if #available(iOS 11.0, *) {
+            settingsButtonTrailing = settingsButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
+            arrowContainerLeading = arrow.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8)
+        } else {
+            // Fallback on earlier versions
+            settingsButtonTrailing = settingsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            arrowContainerLeading = arrow.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8)
+        }
         
-        arrowContainerLeading = arrow.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8)
+        
         arrowContainerTrailing = arrow.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: -8)
         arrowContainerCenterY = arrowContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         
+        if #available(iOS 11.0, *) {
+            NSLayoutConstraint.activate([
+                settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+                
+                textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+                textView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: arrowSize),
+                textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16 - settingSize),
+                textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+                ])
+        } else {
+            NSLayoutConstraint.activate([
+                settingsButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 32),
+                
+                textView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+                textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: arrowSize),
+                textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16 - settingSize),
+                textView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
+                ])
+        }
         
         NSLayoutConstraint.activate([
             settingsButton.widthAnchor.constraint(equalToConstant: settingSize),
             settingsButton.heightAnchor.constraint(equalToConstant: settingSize),
             settingsButtonTrailing,
-            settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            
             
             arrowContainerCenterY,
             arrowContainer.widthAnchor.constraint(equalToConstant: arrowSize),
@@ -205,10 +231,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             arrow.widthAnchor.constraint(equalToConstant: arrowSize),
             arrow.heightAnchor.constraint(equalToConstant: arrowSize),
             
-            textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            textView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: arrowSize),
-            textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16 - settingSize),
-            textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            
             
             gradientView.topAnchor.constraint(equalTo: view.topAnchor),
             gradientView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -217,6 +240,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
 
             controlBar.heightAnchor.constraint(equalTo: view.heightAnchor),
             controlBar.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: controlPanelMultiplier),
+            controlBar.topAnchor.constraint(equalTo: view.topAnchor),
             controlBarTrailing,
 
             shadeView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -318,7 +342,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleBack() {
-        toggleControlPanel()
+        arrow.alpha = 0
+        navigationController?.isNavigationBarHidden = false
+        navigationController?.popViewController(animated: true)
     }
     
     @objc func handleSettings(gesture: UITapGestureRecognizer) {
@@ -375,11 +401,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         arrowContainerCenterY.constant += changeInY
     }
     
-    @objc func handleEditText() {
-        arrow.alpha = 0
-        navigationController?.isNavigationBarHidden = false
-        navigationController?.popViewController(animated: true)
-    }
     
     @objc func handleSave() {
         let alert = UIAlertController(title: "Save Default", message: "Are you sure you want to save these settings?", preferredStyle: .alert)
@@ -643,6 +664,20 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
         updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
+        
+    }
+    
+    //MARK: - ScrollView Methods
+    
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if #available(iOS 11.0, *) {
+            print("no contentOffset needed")
+        } else {
+            if scrollView.contentOffset.x != 0 {
+                scrollView.contentOffset.x = 0
+            }
+        }
         
     }
 }

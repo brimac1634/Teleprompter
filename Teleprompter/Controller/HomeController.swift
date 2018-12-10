@@ -38,6 +38,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         box.layer.borderColor = UIColor.netRoadshowGray(a: 1).cgColor
         box.isEditable = true
         box.clipsToBounds = true
+        box.showsHorizontalScrollIndicator = false
         box.backgroundColor = UIColor.netRoadshowGray(a: 1)
         box.contentInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         box.translatesAutoresizingMaskIntoConstraints = false
@@ -82,18 +83,26 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     private func setupView() {
         view.backgroundColor = .white
-        topLabel.font = usingIpad ? UIFont.systemFont(ofSize: 30) : UIFont.systemFont(ofSize: 24)
+        topLabel.font = usingIpad ? UIFont.systemFont(ofSize: 26) : UIFont.systemFont(ofSize: 20)
         
         view.addSubview(topLabel)
         view.addSubview(textBox)
         view.addSubview(startButton)
         
-        startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
+        if #available(iOS 11.0, *) {
+            startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
+            topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8).isActive = true
+            textBox.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.95).isActive = true
+        } else {
+            // Fallback on earlier versions
+            startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8)
+            topLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 70).isActive = true
+            textBox.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.95).isActive = true
+        }
         
         NSLayoutConstraint.activate([
             topLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             topLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
-            topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             topLabel.heightAnchor.constraint(equalToConstant: 35),
             
             startButton.widthAnchor.constraint(equalToConstant: 120),
@@ -103,8 +112,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             
             textBox.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             textBox.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 8),
-            textBox.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8),
-            textBox.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.95),
+            textBox.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8)
 
             ])
         
@@ -126,27 +134,39 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         logoImage.contentMode = .scaleAspectFit
         navigationItem.titleView = logoImage
         
-        let importImage = UIImage(named: "import")?.withRenderingMode(.alwaysTemplate)
-        let importButton = UIButton()
-        importButton.setImage(importImage, for: .normal)
-        importButton.addTarget(self, action: #selector(handleImport), for: .touchUpInside)
-        importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-        let barItem = UIBarButtonItem(customView: importButton)
+        if #available(iOS 11.0, *) {
+            let importImage = UIImage(named: "import")?.withRenderingMode(.alwaysTemplate)
+            let importButton = UIButton()
+            importButton.setImage(importImage, for: .normal)
+            importButton.addTarget(self, action: #selector(handleImport), for: .touchUpInside)
+            importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+            let barItem = UIBarButtonItem(customView: importButton)
+            
+            let folderImage = UIImage(named: "folder")?.withRenderingMode(.alwaysTemplate)
+            let folderButton = UIButton()
+            folderButton.setImage(folderImage, for: .normal)
+            folderButton.addTarget(self, action: #selector(handleFolder), for: .touchUpInside)
+            folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+            let folderBarItem = UIBarButtonItem(customView: folderButton)
+            
+            barItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
+            barItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
+            folderBarItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
+            folderBarItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
+            
+            navigationItem.rightBarButtonItem = barItem
+            navigationItem.leftBarButtonItem = folderBarItem
+        } else {
+            let folderButton = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(handleFolder))
+            folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+            navigationItem.leftBarButtonItem = folderButton
+            
+            let importButton = UIBarButtonItem(title: "Import", style: .plain, target: self, action: #selector(handleImport))
+            importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+            navigationItem.rightBarButtonItem = importButton
+        }
         
-        let folderImage = UIImage(named: "folder")?.withRenderingMode(.alwaysTemplate)
-        let folderButton = UIButton()
-        folderButton.setImage(folderImage, for: .normal)
-        folderButton.addTarget(self, action: #selector(handleFolder), for: .touchUpInside)
-        folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-        let folderBarItem = UIBarButtonItem(customView: folderButton)
         
-        barItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        barItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
-        folderBarItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        folderBarItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
-        
-        navigationItem.rightBarButtonItem = barItem
-        navigationItem.leftBarButtonItem = folderBarItem
     }
 
 
@@ -169,19 +189,28 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         }
         
     }
-    
+
     @objc func handleImport() {
-        // To add more document types:
-        // documentTypes: ["com.microsoft.word.doc","org.openxmlformats.wordprocessingml.document", kUTTypePDF as String]
+        var alert: UIAlertController!
         
-        
-        let alert = UIAlertController(title: "Import Text", message: "Text can only be imported from pdf files at this time.", preferredStyle: .alert)
+        if #available(iOS 11.0, *) {
+            alert = UIAlertController(title: "Import Text", message: "Text can only be imported from .pdf, .txt, and .rtf files at this time.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (finished) in
+                let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.text", kUTTypeText as String, kUTTypeRTF as String, kUTTypePDF as String], in: UIDocumentPickerMode.import)
+                documentPicker.delegate = self
+                self.present(documentPicker, animated: true, completion: nil)
+            }))
+        } else {
+            alert = UIAlertController(title: "Import Text", message: "Your version of iOS only supports .txt and .rtf files.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (finished) in
+                let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.text", kUTTypeText as String, kUTTypeRTF as String], in: UIDocumentPickerMode.import)
+                documentPicker.delegate = self
+                self.present(documentPicker, animated: true, completion: nil)
+            }))
+        }
+
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (finished) in
-            let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypePDF as String], in: UIDocumentPickerMode.import)
-            documentPicker.delegate = self
-            self.present(documentPicker, animated: true, completion: nil)
-        }))
+        
         alert.preferredAction = alert.actions[1]
         self.present(alert, animated: true, completion: nil)
         
@@ -220,28 +249,63 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     //MARK: - Document Picker Methods
     
+    fileprivate func importRTF(fileURL: URL) {
+        print(".rtf coming")
+        var readString = ""
+        do {
+            let attributedStringWithRtf: NSAttributedString = try NSAttributedString(url: fileURL, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)
+            readString = attributedStringWithRtf.string
+            textBox.textColor = .black
+            textBox.text = readString
+        } catch {
+            print("Failed to read file: \(error)")
+        }
+    }
+    
+    fileprivate func importTxt(fileURL: URL) {
+        print(".txt coming")
+        var readString = ""
+        do {
+            let attributedStringWithRtf: NSAttributedString = try NSAttributedString(url: fileURL, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.plain], documentAttributes: nil)
+            readString = attributedStringWithRtf.string
+            textBox.textColor = .black
+            textBox.text = readString
+        } catch {
+            print("Failed to read file: \(error)")
+        }
+    }
+    
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
-        if let pdf = PDFDocument(url: url) {
-            print("PDF coming")
-            let pageCount = pdf.pageCount
-            let documentContent = NSMutableAttributedString()
-            
-            for i in 0 ..< pageCount {
-                guard let page = pdf.page(at: i) else { continue }
-                guard let pageContent = page.attributedString else { continue }
-                documentContent.append(pageContent)
+        if #available(iOS 11.0, *) {
+            if let pdf = PDFDocument(url: url) {
+                print("PDF coming")
+                let pageCount = pdf.pageCount
+                let documentContent = NSMutableAttributedString()
+                
+                for i in 0 ..< pageCount {
+                    guard let page = pdf.page(at: i) else { continue }
+                    guard let pageContent = page.attributedString else { continue }
+                    documentContent.append(pageContent)
+                }
+                documentContent.setFontFace(font: UIFont.systemFont(ofSize: textBox.universalFontSize), color: UIColor.black)
+                
+                if documentContent.string == "" {
+                    presentImportFailAlert()
+                } else {
+                    textBox.attributedText = documentContent
+                }
+                
+            } else if url.pathExtension == "rtf" {
+                importRTF(fileURL: url)
+            } else if url.pathExtension == "txt" {
+                importTxt(fileURL: url)
             }
-            documentContent.setFontFace(font: UIFont.systemFont(ofSize: textBox.universalFontSize), color: UIColor.black)
-            
-            if documentContent.string == "" {
-                presentImportFailAlert()
-            } else {
-                textBox.attributedText = documentContent
-            }
-            
         } else {
-            print("non PDF coming")
-
+            if url.pathExtension == "rtf" {
+                importRTF(fileURL: url)
+            } else if url.pathExtension == "txt" {
+                importTxt(fileURL: url)
+            }
         }
 
     }
@@ -429,7 +493,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         self.present(alert, animated: true, completion: nil)
     }
     
-    
+
     
 }
 

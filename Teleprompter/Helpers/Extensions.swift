@@ -113,4 +113,15 @@ extension HomeController: UITextViewDelegate {
             textBox.textColor = .lightGray
         }
     }
+    
+    func textViewDidChangeSelection(_ textView: UITextView) {
+        textView.scrollRangeToVisible(textView.selectedRange)
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.x != 0 {
+            scrollView.contentOffset.x = 0
+        }
+    }
 }
+

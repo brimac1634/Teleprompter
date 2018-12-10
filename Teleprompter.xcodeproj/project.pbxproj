@@ -38,6 +38,7 @@
 		D2903D0C21B66314009EBF3C /* FirstTimeGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstTimeGuide.swift; sourceTree = "<group>"; };
 		D2AFE19021B8CD5E0020E736 /* Script.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Script.swift; sourceTree = "<group>"; };
 		D2AFE19221B8D7BB0020E736 /* SavedScriptsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedScriptsController.swift; sourceTree = "<group>"; };
+		D2AFE19421BA847B0020E736 /* Teleprompter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Teleprompter.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +83,7 @@
 		D28C16A721A529210012D84D /* Teleprompter */ = {
 			isa = PBXGroup;
 			children = (
+				D2AFE19421BA847B0020E736 /* Teleprompter.entitlements */,
 				D2AFE18F21B8CD4E0020E736 /* Model */,
 				D28C16C721A5576B0012D84D /* Singleton */,
 				D28C16C421A554E80012D84D /* View */,
@@ -186,7 +188,7 @@
 								enabled = 0;
 							};
 							com.apple.iCloud = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -432,10 +434,11 @@
 			baseConfigurationReference = 9BDEEB54421D7ECCE7A5CE55 /* Pods-Teleprompter.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Teleprompter/Teleprompter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AY47KJ5YA8;
 				INFOPLIST_FILE = Teleprompter/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -452,10 +455,11 @@
 			baseConfigurationReference = 2F678B07C8C57536C0733047 /* Pods-Teleprompter.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Teleprompter/Teleprompter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AY47KJ5YA8;
 				INFOPLIST_FILE = Teleprompter/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
