@@ -284,7 +284,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         let shadeViewGesture = UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap))
         shadeView.addGestureRecognizer(shadeViewGesture)
         controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBack)))
-        controlBar.editButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleEditText)))
         controlBar.saveButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSave)))
         controlBar.startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
         controlBar.defaultButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleDefault)))
@@ -342,7 +341,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleBack() {
-        toggleControlPanel()
+        arrow.alpha = 0
+        navigationController?.isNavigationBarHidden = false
+        navigationController?.popViewController(animated: true)
     }
     
     @objc func handleSettings(gesture: UITapGestureRecognizer) {
@@ -399,11 +400,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         arrowContainerCenterY.constant += changeInY
     }
     
-    @objc func handleEditText() {
-        arrow.alpha = 0
-        navigationController?.isNavigationBarHidden = false
-        navigationController?.popViewController(animated: true)
-    }
     
     @objc func handleSave() {
         let alert = UIAlertController(title: "Save Default", message: "Are you sure you want to save these settings?", preferredStyle: .alert)
