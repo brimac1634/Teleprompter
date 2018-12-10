@@ -8,7 +8,7 @@
 
 import UIKit
 
-class firstTimeGuide: NSObject {
+class FirstTimeGuide: NSObject {
     
     var shadeViewTrailing: NSLayoutConstraint!
     var shadeViewLeading: NSLayoutConstraint!
