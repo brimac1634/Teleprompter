@@ -16,7 +16,7 @@
 		D28C16BF21A53D390012D84D /* RollingTextController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16BE21A53D390012D84D /* RollingTextController.swift */; };
 		D28C16C121A53DA10012D84D /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16C021A53DA10012D84D /* BaseView.swift */; };
 		D28C16C321A554C80012D84D /* ControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16C221A554C80012D84D /* ControlBar.swift */; };
-		D2903D0D21B66314009EBF3C /* FirstTimeGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2903D0C21B66314009EBF3C /* FirstTimeGuide.swift */; };
+		D2903D0D21B66314009EBF3C /* firstTimeGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2903D0C21B66314009EBF3C /* firstTimeGuide.swift */; };
 		D2AFE19121B8CD5E0020E736 /* Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2AFE19021B8CD5E0020E736 /* Script.swift */; };
 		D2AFE19321B8D7BB0020E736 /* SavedScriptsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2AFE19221B8D7BB0020E736 /* SavedScriptsController.swift */; };
 /* End PBXBuildFile section */
@@ -35,7 +35,7 @@
 		D28C16BE21A53D390012D84D /* RollingTextController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollingTextController.swift; sourceTree = "<group>"; };
 		D28C16C021A53DA10012D84D /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		D28C16C221A554C80012D84D /* ControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlBar.swift; sourceTree = "<group>"; };
-		D2903D0C21B66314009EBF3C /* FirstTimeGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstTimeGuide.swift; sourceTree = "<group>"; };
+		D2903D0C21B66314009EBF3C /* firstTimeGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = firstTimeGuide.swift; sourceTree = "<group>"; };
 		D2AFE19021B8CD5E0020E736 /* Script.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Script.swift; sourceTree = "<group>"; };
 		D2AFE19221B8D7BB0020E736 /* SavedScriptsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedScriptsController.swift; sourceTree = "<group>"; };
 		D2AFE19421BA847B0020E736 /* Teleprompter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Teleprompter.entitlements; sourceTree = "<group>"; };
@@ -119,7 +119,7 @@
 				D28C16BA21A530670012D84D /* HomeController.swift */,
 				D28C16BE21A53D390012D84D /* RollingTextController.swift */,
 				D2AFE19221B8D7BB0020E736 /* SavedScriptsController.swift */,
-				D2903D0C21B66314009EBF3C /* FirstTimeGuide.swift */,
+				D2903D0C21B66314009EBF3C /* firstTimeGuide.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -294,7 +294,7 @@
 				D28C16C121A53DA10012D84D /* BaseView.swift in Sources */,
 				D2AFE19121B8CD5E0020E736 /* Script.swift in Sources */,
 				D28C16BF21A53D390012D84D /* RollingTextController.swift in Sources */,
-				D2903D0D21B66314009EBF3C /* FirstTimeGuide.swift in Sources */,
+				D2903D0D21B66314009EBF3C /* firstTimeGuide.swift in Sources */,
 				D28C16BB21A530670012D84D /* HomeController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -32,6 +32,7 @@ class FirstTimeGuide: NSObject {
     }()
     
     func presentGuide() {
+        //adding comment
         shadeView.alpha = 0
         guideLabel.alpha = 0
         guard let window = UIApplication.shared.keyWindow else {return}
