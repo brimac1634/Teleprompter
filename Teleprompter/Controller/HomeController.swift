@@ -161,7 +161,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
             navigationItem.leftBarButtonItem = folderButton
             
-            let importButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleImport))
+            let importButton = UIBarButtonItem(title: "Import", style: .plain, target: self, action: #selector(handleImport))
             importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
             navigationItem.rightBarButtonItem = importButton
         }
@@ -195,16 +195,22 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         
         if #available(iOS 11.0, *) {
             alert = UIAlertController(title: "Import Text", message: "Text can only be imported from .pdf, .txt, and .rtf files at this time.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (finished) in
+                let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.text", kUTTypeText as String, kUTTypeRTF as String, kUTTypePDF as String], in: UIDocumentPickerMode.import)
+                documentPicker.delegate = self
+                self.present(documentPicker, animated: true, completion: nil)
+            }))
         } else {
-            alert = UIAlertController(title: "Import Text", message: "Text can only be imported from .txt and .rtf files with your version of iOS.", preferredStyle: .alert)
+            alert = UIAlertController(title: "Import Text", message: "Your version of iOS only supports .txt and .rtf files.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (finished) in
+                let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.text", kUTTypeText as String, kUTTypeRTF as String], in: UIDocumentPickerMode.import)
+                documentPicker.delegate = self
+                self.present(documentPicker, animated: true, completion: nil)
+            }))
         }
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (finished) in
-            let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.text", kUTTypeText as String, kUTTypeRTF as String, kUTTypePDF as String], in: UIDocumentPickerMode.import)
-            documentPicker.delegate = self
-            self.present(documentPicker, animated: true, completion: nil)
-        }))
+        
         alert.preferredAction = alert.actions[1]
         self.present(alert, animated: true, completion: nil)
         
@@ -267,15 +273,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         } catch {
             print("Failed to read file: \(error)")
         }
-
-//        do {
-//            let attributedStringWithTxt: NSAttributedString = try NSAttributedString(url: fileURL, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.plain], documentAttributes: nil)
-//            readString = attributedStringWithTxt.string
-//            textBox.textColor = .black
-//            textBox.text = readString
-//        } catch {
-//            print("Failed to read file: \(error)")
-//        }
     }
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
