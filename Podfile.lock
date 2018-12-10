@@ -1,0 +1,20 @@
+PODS:
+  - ChromaColorPicker (1.7)
+  - Realm (3.7.5):
+    - Realm/Headers (= 3.7.5)
+  - Realm/Headers (3.7.5)
+  - RealmSwift (3.7.5):
+    - Realm (= 3.7.5)
+
+DEPENDENCIES:
+  - ChromaColorPicker
+  - RealmSwift
+
+SPEC CHECKSUMS:
+  ChromaColorPicker: 33efa67b17cca51dd253689d18b83ac7e05642c2
+  Realm: c286caf4dbf346ce24aad49ca76c7ce622d4a082
+  RealmSwift: 2a9281e37d6de55f66f76254d49d28aeb1b729e4
+
+PODFILE CHECKSUM: 3d38615a5c19907e1265aa1e2900564ffaf470dd
+
+COCOAPODS: 1.4.0
