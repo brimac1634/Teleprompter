@@ -8,11 +8,16 @@
 
 import UIKit
 
-class FirstTimeGuide: NSObject {
+class FirstTimeGuide: BaseView {
     
     var shadeViewTrailing: NSLayoutConstraint!
     var shadeViewLeading: NSLayoutConstraint!
+    var shadeViewTrailingCenter: NSLayoutConstraint!
+    var shadeViewLeadingCenter: NSLayoutConstraint!
     
+    var rollingController: RollingTextController!
+    
+    var circles: [UIView] = []
     
     let shadeView: UIView = {
         let view = UIView()
@@ -32,7 +37,15 @@ class FirstTimeGuide: NSObject {
     }()
     
     func presentGuide() {
-        //adding comment
+        let circleContainer = UIView()
+        
+        for _ in 0 ..< 2 {
+            let circle = BaseView()
+            circle.backgroundColor = .white
+            circle.layer.cornerRadius = 20
+            circleContainer.addSubview(circle)
+            circles.append(circle)
+        }
         shadeView.alpha = 0
         guideLabel.alpha = 0
         guard let window = UIApplication.shared.keyWindow else {return}
