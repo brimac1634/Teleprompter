@@ -132,7 +132,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if defaults.bool(forKey: "isFirstTime") == false {
+        if defaults.bool(forKey: "isFirstTime") == true {
             toggleControlPanel()
         } else {
             let guide = FirstTimeGuide()

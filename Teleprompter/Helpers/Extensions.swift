@@ -119,8 +119,12 @@ extension HomeController: UITextViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.x != 0 {
-            scrollView.contentOffset.x = 0
+        if #available(iOS 11.0, *) {
+            //content offset unneeded
+        } else {
+            if scrollView.contentOffset.x != 0 {
+                scrollView.contentOffset.x = 0
+            }
         }
     }
 }
