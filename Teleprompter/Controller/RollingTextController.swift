@@ -672,7 +672,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if #available(iOS 11.0, *) {
-            print("no contentOffset needed")
+//            print("no contentOffset needed")
         } else {
             if scrollView.contentOffset.x != 0 {
                 scrollView.contentOffset.x = 0

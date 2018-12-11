@@ -16,7 +16,7 @@ class FirstTimeGuide: BaseView {
     var shadeViewLeadingCenter: NSLayoutConstraint!
     
     var firstTap: UITapGestureRecognizer!
-    var secondTap: UIPanGestureRecognizer!
+    var secondTap: UITapGestureRecognizer!
     var thirdTap: UITapGestureRecognizer!
     var fourthTap: UITapGestureRecognizer!
     
@@ -26,7 +26,9 @@ class FirstTimeGuide: BaseView {
     
     let shadeView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.init(white: 0, alpha: 0.5)
+        view.layer.borderColor = UIColor.netRoadshowGray(a: 1).cgColor
+        view.layer.borderWidth = 5
+        view.backgroundColor = .clear
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -45,6 +47,10 @@ class FirstTimeGuide: BaseView {
     
     
     func presentGuide() {
+        isUserInteractionEnabled = true
+        if let rolling = rollingController {
+            rolling.settingsButton.isUserInteractionEnabled = false
+        }
         
         if ( UIDevice.current.model.range(of: "iPad") != nil) {
             guideLabel.font = UIFont.systemFont(ofSize: 36)
@@ -52,18 +58,23 @@ class FirstTimeGuide: BaseView {
             guideLabel.font = UIFont.systemFont(ofSize: 22)
         }
         
-        let circleContainer = UIView()
+        let circleContainer = BaseView()
         
         for _ in 0 ..< 2 {
             let circle = BaseView()
             circle.backgroundColor = .white
             circle.layer.cornerRadius = 20
             circle.alpha = 0
+            circle.isUserInteractionEnabled = false
             circleContainer.addSubview(circle)
             circles.append(circle)
         }
         
-        animateCircles()
+        UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat], animations: {
+            for circle in self.circles {
+                circle.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+            }
+        }, completion: nil)
         
         shadeView.alpha = 0
         guideLabel.alpha = 0
@@ -86,8 +97,8 @@ class FirstTimeGuide: BaseView {
             
             guideLabel.topAnchor.constraint(equalTo: shadeView.topAnchor),
             guideLabel.bottomAnchor.constraint(equalTo: shadeView.centerYAnchor),
-            guideLabel.widthAnchor.constraint(equalTo: shadeView.widthAnchor),
-            guideLabel.centerXAnchor.constraint(equalTo: shadeView.centerXAnchor),
+            guideLabel.leadingAnchor.constraint(equalTo: shadeView.leadingAnchor, constant: 16),
+            guideLabel.trailingAnchor.constraint(equalTo: shadeView.trailingAnchor, constant: -16),
             
             circleContainer.topAnchor.constraint(equalTo: shadeView.centerYAnchor),
             circleContainer.leadingAnchor.constraint(equalTo: shadeView.leadingAnchor),
@@ -96,13 +107,13 @@ class FirstTimeGuide: BaseView {
             
             circles[0].widthAnchor.constraint(equalToConstant: 40),
             circles[0].heightAnchor.constraint(equalToConstant: 40),
-            circles[0].centerXAnchor.constraint(equalTo: shadeView.centerXAnchor, constant: -20),
-            circles[0].centerYAnchor.constraint(equalTo: shadeView.centerYAnchor, constant: 20),
+            circles[0].centerXAnchor.constraint(equalTo: circleContainer.centerXAnchor, constant: -30),
+            circles[0].centerYAnchor.constraint(equalTo: circleContainer.centerYAnchor, constant: 30),
             
             circles[1].widthAnchor.constraint(equalToConstant: 40),
             circles[1].heightAnchor.constraint(equalToConstant: 40),
-            circles[1].centerXAnchor.constraint(equalTo: shadeView.centerXAnchor, constant: 20),
-            circles[1].centerYAnchor.constraint(equalTo: shadeView.centerYAnchor, constant: -20)
+            circles[1].centerXAnchor.constraint(equalTo: circleContainer.centerXAnchor, constant: 30),
+            circles[1].centerYAnchor.constraint(equalTo: circleContainer.centerYAnchor, constant: -30)
             ])
         
         setupGestures()
@@ -110,11 +121,12 @@ class FirstTimeGuide: BaseView {
         guideLabel.frame.origin.y = guideLabel.frame.origin.y + 50
         
         UIView.animate(withDuration: 0.5, animations: {
+            self.backgroundColor = UIColor.init(white: 0, alpha: 0.8)
             self.shadeView.alpha = 1
         }) { (finished) in
             UIView.animate(withDuration: 0.25, animations: {
                 self.guideLabel.alpha = 1
-                self.circles[0].alpha = 0.9
+                self.circles[0].alpha = 0.8
                 self.guideLabel.frame.origin.y -= 50
             })
         }
@@ -126,41 +138,96 @@ class FirstTimeGuide: BaseView {
     
     fileprivate func setupGestures() {
         firstTap = UITapGestureRecognizer(target: self, action: #selector(handleFirst))
-        secondTap = UIPanGestureRecognizer(target: self, action: #selector(handleSecond))
+        secondTap = UITapGestureRecognizer(target: self, action: #selector(handleSecond))
+        secondTap.numberOfTouchesRequired = 2
         thirdTap = UITapGestureRecognizer(target: self, action: #selector(handleThird))
-        fourthTap = UITapGestureRecognizer(target: self, action: #selector(handleFourth))
+        thirdTap.numberOfTouchesRequired = 2
+        
+        secondTap.isEnabled = false
+        thirdTap.isEnabled = false
         
         shadeView.addGestureRecognizer(firstTap)
         shadeView.addGestureRecognizer(secondTap)
         shadeView.addGestureRecognizer(thirdTap)
-        shadeView.addGestureRecognizer(fourthTap)
     }
     
     @objc func handleFirst() {
-        
+        firstTap.isEnabled = false
+        UIView.animate(withDuration: 0.25, animations: {
+            self.guideLabel.frame.origin.y += 50
+            self.guideLabel.alpha = 0
+            for circle in self.circles {
+                circle.alpha = 0
+            }
+        }) { (_) in
+            UIView.animate(withDuration: 0.5, animations: {
+                self.shadeViewTrailing.isActive = false
+                self.shadeViewTrailingCenter.isActive = true
+                self.guideLabel.text = "Two finger tap on the left side of the screen to slow down scrolling"
+                self.layoutIfNeeded()
+            }, completion: { (_) in
+                UIView.animate(withDuration: 0.25, animations: {
+                    self.guideLabel.frame.origin.y -= 50
+                    self.guideLabel.alpha = 1
+                    for circle in self.circles {
+                        circle.alpha = 0.8
+                    }
+                }, completion: { (_) in
+                    self.secondTap.isEnabled = true
+                })
+            })
+        }
     }
     
     @objc func handleSecond() {
+        secondTap.isEnabled = false
+        UIView.animate(withDuration: 0.25, animations: {
+            self.guideLabel.frame.origin.y += 50
+            self.guideLabel.alpha = 0
+            for circle in self.circles {
+                circle.alpha = 0
+            }
+        }) { (_) in
+            UIView.animate(withDuration: 0.5, animations: {
+                self.shadeViewTrailingCenter.isActive = false
+                self.shadeViewTrailing.isActive = true
+                self.shadeViewLeading.isActive = false
+                self.shadeViewLeadingCenter.isActive = true
+                self.guideLabel.text = "Two finger tap on the right side of the screen to speed up scrolling"
+                self.layoutIfNeeded()
+            }, completion: { (_) in
+                UIView.animate(withDuration: 0.25, animations: {
+                    self.guideLabel.frame.origin.y -= 50
+                    self.guideLabel.alpha = 1
+                    for circle in self.circles {
+                        circle.alpha = 0.8
+                    }
+                }, completion: { (_) in
+                    self.thirdTap.isEnabled = true
+                })
+            })
+        }
         
     }
     
     @objc func handleThird() {
-        
-    }
-    
-    @objc func handleFourth() {
-        
-    }
-
-    
-    //MARK: - Animation Method
-    
-    fileprivate func animateCircles() {
-        UIView.animate(withDuration: 1.5, delay: 0, options: [.autoreverse, .repeat], animations: {
+        thirdTap.isEnabled = false
+        UIView.animate(withDuration: 0.25, animations: {
+            self.guideLabel.frame.origin.y += 50
+            self.guideLabel.alpha = 0
             for circle in self.circles {
-                circle.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                circle.alpha = 0
             }
-        }, completion: nil)
+        }) { (_) in
+            UIView.animate(withDuration: 0.5, animations: {
+                self.shadeView.alpha = 0
+            }, completion: { (_) in
+                self.removeFromSuperview()
+                guard let rolling = self.rollingController else {return}
+                rolling.settingsButton.isUserInteractionEnabled = true
+                rolling.toggleControlPanel()
+            })
+        }
     }
     
 }
