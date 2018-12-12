@@ -82,6 +82,12 @@ extension NSMutableAttributedString {
     }
 }
 
+extension StringProtocol where Index == String.Index {
+    func nsRange(from range: Range<Index>) -> NSRange {
+        return NSRange(range, in: self)
+    }
+}
+
 extension HomeController: UITextViewDelegate {
     @objc func keyboardWillShow(_ notification: Notification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
@@ -127,5 +133,28 @@ extension HomeController: UITextViewDelegate {
             }
         }
     }
+}
+
+extension RollingTextController: UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return markerArray.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return markerArray[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let marker = markerArray[row]
+        if let range = textInput.range(of: marker) {
+            let nsRange = textInput.nsRange(from: range)
+            textView.scrollRangeToVisible(nsRange)
+        }
+    }
+    
 }
 

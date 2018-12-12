@@ -21,6 +21,23 @@ class ControlBar: BaseView {
         return button
     }()
     
+    let markerMenu: UIPickerView = {
+        let picker = UIPickerView()
+        picker.backgroundColor = .clear
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        return picker
+    }()
+    
+//    let testButton: BaseButton = {
+//        let button = BaseButton()
+//        button.backgroundColor = .clear
+//        button.setTitle("Test", for: .normal)
+//        button.titleLabel?.textAlignment = .center
+//        button.titleLabel?.lineBreakMode = .byWordWrapping
+//        button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
+//        return button
+//    }()
+    
     let saveButton: BaseButton = {
         let button = BaseButton()
         button.backgroundColor = .clear
@@ -263,6 +280,7 @@ class ControlBar: BaseView {
         
         
         addSubview(backButton)
+        addSubview(markerMenu)
         addSubview(groupedStack)
         addSubview(topButton)
         addSubview(bottomStack)
@@ -282,6 +300,11 @@ class ControlBar: BaseView {
             topButton.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
             topButton.widthAnchor.constraint(equalToConstant: 100),
             topButton.heightAnchor.constraint(equalToConstant: 55),
+            
+            markerMenu.centerXAnchor.constraint(equalTo: centerXAnchor),
+            markerMenu.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            markerMenu.widthAnchor.constraint(equalToConstant: 100),
+            markerMenu.heightAnchor.constraint(equalToConstant: 55),
             
             groupedStack.topAnchor.constraint(equalTo: topButton.bottomAnchor, constant: 32),
             groupedStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
