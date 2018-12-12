@@ -180,8 +180,12 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         if textBox.text?.count != 0 && textBox.text != "Type or paste your script here..." {
             let rollingTextController = RollingTextController()
             guard let text = textBox.text else {return}
-            rollingTextController.textInput = "\n\n\n\n\(text)\n\n\n\n\n\n\n\n\n\n\n"
-            rollingTextController.markerArray = createMarkers(textBody: text)
+            let marker = "##"
+            let separatedTextArray = text.components(separatedBy: marker)
+            let markerArray = createMarkers(textBody: text, textArray: separatedTextArray)
+            rollingTextController.markerArray = markerArray
+            let newText = updateTextWithMarkers(textArray: separatedTextArray, markerArray: markerArray)
+            rollingTextController.textInput = "\n\n\n\n\(newText)\n\n\n\n\n\n\n\n\n\n\n"
             rollingTextController.view.backgroundColor = .black
             navigationController?.isNavigationBarHidden = true
             navigationController?.pushViewController(rollingTextController, animated: true)
@@ -497,20 +501,29 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     //MARK: - Marker Method
     
-    fileprivate func createMarkers(textBody: String) -> [String] {
+    fileprivate func createMarkers(textBody: String, textArray: [String]) -> [String] {
         var markerList = [String]()
-        let marker = "##"
-        let separatedTextArray = textBody.components(separatedBy: marker)
-        for i in 0..<separatedTextArray.count {
+        for i in 0..<textArray.count {
             if i % 2 != 0 {
-                markerList.append(separatedTextArray[i])
+                markerList.append(textArray[i])
             }
         }
-        
         return markerList
     }
     
-
+    fileprivate func updateTextWithMarkers(textArray: [String], markerArray: [String]) -> String {
+        var newText = ""
+        var markerCount: Int = 0
+        for i in 0..<textArray.count {
+            newText.append(contentsOf: textArray[i])
+            newText.append(contentsOf: "##")
+            if i % 2 == 0 {
+                markerCount += 1
+                newText.append(contentsOf: "\(markerCount): ")
+            }
+        }
+        return newText
+    }
     
 }
 
