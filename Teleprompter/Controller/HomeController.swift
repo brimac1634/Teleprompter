@@ -182,9 +182,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             guard let text = textBox.text else {return}
             let marker = "##"
             let separatedTextArray = text.components(separatedBy: marker)
-            let markerArray = createMarkers(textBody: text, textArray: separatedTextArray)
-            rollingTextController.markerArray = markerArray
-            let newText = updateTextWithMarkers(textArray: separatedTextArray, markerArray: markerArray)
+            rollingTextController.markerArray = createMarkers(textBody: text, textArray: separatedTextArray)
+            let newText = updateTextWithMarkers(textArray: separatedTextArray)
             rollingTextController.textInput = "\n\n\n\n\(newText)\n\n\n\n\n\n\n\n\n\n\n"
             rollingTextController.view.backgroundColor = .black
             navigationController?.isNavigationBarHidden = true
@@ -503,15 +502,22 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     fileprivate func createMarkers(textBody: String, textArray: [String]) -> [String] {
         var markerList = [String]()
+        var markerCount: Int = 0
         for i in 0..<textArray.count {
             if i % 2 != 0 {
-                markerList.append(textArray[i])
+                markerCount += 1
+                if textArray[i] == "" {
+                    markerList.append("Section \(markerCount)")
+                } else {
+                    markerList.append(textArray[i])
+                }
+                
             }
         }
         return markerList
     }
     
-    fileprivate func updateTextWithMarkers(textArray: [String], markerArray: [String]) -> String {
+    fileprivate func updateTextWithMarkers(textArray: [String]) -> String {
         var newText = ""
         var markerCount: Int = 0
         for i in 0..<textArray.count {
@@ -519,7 +525,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             newText.append(contentsOf: "##")
             if i % 2 == 0 {
                 markerCount += 1
-                newText.append(contentsOf: "\(markerCount): ")
+                newText.append(contentsOf: "[\(markerCount)] ")
             }
         }
         return newText
