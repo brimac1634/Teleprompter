@@ -21,13 +21,32 @@ class ControlBar: BaseView {
         return button
     }()
     
-    let markerMenu: UIPickerView = {
-        let picker = UIPickerView()
-        picker.backgroundColor = .clear
-        picker.translatesAutoresizingMaskIntoConstraints = false
-        return picker
+//    let markerLabel: BaseLabel = {
+//        let label = BaseLabel()
+//        label.text = "Jump to..."
+//        label.translatesAutoresizingMaskIntoConstraints = true
+//        return label
+//    }()
+    
+    let markerInput: UITextField = {
+        let field = UITextField()
+        field.borderStyle = .none
+        field.backgroundColor = UIColor.netRoadshowGray(a: 1)
+        field.textColor = UIColor.netRoadshowDarkGray(a: 1)
+        field.placeholder = "Skip to..."
+        field.contentMode = .center
+        field.textAlignment = .center
+        field.autocorrectionType = .no
+        field.translatesAutoresizingMaskIntoConstraints = false
+        return field
     }()
     
+    let picker: UIPickerView = {
+        let picker = UIPickerView()
+        picker.showsSelectionIndicator = true
+        picker.tintColor = UIColor.netRoadshowBlue(a: 1)
+        return picker
+    }()
 //    let testButton: BaseButton = {
 //        let button = BaseButton()
 //        button.backgroundColor = .clear
@@ -221,6 +240,15 @@ class ControlBar: BaseView {
     override func setupView() {
        super.setupView()
         
+        if ( UIDevice.current.model.range(of: "iPad") != nil) {
+            markerInput.font = UIFont.systemFont(ofSize: 26)
+        } else {
+            markerInput.font = UIFont.systemFont(ofSize: 18)
+        }
+        
+        
+        markerInput.inputView = picker
+        
         let switches = [[mirrorModeLabel, mirrorModeSwitch], [arrowModeLabel, arrowModeSwitch], [highlightModeLabel, highlightModeSwitch]]
         var switchViews: [UIView] = []
         for i in 0..<switches.count {
@@ -278,11 +306,17 @@ class ControlBar: BaseView {
         bottomStack.spacing = 8
         bottomStack.translatesAutoresizingMaskIntoConstraints = false
         
+//        let markerStack = UIStackView(arrangedSubviews: [markerLabel, markerInput])
+//        markerStack.axis = .vertical
+//        markerStack.distribution = .fillEqually
+//        markerStack.contentMode = .center
+//        markerStack.spacing = 8
+//        markerStack.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(backButton)
-        addSubview(markerMenu)
         addSubview(groupedStack)
         addSubview(topButton)
+        addSubview(markerInput)
         addSubview(bottomStack)
         
         NSLayoutConstraint.activate([
@@ -301,10 +335,10 @@ class ControlBar: BaseView {
             topButton.widthAnchor.constraint(equalToConstant: 100),
             topButton.heightAnchor.constraint(equalToConstant: 55),
             
-            markerMenu.centerXAnchor.constraint(equalTo: centerXAnchor),
-            markerMenu.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
-            markerMenu.widthAnchor.constraint(equalToConstant: 100),
-            markerMenu.heightAnchor.constraint(equalToConstant: 55),
+            markerInput.centerXAnchor.constraint(equalTo: centerXAnchor),
+            markerInput.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            markerInput.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.4),
+            markerInput.heightAnchor.constraint(equalToConstant: 60),
             
             groupedStack.topAnchor.constraint(equalTo: topButton.bottomAnchor, constant: 32),
             groupedStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),

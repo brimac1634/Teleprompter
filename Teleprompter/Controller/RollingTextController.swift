@@ -28,7 +28,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var backgroundColorChosen: Bool = true
     var controlPanelMultiplier: CGFloat = 300
     var lastScale: CGFloat = 0
-    var markerArray: [String] = ["#Slide 1#", "#Slide 2#"]
+    var markerArray: [String] = ["", "#Slide 1#", "#Slide 2#"]
    
     
     var style: NSMutableParagraphStyle!
@@ -113,8 +113,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        controlBar.markerMenu.dataSource = self
-        controlBar.markerMenu.delegate = self
+        controlBar.picker.dataSource = self
+        controlBar.picker.delegate = self
         
         if ( UIDevice.current.model.range(of: "iPad") != nil){
             usingIpad = true
