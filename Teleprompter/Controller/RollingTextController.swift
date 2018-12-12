@@ -15,7 +15,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     let defaults = UserDefaults.standard
     var usingIpad: Bool = true
 
-    var textInput: String = ""
+    var textInput = NSMutableAttributedString()
     var textColor: UIColor = UIColor.white
     var backgroundColor: UIColor = UIColor.black
     var textSize: CGFloat = 80
@@ -526,12 +526,12 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     func updateTextStyle(lineSpacing: CGFloat, fontSize: CGFloat, color: UIColor) {
-        let attributedString = NSMutableAttributedString(string: textInput)
+        let attributedString = textInput
         let mutableParagraphStyle = NSMutableParagraphStyle()
         mutableParagraphStyle.lineSpacing = lineSpacing
         mutableParagraphStyle.alignment = .center
 
-        attributedString.addAttributes([NSAttributedString.Key.paragraphStyle: mutableParagraphStyle, NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize)], range: NSMakeRange(0, textInput.count))
+        attributedString.addAttributes([NSAttributedString.Key.paragraphStyle: mutableParagraphStyle, NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize)], range: NSMakeRange(0, textInput.string.count))
         
         textView.attributedText = attributedString
         arrow.tintColor = color

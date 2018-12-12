@@ -183,8 +183,10 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             let marker = "##"
             let separatedTextArray = text.components(separatedBy: marker)
             rollingTextController.markerArray = createMarkers(textBody: text, textArray: separatedTextArray)
-            let newText = updateTextWithMarkers(textArray: separatedTextArray)
-            rollingTextController.textInput = "\n\n\n\n\(newText)\n\n\n\n\n\n\n\n\n\n\n"
+            let newText = NSMutableAttributedString.init(string: "\n\n\n\n")
+            newText.append(updateTextWithMarkers(textArray: separatedTextArray))
+            newText.append(NSMutableAttributedString.init(string: "\n\n\n\n\n\n\n\n\n\n\n"))
+            rollingTextController.textInput = newText
             rollingTextController.view.backgroundColor = .black
             navigationController?.isNavigationBarHidden = true
             navigationController?.pushViewController(rollingTextController, animated: true)
@@ -517,16 +519,27 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         return markerList
     }
     
-    fileprivate func updateTextWithMarkers(textArray: [String]) -> String {
-        var newText = ""
+    fileprivate func updateTextWithMarkers(textArray: [String]) -> NSMutableAttributedString {
+        let markerColor = UIColor.netRoadshowDarkGray(a: 1)
+        let newText = NSMutableAttributedString()
         var markerCount: Int = 0
         for i in 0..<textArray.count {
-            newText.append(contentsOf: textArray[i])
-            newText.append(contentsOf: "##")
-            if i % 2 == 0 {
+            let markerSymbol = NSMutableAttributedString(string: "##", attributes: [NSAttributedString.Key.foregroundColor : markerColor])
+            if i % 2 != 0 {
+                newText.append(NSAttributedString.init(string: textArray[i]))
+                newText.append(markerSymbol)
+            } else {
+                let markerName = NSMutableAttributedString(string: textArray[i], attributes: [NSAttributedString.Key.foregroundColor : markerColor])
+                
+                newText.append(markerName)
+                newText.append(markerSymbol)
                 markerCount += 1
-                newText.append(contentsOf: "[\(markerCount)] ")
+                
+                let markerNumber = NSMutableAttributedString(string: "[\(markerCount)] ", attributes: [NSAttributedString.Key.foregroundColor : markerColor])
+                
+                newText.append(markerNumber)
             }
+
         }
         return newText
     }
