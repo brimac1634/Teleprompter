@@ -86,6 +86,18 @@ extension StringProtocol where Index == String.Index {
     func nsRange(from range: Range<Index>) -> NSRange {
         return NSRange(range, in: self)
     }
+    
+    func ranges(of string: Self, options: String.CompareOptions = []) -> [Range<Index>] {
+        var result: [Range<Index>] = []
+        var start = startIndex
+        while start < endIndex,
+            let range = self[start..<endIndex].range(of: string, options: options) {
+                result.append(range)
+                start = range.lowerBound < range.upperBound ? range.upperBound :
+                    index(range.lowerBound, offsetBy: 1, limitedBy: endIndex) ?? endIndex
+        }
+        return result
+    }
 }
 
 extension HomeController: UITextViewDelegate {
@@ -149,6 +161,7 @@ extension RollingTextController: UIPickerViewDataSource, UIPickerViewDelegate {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        guard !markerArray.isEmpty else {return}
         let marker = markerArray[row]
         if let range = textInput.range(of: marker) {
             let nsRange = textInput.nsRange(from: range)

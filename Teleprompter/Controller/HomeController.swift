@@ -181,6 +181,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             let rollingTextController = RollingTextController()
             guard let text = textBox.text else {return}
             rollingTextController.textInput = "\n\n\n\n\(text)\n\n\n\n\n\n\n\n\n\n\n"
+            rollingTextController.markerArray = createMarkers(textBody: text)
             rollingTextController.view.backgroundColor = .black
             navigationController?.isNavigationBarHidden = true
             navigationController?.pushViewController(rollingTextController, animated: true)
@@ -491,6 +492,22 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+    //MARK: - Marker Method
+    
+    fileprivate func createMarkers(textBody: String) -> [String] {
+        var markerList = [String]()
+        let marker = "##"
+        let separatedTextArray = textBody.components(separatedBy: marker)
+        for i in 0..<separatedTextArray.count {
+            if i % 2 != 0 {
+                markerList.append(separatedTextArray[i])
+            }
+        }
+        
+        return markerList
     }
     
 
