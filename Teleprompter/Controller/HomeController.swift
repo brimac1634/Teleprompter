@@ -16,6 +16,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     let realm = try! Realm()
     
     var usingIpad: Bool = true
+    var textBoxIsEditing: Bool = false
     
     let topLabel: UILabel = {
         let label = UILabel()
@@ -53,11 +54,19 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         return button
     }()
     
+    let markerButton: BaseButton = {
+        let button = BaseButton()
+        button.backgroundColor = UIColor.netRoadshowDarkGray(a: 1)
+        button.setTitle("Add Mark", for: .normal)
+        button.setTitleColor(UIColor.white, for: .normal)
+        return button
+    }()
+    
     var keyboardHeight: CGFloat = 0
     var currentScriptName: String = ""
     
     var startButtonBottomConstraint: NSLayoutConstraint!
-    var saveButtonBottomConstraint: NSLayoutConstraint!
+    var markerButtonBottomConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,14 +97,19 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         view.addSubview(topLabel)
         view.addSubview(textBox)
         view.addSubview(startButton)
+        view.addSubview(markerButton)
         
         if #available(iOS 11.0, *) {
             startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
+            
+            markerButtonBottomConstraint = markerButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
             topLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8).isActive = true
             textBox.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.95).isActive = true
         } else {
             // Fallback on earlier versions
             startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8)
+            
+            markerButtonBottomConstraint = markerButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8)
             topLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 70).isActive = true
             textBox.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.95).isActive = true
         }
@@ -112,11 +126,17 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             
             textBox.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             textBox.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 8),
-            textBox.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8)
+            textBox.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -8),
+            
+            markerButton.widthAnchor.constraint(equalToConstant: 120),
+            markerButton.heightAnchor.constraint(equalToConstant: 40),
+            markerButtonBottomConstraint,
+            markerButton.leadingAnchor.constraint(equalTo: textBox.leadingAnchor)
 
             ])
         
         startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
+        markerButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleAddMarker)))
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap)))
         view.isUserInteractionEnabled = true
         textBox.delegate = self
@@ -248,6 +268,16 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         
         self.present(actionAlert, animated: true, completion: nil)
 
+    }
+    
+    @objc func handleAddMarker() {
+        guard textBoxIsEditing else {return}
+        if let selectedRange = textBox.selectedTextRange {
+            textBox.insertText("####")
+            guard let newPosition = textBox.position(from: selectedRange.start, offset: 2) else {return}
+            textBox.selectedTextRange = textBox.textRange(from: newPosition, to: newPosition)
+            
+        }
     }
     
     //MARK: - Document Picker Methods

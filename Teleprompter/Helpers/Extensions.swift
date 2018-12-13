@@ -111,6 +111,7 @@ extension HomeController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.startButtonBottomConstraint.constant = -self.keyboardHeight - 8
+            self.markerButtonBottomConstraint.constant = -self.keyboardHeight - 8
             self.view.layoutIfNeeded()
         }, completion: nil)
         
@@ -118,11 +119,13 @@ extension HomeController: UITextViewDelegate {
             textBox.text = nil
             textBox.textColor = .black
         }
+        textBoxIsEditing = true
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.startButtonBottomConstraint.constant = -8
+            self.markerButtonBottomConstraint.constant = -8
             self.view.layoutIfNeeded()
         }, completion: nil)
         
@@ -130,6 +133,7 @@ extension HomeController: UITextViewDelegate {
             textBox.text = "Type or paste your script here..."
             textBox.textColor = .lightGray
         }
+        textBoxIsEditing = false
     }
     
     func textViewDidChangeSelection(_ textView: UITextView) {
