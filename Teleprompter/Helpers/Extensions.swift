@@ -171,6 +171,7 @@ extension RollingTextController: UIPickerViewDataSource, UIPickerViewDelegate {
         if let range = text.range(of: marker) {
             let nsRange = text.nsRange(from: range)
             textView.scrollRangeToVisible(nsRange)
+            
         }
         controlBar.markerInput.text = "Skip to \"\(markerArray[row])\""
         controlBar.markerInput.resignFirstResponder()

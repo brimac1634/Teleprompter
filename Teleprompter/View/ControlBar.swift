@@ -21,13 +21,6 @@ class ControlBar: BaseView {
         return button
     }()
     
-//    let markerLabel: BaseLabel = {
-//        let label = BaseLabel()
-//        label.text = "Jump to..."
-//        label.translatesAutoresizingMaskIntoConstraints = true
-//        return label
-//    }()
-    
     let markerInput: UITextField = {
         let field = UITextField()
         field.borderStyle = .none
@@ -47,15 +40,6 @@ class ControlBar: BaseView {
         picker.tintColor = UIColor.netRoadshowBlue(a: 1)
         return picker
     }()
-//    let testButton: BaseButton = {
-//        let button = BaseButton()
-//        button.backgroundColor = .clear
-//        button.setTitle("Test", for: .normal)
-//        button.titleLabel?.textAlignment = .center
-//        button.titleLabel?.lineBreakMode = .byWordWrapping
-//        button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
-//        return button
-//    }()
     
     let saveButton: BaseButton = {
         let button = BaseButton()
@@ -305,13 +289,6 @@ class ControlBar: BaseView {
         bottomStack.contentMode = .center
         bottomStack.spacing = 8
         bottomStack.translatesAutoresizingMaskIntoConstraints = false
-        
-//        let markerStack = UIStackView(arrangedSubviews: [markerLabel, markerInput])
-//        markerStack.axis = .vertical
-//        markerStack.distribution = .fillEqually
-//        markerStack.contentMode = .center
-//        markerStack.spacing = 8
-//        markerStack.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(backButton)
         addSubview(groupedStack)

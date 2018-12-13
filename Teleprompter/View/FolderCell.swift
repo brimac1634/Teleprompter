@@ -48,10 +48,10 @@ class FolderCell: UITableViewCell {
     fileprivate func setupView() {
         if ( UIDevice.current.model.range(of: "iPad") != nil) {
             scriptLabel.font = UIFont.boldSystemFont(ofSize: 28)
-            dateLabel.font = UIFont.systemFont(ofSize: 28)
+            dateLabel.font = UIFont.systemFont(ofSize: 24)
         } else {
             scriptLabel.font = UIFont.boldSystemFont(ofSize: 18)
-            dateLabel.font = UIFont.systemFont(ofSize: 16)
+            dateLabel.font = UIFont.systemFont(ofSize: 15)
         }
         
         addSubview(scriptLabel)
