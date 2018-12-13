@@ -540,7 +540,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 } else {
                     markerList.append(textArray[i])
                 }
-                
             }
         }
         return markerList

@@ -28,7 +28,7 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
         } else {
             usingIpad = false
         }
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellID")
+        tableView.register(FolderCell.self, forCellReuseIdentifier: "cellID")
         self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
@@ -36,6 +36,7 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
         let logoImage = UIImageView(image: UIImage(named: "logo"))
         logoImage.contentMode = .scaleAspectFit
         navigationItem.titleView = logoImage
+        navigationItem.rightBarButtonItem = nil
     }
     
     private func loadData() {
@@ -93,15 +94,9 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellID", for: indexPath)
-        cell.textLabel?.textColor = UIColor.netRoadshowBlue(a: 1)
-        cell.textLabel?.font = usingIpad ? UIFont.systemFont(ofSize: 28) : UIFont.systemFont(ofSize: 18)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellID", for: indexPath) as! FolderCell
         if let script = scriptList?[indexPath.row] {
-            let formatter = DateFormatter()
-            formatter.timeStyle = .short
-            formatter.dateStyle = .medium
-            let date = formatter.string(from: script.dateCreated)
-            cell.textLabel?.text = "\(date) - \(script.scriptName)"
+            cell.script = script
         }
         return cell
     }
@@ -125,6 +120,7 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate {
         let height: CGFloat = usingIpad ? 100 : 60
         return height
     }
+
 
     
 }

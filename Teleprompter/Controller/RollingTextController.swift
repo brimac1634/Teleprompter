@@ -546,7 +546,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
                 newText.append(markerSymbol)
                 markerCount += 1
                 
-                let markerNumber = NSMutableAttributedString(string: "[\(markerCount)] ", attributes: [NSAttributedString.Key.foregroundColor : markerColor])
+                let markerNumber = NSMutableAttributedString(string: " [\(markerCount)] ", attributes: [NSAttributedString.Key.foregroundColor : markerColor])
                 
                 newText.append(markerNumber)
             }

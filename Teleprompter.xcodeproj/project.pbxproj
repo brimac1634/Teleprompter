@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		024CC9517648145EA08A89D4 /* Pods_Teleprompter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2550E8CE3A3166563604E647 /* Pods_Teleprompter.framework */; };
+		D22BAC2121C20B2800A70504 /* FolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22BAC2021C20B2800A70504 /* FolderCell.swift */; };
 		D28C16A921A529210012D84D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16A821A529210012D84D /* AppDelegate.swift */; };
 		D28C16B021A529260012D84D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D28C16AF21A529260012D84D /* Assets.xcassets */; };
 		D28C16B321A529260012D84D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D28C16B121A529260012D84D /* LaunchScreen.storyboard */; };
@@ -25,6 +26,7 @@
 		2550E8CE3A3166563604E647 /* Pods_Teleprompter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Teleprompter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F678B07C8C57536C0733047 /* Pods-Teleprompter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teleprompter.release.xcconfig"; path = "Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter.release.xcconfig"; sourceTree = "<group>"; };
 		9BDEEB54421D7ECCE7A5CE55 /* Pods-Teleprompter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teleprompter.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter.debug.xcconfig"; sourceTree = "<group>"; };
+		D22BAC2021C20B2800A70504 /* FolderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCell.swift; sourceTree = "<group>"; };
 		D28C16A521A529210012D84D /* Teleprompter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teleprompter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28C16A821A529210012D84D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D28C16AF21A529260012D84D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				D28C16C221A554C80012D84D /* ControlBar.swift */,
+				D22BAC2021C20B2800A70504 /* FolderCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -288,6 +291,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D28C16A921A529210012D84D /* AppDelegate.swift in Sources */,
+				D22BAC2121C20B2800A70504 /* FolderCell.swift in Sources */,
 				D28C16C321A554C80012D84D /* ControlBar.swift in Sources */,
 				D2AFE19321B8D7BB0020E736 /* SavedScriptsController.swift in Sources */,
 				D28C16BD21A533180012D84D /* Extensions.swift in Sources */,
