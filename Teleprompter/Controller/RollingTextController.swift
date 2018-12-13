@@ -15,7 +15,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     let defaults = UserDefaults.standard
     var usingIpad: Bool = true
 
-    var textInput = NSMutableAttributedString()
+    var textInput: String = ""
     var textColor: UIColor = UIColor.white
     var backgroundColor: UIColor = UIColor.black
     var textSize: CGFloat = 80
@@ -525,13 +525,43 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         textView.contentOffset = CGPoint(x: 0, y: 0)
     }
     
-    func updateTextStyle(lineSpacing: CGFloat, fontSize: CGFloat, color: UIColor) {
-        let attributedString = textInput
+    fileprivate func updateTextWithMarkers(text: String, scriptColor: UIColor) -> NSMutableAttributedString {
+        let marker = "##"
+        var initialText = "\n\n\n\n"
+        initialText.append(contentsOf: text)
+        initialText.append("\n\n\n\n\n\n\n\n\n\n\n")
+        let separatedTextArray = initialText.components(separatedBy: marker)
+        let markerColor = UIColor.darkGray
+        let newText = NSMutableAttributedString()
+        var markerCount: Int = 0
+        for i in 0..<separatedTextArray.count {
+            let markerSymbol = NSMutableAttributedString(string: marker, attributes: [NSAttributedString.Key.foregroundColor : markerColor])
+            if i % 2 != 0 {
+                let markerName = NSMutableAttributedString(string: separatedTextArray[i], attributes: [NSAttributedString.Key.foregroundColor : markerColor])
+                newText.append(markerName)
+                newText.append(markerSymbol)
+            } else {
+                let scriptText = NSMutableAttributedString(string: separatedTextArray[i], attributes: [NSAttributedString.Key.foregroundColor : scriptColor])
+                newText.append(scriptText)
+                newText.append(markerSymbol)
+                markerCount += 1
+                
+                let markerNumber = NSMutableAttributedString(string: "[\(markerCount)] ", attributes: [NSAttributedString.Key.foregroundColor : markerColor])
+                
+                newText.append(markerNumber)
+            }
+            
+        }
+        return newText
+    }
+    
+    fileprivate func updateTextStyle(lineSpacing: CGFloat, fontSize: CGFloat, color: UIColor) {
+        let attributedString = updateTextWithMarkers(text: textInput, scriptColor: color)
         let mutableParagraphStyle = NSMutableParagraphStyle()
         mutableParagraphStyle.lineSpacing = lineSpacing
         mutableParagraphStyle.alignment = .center
 
-        attributedString.addAttributes([NSAttributedString.Key.paragraphStyle: mutableParagraphStyle, NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize)], range: NSMakeRange(0, textInput.string.count))
+        attributedString.addAttributes([NSAttributedString.Key.paragraphStyle: mutableParagraphStyle, NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize)], range: NSMakeRange(0, textInput.count))
         
         textView.attributedText = attributedString
         arrow.tintColor = color
@@ -544,7 +574,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBar.fontSizeLabel.text = "Font Size: \(Int(fontSize))"
     }
     
-    func updateViewStyle(scroll: CGFloat, mirror: Bool, arrow: Bool, fade: Bool, backColor: UIColor) {
+    fileprivate func updateViewStyle(scroll: CGFloat, mirror: Bool, arrow: Bool, fade: Bool, backColor: UIColor) {
         gradientView.alpha =  mirror ? 1 : 0
         
         controlBar.scrollSpeedSlider.value = Float(scroll)
