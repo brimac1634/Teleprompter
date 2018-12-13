@@ -535,6 +535,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         let newText = NSMutableAttributedString()
         var markerCount: Int = 0
         for i in 0..<separatedTextArray.count {
+            print(separatedTextArray[i])
             let markerSymbol = NSMutableAttributedString(string: marker, attributes: [NSAttributedString.Key.foregroundColor : markerColor])
             if i % 2 != 0 {
                 let markerName = NSMutableAttributedString(string: separatedTextArray[i], attributes: [NSAttributedString.Key.foregroundColor : markerColor])
@@ -561,7 +562,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         mutableParagraphStyle.lineSpacing = lineSpacing
         mutableParagraphStyle.alignment = .center
 
-        attributedString.addAttributes([NSAttributedString.Key.paragraphStyle: mutableParagraphStyle, NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize)], range: NSMakeRange(0, textInput.count))
+        attributedString.addAttributes([NSAttributedString.Key.paragraphStyle: mutableParagraphStyle, NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize)], range: NSMakeRange(0, attributedString.length))
         
         textView.attributedText = attributedString
         arrow.tintColor = color
