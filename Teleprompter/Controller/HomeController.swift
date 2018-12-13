@@ -62,6 +62,15 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         return button
     }()
     
+    let infoButton: BaseButton = {
+        let button = BaseButton()
+        let image = UIImage(named: "info")?.withRenderingMode(.alwaysTemplate)
+        button.backgroundColor = .clear
+        button.setBackgroundImage(image, for: .normal)
+        button.tintColor = UIColor.netRoadshowBlue(a: 1)
+        return button
+    }()
+    
     var keyboardHeight: CGFloat = 0
     var currentScriptName: String = ""
     
@@ -98,6 +107,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         view.addSubview(textBox)
         view.addSubview(startButton)
         view.addSubview(markerButton)
+        view.addSubview(infoButton)
         
         if #available(iOS 11.0, *) {
             startButtonBottomConstraint = startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
@@ -131,12 +141,18 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             markerButton.widthAnchor.constraint(equalToConstant: 120),
             markerButton.heightAnchor.constraint(equalToConstant: 40),
             markerButtonBottomConstraint,
-            markerButton.leadingAnchor.constraint(equalTo: textBox.leadingAnchor)
+            markerButton.leadingAnchor.constraint(equalTo: textBox.leadingAnchor),
+            
+            infoButton.widthAnchor.constraint(equalToConstant: 28),
+            infoButton.heightAnchor.constraint(equalToConstant: 28),
+            infoButton.centerYAnchor.constraint(equalTo: markerButton.centerYAnchor),
+            infoButton.leadingAnchor.constraint(equalTo: markerButton.trailingAnchor, constant: 8)
 
             ])
         
         startButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleStart)))
         markerButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleAddMarker)))
+        infoButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleInfo)))
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap)))
         view.isUserInteractionEnabled = true
         textBox.delegate = self
@@ -278,6 +294,10 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             textBox.selectedTextRange = textBox.textRange(from: newPosition, to: newPosition)
             
         }
+    }
+    
+    @objc func handleInfo() {
+        print(123)
     }
     
     //MARK: - Document Picker Methods
