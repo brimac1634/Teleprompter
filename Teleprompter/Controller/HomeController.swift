@@ -17,6 +17,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     var usingIpad: Bool = true
     var textBoxIsEditing: Bool = false
+    var infoIsShowing: Bool = false
     
     let topLabel: UILabel = {
         let label = UILabel()
@@ -73,6 +74,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     var keyboardHeight: CGFloat = 0
     var currentScriptName: String = ""
+    
+    var infoPopUp: InfoPopUp!
     
     var startButtonBottomConstraint: NSLayoutConstraint!
     var markerButtonBottomConstraint: NSLayoutConstraint!
@@ -297,7 +300,27 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
     
     @objc func handleInfo() {
-        print(123)
+        if infoIsShowing {
+            guard let info = infoPopUp else {return}
+            info.animatePopDown()
+            infoIsShowing = false
+        } else {
+            let newPopUp = InfoPopUp()
+            
+            view.addSubview(newPopUp)
+            
+            NSLayoutConstraint.activate([
+                newPopUp.widthAnchor.constraint(equalToConstant: 400),
+                newPopUp.heightAnchor.constraint(equalToConstant: 600),
+                newPopUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                newPopUp.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+                ])
+            
+            newPopUp.animatePopUp()
+            infoPopUp = newPopUp
+            infoIsShowing = true
+        }
+        
     }
     
     //MARK: - Document Picker Methods
