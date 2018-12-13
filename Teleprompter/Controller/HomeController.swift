@@ -213,6 +213,10 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     @objc func handleBackgroundTap() {
         textBox.resignFirstResponder()
+        
+        if infoIsShowing {
+            infoPopUp.animatePopDown()
+        }
     }
     
     @objc func handleStart() {
@@ -305,19 +309,28 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             info.animatePopDown()
             infoIsShowing = false
         } else {
-            let newPopUp = InfoPopUp()
+            infoPopUp = InfoPopUp()
             
-            view.addSubview(newPopUp)
+            view.addSubview(infoPopUp)
             
-            NSLayoutConstraint.activate([
-                newPopUp.widthAnchor.constraint(equalToConstant: 400),
-                newPopUp.heightAnchor.constraint(equalToConstant: 600),
-                newPopUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                newPopUp.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-                ])
+            if usingIpad {
+                NSLayoutConstraint.activate([
+                    infoPopUp.widthAnchor.constraint(equalToConstant: 450),
+                    infoPopUp.heightAnchor.constraint(equalToConstant: 600),
+                    infoPopUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    infoPopUp.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+                    ])
+            } else {
+                NSLayoutConstraint.activate([
+                    infoPopUp.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
+                    infoPopUp.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.7),
+                    infoPopUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    infoPopUp.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+                    ])
+            }
             
-            newPopUp.animatePopUp()
-            infoPopUp = newPopUp
+            
+            infoPopUp.animatePopUp()
             infoIsShowing = true
         }
         

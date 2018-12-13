@@ -22,7 +22,7 @@ class InfoPopUp: BaseView {
     let firstTextView: BaseTextView = {
         let textView = BaseTextView()
         textView.text = "Press the \"Add Mark\" button, or manually type \"####\" where you want to add a directory heading. This will allow you to skip to particular sections of your script easily and quickly."
-        textView.backgroundColor = .clear
+        textView.textAlignment = .center
         textView.isUserInteractionEnabled = false
         return textView
     }()
@@ -40,6 +40,7 @@ class InfoPopUp: BaseView {
         let textView = BaseTextView()
         textView.text = "Type a custom directory heading in the middle of the marker, or leave it blank to default to simple numbered sections."
         textView.backgroundColor = .clear
+        textView.textAlignment = .center
         textView.isUserInteractionEnabled = false
         return textView
     }()
@@ -54,7 +55,7 @@ class InfoPopUp: BaseView {
         
         let infoStack = UIStackView(arrangedSubviews: [firstLabel, firstTextView, secondLabel, secondTextView])
         infoStack.axis = .vertical
-        infoStack.distribution = .fillProportionally
+        infoStack.distribution = .fillEqually
         infoStack.translatesAutoresizingMaskIntoConstraints = false
         infoStack.spacing = 8
         
