@@ -213,10 +213,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     @objc func handleBackgroundTap() {
         textBox.resignFirstResponder()
-        
-        if infoIsShowing {
-            infoPopUp.animatePopDown()
-        }
+
     }
     
     @objc func handleStart() {
@@ -304,36 +301,22 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
     
     @objc func handleInfo() {
-        if infoIsShowing {
-            guard let info = infoPopUp else {return}
-            info.animatePopDown()
-            infoIsShowing = false
-        } else {
-            infoPopUp = InfoPopUp()
-            
-            view.addSubview(infoPopUp)
-            
-            if usingIpad {
-                NSLayoutConstraint.activate([
-                    infoPopUp.widthAnchor.constraint(equalToConstant: 450),
-                    infoPopUp.heightAnchor.constraint(equalToConstant: 600),
-                    infoPopUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                    infoPopUp.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-                    ])
-            } else {
-                NSLayoutConstraint.activate([
-                    infoPopUp.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
-                    infoPopUp.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.7),
-                    infoPopUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                    infoPopUp.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-                    ])
-            }
-            
-            
-            infoPopUp.animatePopUp()
-            infoIsShowing = true
-        }
+        guard let window = UIApplication.shared.keyWindow else {return}
+        infoPopUp = InfoPopUp()
         
+        window.addSubview(infoPopUp)
+        
+        NSLayoutConstraint.activate([
+            infoPopUp.topAnchor.constraint(equalTo: window.topAnchor),
+            infoPopUp.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+            infoPopUp.trailingAnchor.constraint(equalTo: window.trailingAnchor),
+            infoPopUp.bottomAnchor.constraint(equalTo: window.bottomAnchor)
+            ])
+       
+        
+        textBox.resignFirstResponder()
+        infoPopUp.setupView()
+
     }
     
     //MARK: - Document Picker Methods

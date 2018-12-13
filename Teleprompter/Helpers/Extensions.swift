@@ -109,9 +109,6 @@ extension HomeController: UITextViewDelegate {
     }
 
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if infoIsShowing {
-            infoPopUp.animatePopDown()
-        }
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.startButtonBottomConstraint.constant = -self.keyboardHeight - 8
             self.markerButtonBottomConstraint.constant = -self.keyboardHeight - 8
