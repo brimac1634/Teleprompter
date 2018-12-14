@@ -468,7 +468,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         }
     }
     
-    fileprivate func createNewScriptButton() {
+    func createNewScriptButton() {
         if currentScriptName == "" {
             if textBox.text.count != 0 && textBox.text != "Type or paste your script here..." {
                 //ask to save as then create new

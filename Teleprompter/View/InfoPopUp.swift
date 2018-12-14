@@ -105,8 +105,8 @@ class InfoPopUp: UIView {
                 ])
         } else {
             NSLayoutConstraint.activate([
-                popUp.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8),
-                popUp.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.7),
+                popUp.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.85),
+                popUp.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.75),
                 popUp.centerXAnchor.constraint(equalTo: centerXAnchor),
                 popUp.centerYAnchor.constraint(equalTo: centerYAnchor)
                 ])

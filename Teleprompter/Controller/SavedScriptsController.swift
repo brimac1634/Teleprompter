@@ -29,7 +29,7 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
             usingIpad = false
         }
         tableView.register(FolderCell.self, forCellReuseIdentifier: "cellID")
-        self.navigationItem.rightBarButtonItem = self.editButtonItem
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAdd))
         
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPressGesture.delegate = self
@@ -41,7 +41,6 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         let logoImage = UIImageView(image: UIImage(named: "logo"))
         logoImage.contentMode = .scaleAspectFit
         navigationItem.titleView = logoImage
-        navigationItem.rightBarButtonItem = nil
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -129,6 +128,14 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
             
         }
     }
+    
+    @objc func handleAdd() {
+        guard let home = homeController else {return}
+        self.navigationController?.popViewController(animated: true)
+        home.createNewScriptButton()
+    }
+    
+    //MARK: - Alert Methods
     
     fileprivate func popToHomeWithScript(script: Script) {
         guard let home = self.homeController else {return}
