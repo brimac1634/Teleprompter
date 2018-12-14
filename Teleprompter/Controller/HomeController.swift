@@ -440,7 +440,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 }
                 self.topLabel.text = field.text
                 self.currentScriptName = field.text ?? ""
-                self.savedConfirmation()
+//                self.savedConfirmation()
             }
         }
         
