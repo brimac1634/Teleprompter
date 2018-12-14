@@ -29,6 +29,8 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
             usingIpad = false
         }
         tableView.register(FolderCell.self, forCellReuseIdentifier: "cellID")
+        tableView.separatorStyle = .none
+        
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAdd))
         
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))

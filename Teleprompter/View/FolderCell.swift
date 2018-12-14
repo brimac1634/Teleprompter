@@ -40,6 +40,13 @@ class FolderCell: UITableViewCell {
         return label
     }()
     
+    let dividerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.netRoadshowGray(a: 1)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
@@ -56,6 +63,7 @@ class FolderCell: UITableViewCell {
         
         addSubview(scriptLabel)
         addSubview(dateLabel)
+        addSubview(dividerView)
         
         NSLayoutConstraint.activate([
             scriptLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
@@ -66,7 +74,12 @@ class FolderCell: UITableViewCell {
             dateLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             dateLabel.leadingAnchor.constraint(equalTo: centerXAnchor, constant: 16),
             dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            dateLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
+            dateLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+            
+            dividerView.widthAnchor.constraint(equalTo: widthAnchor),
+            dividerView.heightAnchor.constraint(equalToConstant: 1),
+            dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            dividerView.centerXAnchor.constraint(equalTo: centerXAnchor)
             ])
         
     }
