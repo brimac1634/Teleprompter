@@ -299,7 +299,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBar.highlightModeSwitch.addTarget(self, action: #selector(handleFadeMode(sender:)), for: .allEvents)
         controlBar.backgroundColorButton.addTarget(self, action: #selector(handleBackgroundColor), for: .touchUpInside)
         controlBar.textColorButton.addTarget(self, action: #selector(handleTextColor), for: .touchUpInside)
-        controlBar.topButton.addTarget(self, action: #selector(handleRestart), for: .touchUpInside)
+        controlBar.restartButton.addTarget(self, action: #selector(handleRestart), for: .touchUpInside)
     }
     
     //MARK: - Gesture Selectors

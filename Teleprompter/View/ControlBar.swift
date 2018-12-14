@@ -17,21 +17,9 @@ class ControlBar: BaseView {
         let button = BaseButton()
         button.setImage(UIImage(named: "back")?.withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = UIColor.netRoadshowDarkGray(a: 1)
+        button.contentMode = .left
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-    }()
-    
-    let markerInput: UITextField = {
-        let field = UITextField()
-        field.borderStyle = .none
-        field.backgroundColor = UIColor.netRoadshowGray(a: 1)
-        field.textColor = UIColor.netRoadshowDarkGray(a: 1)
-        field.placeholder = "Skip to..."
-        field.contentMode = .center
-        field.textAlignment = .center
-        field.autocorrectionType = .no
-        field.translatesAutoresizingMaskIntoConstraints = false
-        return field
     }()
     
     let picker: UIPickerView = {
@@ -45,16 +33,20 @@ class ControlBar: BaseView {
         let button = BaseButton()
         button.backgroundColor = .clear
         button.setTitle("Save Default", for: .normal)
-        button.titleLabel?.textAlignment = .left
+        button.titleLabel?.textAlignment = .center
         button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
         return button
     }()
     
-    let controlsView: BaseView = {
-        let view = BaseView()
-        view.backgroundColor = .clear
-        return view
+    let defaultButton: BaseButton = {
+        let button = BaseButton()
+        button.backgroundColor = .clear
+        button.setTitle("Use Default", for: .normal)
+        button.titleLabel?.textAlignment = .right
+        button.titleLabel?.lineBreakMode = .byWordWrapping
+        button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
+        return button
     }()
     
     let fontSizeLabel: BaseLabel = {
@@ -194,23 +186,28 @@ class ControlBar: BaseView {
     }()
     
     
-    let topButton: BaseButton = {
+    let restartButton: BaseButton = {
         let button = BaseButton()
         button.backgroundColor = .clear
         button.setTitle("Restart", for: .normal)
         button.titleLabel?.lineBreakMode = .byWordWrapping
         button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
+        button.titleLabel?.textAlignment = .left
+        button.contentMode = .left
         return button
     }()
     
-    let defaultButton: BaseButton = {
-        let button = BaseButton()
-        button.backgroundColor = .clear
-        button.setTitle("Use Default", for: .normal)
-        button.titleLabel?.textAlignment = .center
-        button.titleLabel?.lineBreakMode = .byWordWrapping
-        button.setTitleColor(UIColor.netRoadshowDarkGray(a: 1), for: .normal)
-        return button
+    let markerInput: UITextField = {
+        let field = UITextField()
+        field.borderStyle = .none
+        field.backgroundColor = UIColor.netRoadshowGray(a: 1)
+        field.textColor = UIColor.netRoadshowDarkGray(a: 1)
+        field.placeholder = "Skip to..."
+        field.contentMode = .center
+        field.textAlignment = .center
+        field.autocorrectionType = .no
+        field.translatesAutoresizingMaskIntoConstraints = false
+        return field
     }()
     
     let startButton: BaseButton = {
@@ -218,6 +215,8 @@ class ControlBar: BaseView {
         button.backgroundColor = .clear
         button.setTitle("Start", for: .normal)
         button.setTitleColor(UIColor.netRoadshowBlue(a: 1), for: .normal)
+        button.titleLabel?.textAlignment = .right
+        button.contentMode = .right
         return button
     }()
     
@@ -283,18 +282,13 @@ class ControlBar: BaseView {
         groupedStack.spacing = 16
         groupedStack.translatesAutoresizingMaskIntoConstraints = false
         
-        let bottomStack = UIStackView(arrangedSubviews: [saveButton, defaultButton, startButton])
-        bottomStack.axis = .horizontal
-        bottomStack.distribution = .fillEqually
-        bottomStack.contentMode = .center
-        bottomStack.spacing = 8
-        bottomStack.translatesAutoresizingMaskIntoConstraints = false
-        
         addSubview(backButton)
         addSubview(groupedStack)
-        addSubview(topButton)
+        addSubview(defaultButton)
+        addSubview(saveButton)
+        addSubview(restartButton)
         addSubview(markerInput)
-        addSubview(bottomStack)
+        addSubview(startButton)
         
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: topAnchor, constant: 52),
@@ -302,25 +296,35 @@ class ControlBar: BaseView {
             backButton.widthAnchor.constraint(equalToConstant: 28),
             backButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32),
             
-            bottomStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
-            bottomStack.heightAnchor.constraint(equalToConstant: 60),
-            bottomStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
-            bottomStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
+            saveButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            saveButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            saveButton.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.25),
+            saveButton.heightAnchor.constraint(equalToConstant: 60),
             
-            topButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
-            topButton.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
-            topButton.widthAnchor.constraint(equalToConstant: 100),
-            topButton.heightAnchor.constraint(equalToConstant: 55),
+            defaultButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            defaultButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32),
+            defaultButton.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.25),
+            defaultButton.heightAnchor.constraint(equalTo: saveButton.heightAnchor),
             
+            markerInput.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
             markerInput.centerXAnchor.constraint(equalTo: centerXAnchor),
-            markerInput.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
-            markerInput.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.4),
-            markerInput.heightAnchor.constraint(equalToConstant: 60),
+            markerInput.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.45),
+            markerInput.heightAnchor.constraint(equalTo: saveButton.heightAnchor),
             
-            groupedStack.topAnchor.constraint(equalTo: topButton.bottomAnchor, constant: 32),
+            restartButton.centerYAnchor.constraint(equalTo: markerInput.centerYAnchor),
+            restartButton.heightAnchor.constraint(equalTo: markerInput.heightAnchor),
+            restartButton.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
+            restartButton.trailingAnchor.constraint(equalTo: markerInput.leadingAnchor, constant: -8),
+            
+            startButton.centerYAnchor.constraint(equalTo: markerInput.centerYAnchor),
+            startButton.heightAnchor.constraint(equalTo: markerInput.heightAnchor),
+            startButton.leadingAnchor.constraint(equalTo: markerInput.trailingAnchor, constant: 8),
+            startButton.trailingAnchor.constraint(equalTo: defaultButton.trailingAnchor),
+
+            groupedStack.topAnchor.constraint(equalTo: defaultButton.bottomAnchor, constant: 32),
             groupedStack.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
-            groupedStack.trailingAnchor.constraint(equalTo: bottomStack.trailingAnchor),
-            groupedStack.bottomAnchor.constraint(equalTo: bottomStack.topAnchor, constant: -32)
+            groupedStack.trailingAnchor.constraint(equalTo: defaultButton.trailingAnchor),
+            groupedStack.bottomAnchor.constraint(equalTo: markerInput.topAnchor, constant: -32),
             ])
         
         fontSizeSlider.value = 80
