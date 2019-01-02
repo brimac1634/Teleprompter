@@ -86,7 +86,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        checkIfUserIsLoggedIn()
         
         if ( UIDevice.current.model.range(of: "iPad") != nil) {
             usingIpad = true
@@ -218,10 +218,22 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         
     }
 
+    fileprivate func checkIfUserIsLoggedIn() {
+        if Auth.auth().currentUser?.uid == nil {
+            perform(#selector(handleLogout), with: nil, afterDelay: 0)
+        }
+    }
 
     //MARK: - Gesture Selectors
     
     @objc func handleLogout() {
+        
+        do {
+            try Auth.auth().signOut()
+        } catch let error {
+            print("Unable to sign out: ", error)
+        }
+        
         let loginController = LoginController()
         navigationController?.present(loginController, animated: true, completion: nil)
     }
