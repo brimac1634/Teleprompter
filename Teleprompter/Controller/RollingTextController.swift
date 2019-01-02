@@ -757,14 +757,17 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
             let valueChange = snapshot.value as! Int
+            var isScrolling: Bool = false
             if valueChange == 0 {
-                self.scrollViewIsScrolling = false
+                isScrolling = false
             } else {
-                self.scrollViewIsScrolling = true
+                isScrolling = true
             }
             
-            self.pauseStartScroll()
-            
+            if isScrolling != self.scrollViewIsScrolling {
+                self.scrollViewIsScrolling = isScrolling
+                self.pauseStartScroll()
+            }
             
         }, withCancel: nil)
     }
