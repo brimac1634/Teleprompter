@@ -162,14 +162,18 @@ class LoginController: UIViewController {
         }
         Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
             if error != nil {
-                print(error)
+                print(error ?? "")
                 return
             }
+            
+            guard let uid = authResult?.user.uid else {return}
+            
             self.ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
+            let userRef = self.ref.child("users").child(uid)
             let values = ["name": name, "email": email]
-            self.ref.updateChildValues(values, withCompletionBlock: { (err, ref) in
+            userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
                 if err != nil {
-                    print(err)
+                    print(err ?? "")
                     return
                 }
                 print("saved user successfully into Firebase DB")
