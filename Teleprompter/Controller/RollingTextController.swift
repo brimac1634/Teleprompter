@@ -8,9 +8,13 @@
 
 import UIKit
 import ChromaColorPicker
+import Firebase
+import FirebaseDatabase
 
 
 class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGestureRecognizerDelegate, UITextViewDelegate {
+    
+    var ref: DatabaseReference!
     
     let defaults = UserDefaults.standard
     var usingIpad: Bool = true
@@ -29,7 +33,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var controlPanelMultiplier: CGFloat = 300
     var lastScale: CGFloat = 0
     var markerArray: [String] = ["", "#Slide 1#", "#Slide 2#"]
-   
+    var scrollViewIsScrolling: Bool = false
     
     var style: NSMutableParagraphStyle!
     var neatColorPicker: ChromaColorPicker!
@@ -124,6 +128,10 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         setupView()
         setupGestures()
+        configureDatabase()
+        scrollViewIsScrolling = true
+        updateStateOfScroll()
+        observeStateChange()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -305,6 +313,13 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     //MARK: - Gesture Selectors
     
     @objc func handlePauseStart() {
+        updateStateOfScroll()
+        pauseStartScroll()
+        
+        
+    }
+    
+    fileprivate func pauseStartScroll() {
         controlBar.markerInput.resignFirstResponder()
         guard let scrollTap = scrollSpeedDoubleTapGesture else {return}
         if let timer = scrollTimer {
@@ -328,8 +343,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             self.controlBarLeading.constant = 0
             self.view.layoutIfNeeded()
         }, completion: nil)
-        
-        
     }
     
     func startScroll() {
@@ -712,5 +725,47 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             }
         }
         
+    }
+    
+    //MARK: - Firebase functions
+    
+    fileprivate func configureDatabase() {
+        ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+//        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+//            print(snapshot)
+//        }, withCancel: nil)]
+    }
+    
+    fileprivate func updateStateOfScroll() {
+        scrollViewIsScrolling = !scrollViewIsScrolling
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        
+        let userRef = ref.child("users").child(uid)
+        let values = ["scrollViewIsScrolling": scrollViewIsScrolling]
+        userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
+            if err != nil {
+                print(err ?? "")
+                return
+            }
+            print("updated state of scroll")
+        })
+    }
+    
+    fileprivate func observeStateChange() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        
+        ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
+            let valueChange = snapshot.value as! Int
+            if valueChange == 0 {
+                self.scrollViewIsScrolling = false
+            } else {
+                self.scrollViewIsScrolling = true
+            }
+            
+            self.pauseStartScroll()
+            
+            
+        }, withCancel: nil)
     }
 }
