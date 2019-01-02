@@ -10,10 +10,13 @@ import UIKit
 import PDFKit
 import MobileCoreServices
 import RealmSwift
+import Firebase
+import FirebaseDatabase
 
 class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     let realm = try! Realm()
+    var ref: DatabaseReference!
     
     var usingIpad: Bool = true
     var textBoxIsEditing: Bool = false
@@ -82,6 +85,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
         
         if ( UIDevice.current.model.range(of: "iPad") != nil) {
             usingIpad = true
@@ -173,13 +178,19 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         logoImage.contentMode = .scaleAspectFit
         navigationItem.titleView = logoImage
         
+        let logoutButton = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
+        logoutButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+        
+        navigationItem.leftBarButtonItem = logoutButton
+        
+        
         if #available(iOS 11.0, *) {
             let importImage = UIImage(named: "import")?.withRenderingMode(.alwaysTemplate)
             let importButton = UIButton()
             importButton.setImage(importImage, for: .normal)
             importButton.addTarget(self, action: #selector(handleImport), for: .touchUpInside)
             importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-            let barItem = UIBarButtonItem(customView: importButton)
+            let importBarItem = UIBarButtonItem(customView: importButton)
             
             let folderImage = UIImage(named: "folder")?.withRenderingMode(.alwaysTemplate)
             let folderButton = UIButton()
@@ -188,21 +199,20 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
             let folderBarItem = UIBarButtonItem(customView: folderButton)
             
-            barItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
-            barItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
+            importBarItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
+            importBarItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
             folderBarItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
             folderBarItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
             
-            navigationItem.rightBarButtonItem = barItem
-            navigationItem.leftBarButtonItem = folderBarItem
+            navigationItem.rightBarButtonItems = [folderBarItem, importBarItem]
         } else {
             let folderButton = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(handleFolder))
             folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-            navigationItem.leftBarButtonItem = folderButton
             
             let importButton = UIBarButtonItem(title: "Import", style: .plain, target: self, action: #selector(handleImport))
             importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-            navigationItem.rightBarButtonItem = importButton
+            
+            navigationItem.rightBarButtonItems = [folderButton, importButton]
         }
         
         
@@ -210,6 +220,11 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
 
 
     //MARK: - Gesture Selectors
+    
+    @objc func handleLogout() {
+        let loginController = LoginController()
+        navigationController?.present(loginController, animated: true, completion: nil)
+    }
     
     @objc func handleBackgroundTap() {
         textBox.resignFirstResponder()
