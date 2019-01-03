@@ -69,6 +69,15 @@ class LoginController: UIViewController {
         return sc
     }()
     
+    let loadingIndicator: UIActivityIndicatorView = {
+        let load = UIActivityIndicatorView()
+        load.hidesWhenStopped = true
+        load.alpha = 0
+        load.style = .gray
+        return load
+    }()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -85,6 +94,9 @@ class LoginController: UIViewController {
         userInputView.addSubview(passwordTextField)
         view.addSubview(loginRegisterButton)
         view.addSubview(loginRegisterSegmentedControl)
+        view.addSubview(loadingIndicator)
+        
+        loadingIndicator.center = self.view.center
         
         if #available(iOS 11.0, *) {
             NSLayoutConstraint.activate([
@@ -157,13 +169,22 @@ class LoginController: UIViewController {
             print("Form is not valid")
             return
         }
+        loadingIndicator.alpha = 1
+        loadingIndicator.startAnimating()
+        UIApplication.shared.beginIgnoringInteractionEvents()
+        
         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
             if error != nil {
                 print(error ?? "")
+                self.loadingIndicator.stopAnimating()
+                UIApplication.shared.endIgnoringInteractionEvents()
                 return
             }
+            self.loadingIndicator.stopAnimating()
+            UIApplication.shared.endIgnoringInteractionEvents()
             
             self.dismiss(animated: true, completion: nil)
+            
         }
     }
     
@@ -178,27 +199,40 @@ class LoginController: UIViewController {
                 self.passwordTextField.selectAll(nil)
             }))
             self.present(alert, animated: true, completion: nil)
-        }
-        Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
-            if error != nil {
-                print(error ?? "")
-                return
-            }
+        } else {
+            loadingIndicator.alpha = 1
+            loadingIndicator.startAnimating()
+            UIApplication.shared.beginIgnoringInteractionEvents()
             
-            guard let uid = authResult?.user.uid else {return}
-            
-            self.ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
-            let userRef = self.ref.child("users").child(uid)
-            let values = ["email": email]
-            userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
-                if err != nil {
-                    print(err ?? "")
+            Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
+                if error != nil {
+                    print(error ?? "")
+                    self.loadingIndicator.stopAnimating()
+                    UIApplication.shared.endIgnoringInteractionEvents()
                     return
                 }
-                print("saved user successfully into Firebase DB")
-                self.dismiss(animated: true, completion: nil)
-            })
+                
+                guard let uid = authResult?.user.uid else {return}
+                
+                self.ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
+                let userRef = self.ref.child("users").child(uid)
+                let values = ["email": email]
+                userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
+                    if err != nil {
+                        print(err ?? "")
+                        self.loadingIndicator.stopAnimating()
+                        UIApplication.shared.endIgnoringInteractionEvents()
+                        return
+                    }
+                    print("saved user successfully into Firebase DB")
+                    self.loadingIndicator.stopAnimating()
+                    UIApplication.shared.endIgnoringInteractionEvents()
+                    self.dismiss(animated: true, completion: nil)
+                    
+                })
+            }
         }
+        
     }
 
 }

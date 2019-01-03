@@ -300,7 +300,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         actionAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         
         if let popoverController = actionAlert.popoverPresentationController {
-            popoverController.barButtonItem = navigationItem.leftBarButtonItem
+            guard let folderButton = navigationItem.rightBarButtonItems?[0] else {return}
+            popoverController.barButtonItem = folderButton
         }
         
         self.present(actionAlert, animated: true, completion: nil)
