@@ -102,3 +102,40 @@ class BaseTextView: UITextView {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+class RemoteButton: UIButton  {
+    var universalFontSize: CGFloat = 0
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    
+    func setupView() {
+        if ( UIDevice.current.model.range(of: "iPad") != nil){
+            universalFontSize = 26
+        } else {
+            universalFontSize = 18
+        }
+        
+        self.translatesAutoresizingMaskIntoConstraints = false
+        self.titleLabel?.font = UIFont.systemFont(ofSize: universalFontSize)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted ? UIColor.netRoadshowGray(a: 1) : UIColor.white
+        }
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            backgroundColor = .white
+        }
+    }
+}
