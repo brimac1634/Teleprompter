@@ -159,7 +159,7 @@ class LoginController: UIViewController {
         }
         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
             if error != nil {
-                print(error)
+                print(error ?? "")
                 return
             }
             

@@ -12,6 +12,7 @@
 		D22BAC2321C21F8400A70504 /* InfoPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22BAC2221C21F8400A70504 /* InfoPopUp.swift */; };
 		D22BAC2521C2343500A70504 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D22BAC2421C2343500A70504 /* Assets.xcassets */; };
 		D274AE1D21DDE87C00CD20AC /* RemoteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D274AE1C21DDE87C00CD20AC /* RemoteController.swift */; };
+		D274AE1F21DE062A00CD20AC /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D274AE1E21DE062A00CD20AC /* ProfileController.swift */; };
 		D28C16A921A529210012D84D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16A821A529210012D84D /* AppDelegate.swift */; };
 		D28C16B321A529260012D84D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D28C16B121A529260012D84D /* LaunchScreen.storyboard */; };
 		D28C16BB21A530670012D84D /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28C16BA21A530670012D84D /* HomeController.swift */; };
@@ -34,6 +35,7 @@
 		D22BAC2221C21F8400A70504 /* InfoPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPopUp.swift; sourceTree = "<group>"; };
 		D22BAC2421C2343500A70504 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Teleprompter/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		D274AE1C21DDE87C00CD20AC /* RemoteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteController.swift; sourceTree = "<group>"; };
+		D274AE1E21DE062A00CD20AC /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		D28C16A521A529210012D84D /* Teleprompter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teleprompter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28C16A821A529210012D84D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D28C16B221A529260012D84D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				D2903D0C21B66314009EBF3C /* FirstTimeGuide.swift */,
 				D2AAC3DA21DC8230005C25EA /* LoginController.swift */,
 				D274AE1C21DDE87C00CD20AC /* RemoteController.swift */,
+				D274AE1E21DE062A00CD20AC /* ProfileController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -318,6 +321,7 @@
 				D28C16C321A554C80012D84D /* ControlBar.swift in Sources */,
 				D2AFE19321B8D7BB0020E736 /* SavedScriptsController.swift in Sources */,
 				D28C16BD21A533180012D84D /* Extensions.swift in Sources */,
+				D274AE1F21DE062A00CD20AC /* ProfileController.swift in Sources */,
 				D28C16C121A53DA10012D84D /* BaseView.swift in Sources */,
 				D2AFE19121B8CD5E0020E736 /* Script.swift in Sources */,
 				D28C16BF21A53D390012D84D /* RollingTextController.swift in Sources */,

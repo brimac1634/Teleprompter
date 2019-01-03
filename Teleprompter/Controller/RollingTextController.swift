@@ -731,10 +731,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     fileprivate func configureDatabase() {
         ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-//        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-//            print(snapshot)
-//        }, withCancel: nil)]
     }
     
     fileprivate func updateStateOfScroll() {

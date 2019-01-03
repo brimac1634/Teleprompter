@@ -207,7 +207,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     //MARK: - Gesture Selectors
     
     @objc func handleProfile() {
-        print(123)
+        let profileController = ProfileController()
+        navigationController?.pushViewController(profileController, animated: true)
     }
     
     @objc func handleRemote() {
