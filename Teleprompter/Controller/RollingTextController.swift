@@ -406,6 +406,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         let newTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
         timer.invalidate()
         scrollTimer = newTimer
+        
+        updateScrollSpeed()
 
         controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
         controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
@@ -746,6 +748,21 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             }
             print("updated state of scroll")
         })
+    }
+    
+    fileprivate func updateScrollSpeed() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        
+        let userRef = ref.child("users").child(uid)
+        let values = ["scrollSpeed": scrollSpeed]
+        userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
+            if err != nil {
+                print(err ?? "")
+                return
+            }
+            print("updated state of scroll")
+        })
+        
     }
     
     fileprivate func observeStateChange() {

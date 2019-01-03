@@ -15,6 +15,7 @@ class RemoteController: UIViewController {
     var ref: DatabaseReference!
     
     var scrollViewIsScrolling: Bool = false
+    var scrollSpeed: CGFloat = 0
     
     lazy var playPauseButton: RemoteButton = {
         let btn = RemoteButton()
@@ -48,7 +49,12 @@ class RemoteController: UIViewController {
         ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
         
         setupView()
+        setScrollSpeed()
         observeStateChange()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationItem.title = "Remote Control"
     }
     
 
@@ -111,9 +117,35 @@ class RemoteController: UIViewController {
         })
     }
     
-    fileprivate func observeStateChange() {
+    fileprivate func updateScrollSpeed() {
+        
         guard let uid = Auth.auth().currentUser?.uid else {return}
         
+        let userRef = ref.child("users").child(uid)
+        let values = ["scrollSpeed": scrollSpeed]
+        userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
+            if err != nil {
+                print(err ?? "")
+                return
+            }
+            print("updated state of scroll")
+        })
+        
+    }
+    
+    fileprivate func setScrollSpeed() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            if let value = snapshot.value as? [String: AnyObject] {
+                guard let speed = value["scrollSpeed"] else {return}
+                self.scrollSpeed = CGFloat(speed as! Int)
+                print(self.scrollSpeed)
+            }
+        }, withCancel: nil)
+    }
+    
+    fileprivate func observeStateChange() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
         ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
             let valueChange = snapshot.value as! Int
             var isScrolling: Bool = false
