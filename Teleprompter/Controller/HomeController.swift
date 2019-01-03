@@ -213,6 +213,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     @objc func handleRemote() {
         let remoteController = RemoteController()
+        navigationController?.title = "Remote Control"
         navigationController?.pushViewController(remoteController, animated: true)
     }
     

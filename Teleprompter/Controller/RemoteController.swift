@@ -7,9 +7,14 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseDatabase
 
 class RemoteController: UIViewController {
     
+    var ref: DatabaseReference!
+    
+    var scrollViewIsScrolling: Bool = false
     
     lazy var playPauseButton: RemoteButton = {
         let btn = RemoteButton()
@@ -40,8 +45,10 @@ class RemoteController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
         
         setupView()
+        observeStateChange()
     }
     
 
@@ -76,7 +83,7 @@ class RemoteController: UIViewController {
     //MARK: - Selector Methods
     
     @objc func handlePlayPause() {
-        print(123)
+        updateStateOfScroll()
     }
     
     @objc func handleSlow() {
@@ -85,5 +92,41 @@ class RemoteController: UIViewController {
     
     @objc func handleFast() {
         print(789)
+    }
+    
+    //MARK: - Firebase Methods
+    
+    fileprivate func updateStateOfScroll() {
+        scrollViewIsScrolling = !scrollViewIsScrolling
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        
+        let userRef = ref.child("users").child(uid)
+        let values = ["scrollViewIsScrolling": scrollViewIsScrolling]
+        userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
+            if err != nil {
+                print(err ?? "")
+                return
+            }
+            print("updated state of scroll")
+        })
+    }
+    
+    fileprivate func observeStateChange() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        
+        ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
+            let valueChange = snapshot.value as! Int
+            var isScrolling: Bool = false
+            if valueChange == 0 {
+                isScrolling = false
+            } else if valueChange == 1 {
+                isScrolling = true
+            }
+            
+            if isScrolling != self.scrollViewIsScrolling {
+                self.scrollViewIsScrolling = isScrolling
+            }
+            
+        }, withCancel: nil)
     }
 }
