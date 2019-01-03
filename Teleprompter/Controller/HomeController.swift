@@ -178,42 +178,22 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         logoImage.contentMode = .scaleAspectFit
         navigationItem.titleView = logoImage
         
-        let logoutButton = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
-        logoutButton.tintColor = UIColor.netRoadshowBlue(a: 1)
         
-        navigationItem.leftBarButtonItem = logoutButton
+        let profileButton = UIBarButtonItem(image: UIImage(named: "profile"), style: .plain, target: self, action: #selector(handleProfile))
+        profileButton.tintColor = UIColor.netRoadshowBlue(a: 1)
         
+        let remoteButton = UIBarButtonItem(image: UIImage(named: "remote"), style: .plain, target: self, action: #selector(handleRemote))
+        remoteButton.tintColor = UIColor.netRoadshowBlue(a: 1)
         
-        if #available(iOS 11.0, *) {
-            let importImage = UIImage(named: "import")?.withRenderingMode(.alwaysTemplate)
-            let importButton = UIButton()
-            importButton.setImage(importImage, for: .normal)
-            importButton.addTarget(self, action: #selector(handleImport), for: .touchUpInside)
-            importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-            let importBarItem = UIBarButtonItem(customView: importButton)
-            
-            let folderImage = UIImage(named: "folder")?.withRenderingMode(.alwaysTemplate)
-            let folderButton = UIButton()
-            folderButton.setImage(folderImage, for: .normal)
-            folderButton.addTarget(self, action: #selector(handleFolder), for: .touchUpInside)
-            folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-            let folderBarItem = UIBarButtonItem(customView: folderButton)
-            
-            importBarItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
-            importBarItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
-            folderBarItem.customView?.widthAnchor.constraint(equalToConstant: 28).isActive = true
-            folderBarItem.customView?.heightAnchor.constraint(equalToConstant: 28).isActive = true
-            
-            navigationItem.rightBarButtonItems = [folderBarItem, importBarItem]
-        } else {
-            let folderButton = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(handleFolder))
-            folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-            
-            let importButton = UIBarButtonItem(title: "Import", style: .plain, target: self, action: #selector(handleImport))
-            importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
-            
-            navigationItem.rightBarButtonItems = [folderButton, importButton]
-        }
+        navigationItem.leftBarButtonItems = [profileButton, remoteButton]
+        
+        let folderButton = UIBarButtonItem(image: UIImage(named: "folder"), style: .plain, target: self, action: #selector(handleFolder))
+        folderButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+        
+        let importButton = UIBarButtonItem(image: UIImage(named: "import"), style: .plain, target: self, action: #selector(handleImport))
+        importButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+        
+        navigationItem.rightBarButtonItems = [folderButton, importButton]
         
         
     }
@@ -225,6 +205,15 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
 
     //MARK: - Gesture Selectors
+    
+    @objc func handleProfile() {
+        print(123)
+    }
+    
+    @objc func handleRemote() {
+        let remoteController = RemoteController()
+        navigationController?.pushViewController(remoteController, animated: true)
+    }
     
     @objc func handleLogout() {
         
