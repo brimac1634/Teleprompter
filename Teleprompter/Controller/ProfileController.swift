@@ -95,7 +95,6 @@ class ProfileController: UIViewController {
         loadingIndicator.style = .gray
         view.addSubview(loadingIndicator)
         loadingIndicator.startAnimating()
-        UIApplication.shared.beginIgnoringInteractionEvents()
         
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
@@ -110,11 +109,9 @@ class ProfileController: UIViewController {
                 self.userLabel.attributedText = attributedString
                 
                 loadingIndicator.stopAnimating()
-                UIApplication.shared.endIgnoringInteractionEvents()
             } else {
                 self.userLabel.attributedText = NSAttributedString(string: "Unable to retrieve current user, please check internet signal", attributes: [NSAttributedString.Key.foregroundColor: UIColor.netRoadshowDarkGray(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)])
                 loadingIndicator.stopAnimating()
-                UIApplication.shared.endIgnoringInteractionEvents()
             }
         }, withCancel: nil)
     }

@@ -14,6 +14,7 @@ import FirebaseDatabase
 class LoginController: UIViewController {
 
     var ref: DatabaseReference!
+    var homeController: HomeController!
     
     let userInputView: UIView = {
         let view = UIView()
@@ -77,6 +78,26 @@ class LoginController: UIViewController {
         return load
     }()
     
+    lazy var whyButton: UIButton = {
+        let btn = UIButton()
+        let title = NSAttributedString(string: "Why?", attributes: [NSAttributedString.Key.underlineStyle: 1, NSAttributedString.Key.foregroundColor: UIColor.netRoadshowDarkGray(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)])
+        btn.setAttributedTitle(title, for: .normal)
+        btn.backgroundColor = .clear
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.addTarget(self, action: #selector(handleWhy), for: .touchUpInside)
+        return btn
+    }()
+    
+    lazy var skipButton: UIButton = {
+        let btn = UIButton()
+        let title = NSAttributedString(string: "Skip", attributes: [NSAttributedString.Key.underlineStyle: 1, NSAttributedString.Key.foregroundColor: UIColor.netRoadshowDarkGray(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)])
+        btn.setAttributedTitle(title, for: .normal)
+        btn.backgroundColor = .clear
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.addTarget(self, action: #selector(handleSkip), for: .touchUpInside)
+        return btn
+    }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,26 +116,17 @@ class LoginController: UIViewController {
         view.addSubview(loginRegisterButton)
         view.addSubview(loginRegisterSegmentedControl)
         view.addSubview(loadingIndicator)
+        view.addSubview(whyButton)
+        view.addSubview(skipButton)
         
         loadingIndicator.center = self.view.center
-        
-        if #available(iOS 11.0, *) {
-            NSLayoutConstraint.activate([
-                userInputView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                userInputView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                userInputView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, constant: -24),
-                userInputView.heightAnchor.constraint(equalToConstant: 120)
-                ])
-        } else {
-            NSLayoutConstraint.activate([
-                userInputView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                userInputView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                userInputView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -52),
-                userInputView.heightAnchor.constraint(equalToConstant: 120)
-                ])
-        }
+
         
         NSLayoutConstraint.activate([
+            userInputView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            userInputView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            userInputView.widthAnchor.constraint(equalToConstant: 400),
+            userInputView.heightAnchor.constraint(equalToConstant: 120),
             
             emailTextField.leadingAnchor.constraint(equalTo: userInputView.leadingAnchor, constant: 12),
             emailTextField.trailingAnchor.constraint(equalTo: userInputView.trailingAnchor, constant: -12),
@@ -136,6 +148,16 @@ class LoginController: UIViewController {
             loginRegisterButton.widthAnchor.constraint(equalTo: userInputView.widthAnchor),
             loginRegisterButton.heightAnchor.constraint(equalToConstant: 50),
             
+            whyButton.topAnchor.constraint(equalTo: loginRegisterButton.bottomAnchor, constant: 8),
+            whyButton.trailingAnchor.constraint(equalTo: loginRegisterButton.trailingAnchor),
+            whyButton.heightAnchor.constraint(equalToConstant: 30),
+            whyButton.widthAnchor.constraint(equalToConstant: 50),
+            
+            skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -12),
+            skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            skipButton.heightAnchor.constraint(equalToConstant: 30),
+            skipButton.widthAnchor.constraint(equalToConstant: 50),
+            
             loginRegisterSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             loginRegisterSegmentedControl.bottomAnchor.constraint(equalTo: userInputView.topAnchor, constant: -12),
             loginRegisterSegmentedControl.widthAnchor.constraint(equalTo: userInputView.widthAnchor),
@@ -150,6 +172,28 @@ class LoginController: UIViewController {
     
     
     //MARK: - Selector Functions
+    
+    @objc func handleWhy() {
+        let alert = UIAlertController(title: "Why Register?", message: "Registering allows you to log in to a second device to use the remote control function.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
+            self.emailTextField.selectAll(nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    @objc func handleSkip() {
+        let alert = UIAlertController(title: "Skip Registration", message: "If you skip registration, then you will not be able to login to a second device and use the remote control functionality. If you skip now, you can always register later.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "register", style: .default, handler: { (_) in
+            self.emailTextField.selectAll(nil)
+        }))
+        alert.addAction(UIAlertAction(title: "skip", style: .cancel, handler: { (_) in
+            guard let home = self.homeController else {return}
+            home.defaults.set(true, forKey: "registrationSkipped")
+            self.dismiss(animated: true, completion: nil)
+        }))
+        alert.preferredAction = alert.actions[0]
+        self.present(alert, animated: true, completion: nil)
+    }
     
     @objc func handleLoginRegisterChange() {
         let title = loginRegisterSegmentedControl.titleForSegment(at: loginRegisterSegmentedControl.selectedSegmentIndex)
@@ -180,6 +224,8 @@ class LoginController: UIViewController {
                 UIApplication.shared.endIgnoringInteractionEvents()
                 return
             }
+            guard let home = self.homeController else {return}
+            home.defaults.set(false, forKey: "registrationSkipped")
             self.loadingIndicator.stopAnimating()
             UIApplication.shared.endIgnoringInteractionEvents()
             
@@ -224,6 +270,8 @@ class LoginController: UIViewController {
                         UIApplication.shared.endIgnoringInteractionEvents()
                         return
                     }
+                    guard let home = self.homeController else {return}
+                    home.defaults.set(false, forKey: "registrationSkipped")
                     print("saved user successfully into Firebase DB")
                     self.loadingIndicator.stopAnimating()
                     UIApplication.shared.endIgnoringInteractionEvents()

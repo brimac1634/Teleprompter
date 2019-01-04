@@ -17,10 +17,12 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     let realm = try! Realm()
     var ref: DatabaseReference!
+    let defaults = UserDefaults.standard
     
     var usingIpad: Bool = true
     var textBoxIsEditing: Bool = false
     var infoIsShowing: Bool = false
+
     
     let topLabel: UILabel = {
         let label = UILabel()
@@ -199,7 +201,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
 
     fileprivate func checkIfUserIsLoggedIn() {
-        if Auth.auth().currentUser?.uid == nil {
+        if Auth.auth().currentUser?.uid == nil && defaults.bool(forKey: "registrationSkipped") == false {
             perform(#selector(handleLogout), with: nil, afterDelay: 0)
         }
     }
@@ -207,13 +209,28 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     //MARK: - Gesture Selectors
     
     @objc func handleProfile() {
-        let profileController = ProfileController()
-        navigationController?.pushViewController(profileController, animated: true)
+        if defaults.bool(forKey: "registrationSkipped") == true {
+            handleLogout()
+        } else if Auth.auth().currentUser?.uid != nil {
+            let profileController = ProfileController()
+            navigationController?.pushViewController(profileController, animated: true)
+        }
+        
     }
     
     @objc func handleRemote() {
-        let remoteController = RemoteController()
-        navigationController?.pushViewController(remoteController, animated: true)
+        if defaults.bool(forKey: "registrationSkipped") == true {
+            let alert = UIAlertController(title: "Login Needed", message: "You must login before you can use the remote control function.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "cancel", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "login", style: .default, handler: { (_) in
+                self.handleLogout()
+            }))
+            alert.preferredAction = alert.actions[1]
+            self.present(alert, animated: true, completion: nil)
+        } else if Auth.auth().currentUser?.uid != nil {
+            let remoteController = RemoteController()
+            navigationController?.pushViewController(remoteController, animated: true)
+        }
     }
     
     @objc func handleLogout() {
@@ -225,6 +242,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         }
         
         let loginController = LoginController()
+        loginController.homeController = self
         navigationController?.present(loginController, animated: true, completion: nil)
     }
     
