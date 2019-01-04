@@ -93,11 +93,15 @@ class RemoteController: UIViewController {
     }
     
     @objc func handleSlow() {
-        print(456)
+        guard scrollSpeed > 5 else {return}
+        scrollSpeed = scrollSpeed - 5
+        updateScrollSpeed()
     }
     
     @objc func handleFast() {
-        print(789)
+        guard scrollSpeed <= 95 else {return}
+        scrollSpeed = scrollSpeed + 5
+        updateScrollSpeed()
     }
     
     //MARK: - Firebase Methods
@@ -138,8 +142,7 @@ class RemoteController: UIViewController {
         ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             if let value = snapshot.value as? [String: AnyObject] {
                 guard let speed = value["scrollSpeed"] else {return}
-                self.scrollSpeed = CGFloat(speed as! Int)
-                print(self.scrollSpeed)
+                self.scrollSpeed = CGFloat(speed.floatValue)
             }
         }, withCancel: nil)
     }
@@ -147,18 +150,26 @@ class RemoteController: UIViewController {
     fileprivate func observeStateChange() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
-            let valueChange = snapshot.value as! Int
-            var isScrolling: Bool = false
-            if valueChange == 0 {
-                isScrolling = false
-            } else if valueChange == 1 {
-                isScrolling = true
+            let key = snapshot.key
+            if key == "scrollViewIsScrolling" {
+                let valueChange = snapshot.value as! Int
+                var isScrolling: Bool = false
+                if valueChange == 0 {
+                    isScrolling = false
+                } else {
+                    isScrolling = true
+                }
+                if isScrolling != self.scrollViewIsScrolling {
+                    self.scrollViewIsScrolling = isScrolling
+                }
+                
+            } else if key == "scrollSpeed" {
+                let valueChange = snapshot.value as! CGFloat
+                if valueChange != self.scrollSpeed {
+                    self.scrollSpeed = valueChange
+                }
+                
             }
-            
-            if isScrolling != self.scrollViewIsScrolling {
-                self.scrollViewIsScrolling = isScrolling
-            }
-            
         }, withCancel: nil)
     }
 }

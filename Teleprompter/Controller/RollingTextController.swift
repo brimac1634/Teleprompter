@@ -403,15 +403,14 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         } else if rightSide.contains(point1) && rightSide.contains(point2) && scrollSpeed <= 95 {
             scrollSpeed = scrollSpeed + 5
         }
-        let newTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
-        timer.invalidate()
-        scrollTimer = newTimer
         
+        updateTimerWithNewSpeed()
         updateScrollSpeed()
 
         controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
         controlBar.scrollSpeedSlider.value = Float(scrollSpeed)
     }
+
     
     @objc func handleArrowPan(gesture: UIPanGestureRecognizer) {
         let point = gesture.location(in: view)
@@ -473,6 +472,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     @objc func handleScrollSpeed(sender: UISlider!) {
         scrollSpeed = CGFloat(sender.value)
+        updateScrollSpeed()
         controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
     }
     
@@ -536,6 +536,14 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
 
     
     //MARK: - View Updaters
+    
+    fileprivate func updateTimerWithNewSpeed() {
+        guard let timer = scrollTimer else {return}
+        guard timer.isValid else {return}
+        let newTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1 / scrollSpeed), target: self, selector: #selector(fireScroll), userInfo: nil, repeats: true)
+        timer.invalidate()
+        scrollTimer = newTimer
+    }
     
     func scrollToTop() {
         textView.contentOffset = CGPoint(x: 0, y: 0)
@@ -715,6 +723,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
         updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
         
+        updateScrollSpeed()
     }
     
     //MARK: - ScrollView Methods
@@ -760,28 +769,35 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
                 print(err ?? "")
                 return
             }
-            print("updated state of scroll")
         })
         
     }
     
     fileprivate func observeStateChange() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        
         ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
-            let valueChange = snapshot.value as! Int
-            var isScrolling: Bool = false
-            if valueChange == 0 {
-                isScrolling = false
-            } else {
-                isScrolling = true
+            let key = snapshot.key
+            if key == "scrollViewIsScrolling" {
+                let valueChange = snapshot.value as! Int
+                var isScrolling: Bool = false
+                if valueChange == 0 {
+                    isScrolling = false
+                } else {
+                    isScrolling = true
+                }
+                if isScrolling != self.scrollViewIsScrolling {
+                    self.scrollViewIsScrolling = isScrolling
+                    self.pauseStartScroll()
+                }
+
+            } else if key == "scrollSpeed" {
+                let valueChange = snapshot.value as! CGFloat
+                if valueChange != self.scrollSpeed {
+                    self.scrollSpeed = valueChange
+                    self.updateTimerWithNewSpeed()
+                }
+                
             }
-            
-            if isScrolling != self.scrollViewIsScrolling {
-                self.scrollViewIsScrolling = isScrolling
-                self.pauseStartScroll()
-            }
-            
         }, withCancel: nil)
     }
 }
