@@ -120,12 +120,28 @@ class LoginController: UIViewController {
         view.addSubview(skipButton)
         
         loadingIndicator.center = self.view.center
+        
+        if #available(iOS 11.0, *) {
+            NSLayoutConstraint.activate([
+                skipButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
+                skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                skipButton.heightAnchor.constraint(equalToConstant: 30),
+                skipButton.widthAnchor.constraint(equalToConstant: 50)
+                ])
+        } else {
+            NSLayoutConstraint.activate([
+                skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -12),
+                skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                skipButton.heightAnchor.constraint(equalToConstant: 30),
+                skipButton.widthAnchor.constraint(equalToConstant: 50)
+                ])
+        }
 
         
         NSLayoutConstraint.activate([
             userInputView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             userInputView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            userInputView.widthAnchor.constraint(equalToConstant: 400),
+            userInputView.widthAnchor.constraint(equalToConstant: 350),
             userInputView.heightAnchor.constraint(equalToConstant: 120),
             
             emailTextField.leadingAnchor.constraint(equalTo: userInputView.leadingAnchor, constant: 12),
@@ -152,11 +168,6 @@ class LoginController: UIViewController {
             whyButton.trailingAnchor.constraint(equalTo: loginRegisterButton.trailingAnchor),
             whyButton.heightAnchor.constraint(equalToConstant: 30),
             whyButton.widthAnchor.constraint(equalToConstant: 50),
-            
-            skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -12),
-            skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            skipButton.heightAnchor.constraint(equalToConstant: 30),
-            skipButton.widthAnchor.constraint(equalToConstant: 50),
             
             loginRegisterSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             loginRegisterSegmentedControl.bottomAnchor.constraint(equalTo: userInputView.topAnchor, constant: -12),

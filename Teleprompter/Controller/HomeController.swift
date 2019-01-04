@@ -289,7 +289,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         
-        alert.preferredAction = alert.actions[1]
+        alert.preferredAction = alert.actions[0]
         self.present(alert, animated: true, completion: nil)
         
     }

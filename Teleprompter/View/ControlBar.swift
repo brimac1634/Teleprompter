@@ -224,7 +224,7 @@ class ControlBar: BaseView {
        super.setupView()
         
         if ( UIDevice.current.model.range(of: "iPad") != nil) {
-            markerInput.font = UIFont.systemFont(ofSize: 26)
+            markerInput.font = UIFont.systemFont(ofSize: 24)
         } else {
             markerInput.font = UIFont.systemFont(ofSize: 18)
         }
