@@ -229,10 +229,29 @@ class LoginController: UIViewController {
         UIApplication.shared.beginIgnoringInteractionEvents()
         
         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
-            if error != nil {
-                print(error ?? "")
+            if let errCode = AuthErrorCode(rawValue: error!._code){
+                print(errCode)
                 self.loadingIndicator.stopAnimating()
                 UIApplication.shared.endIgnoringInteractionEvents()
+                
+                switch errCode {
+                case .invalidEmail:
+                    print("invalid email")
+                    self.present(self.showAlert(title: "Invalid Email", text: "The email you entered was incomplete"), animated: true, completion: nil)
+                case .userNotFound:
+                    print("Indicates the user account was not found")
+                    self.present(self.showAlert(title: "Email not found", text: "The email you entered is not yet registered"), animated: true, completion: nil)
+                case .wrongPassword:
+                    print("wrong password")
+                    self.present(self.showAlert(title: "Invalid Password", text: "The password you entered was incorrect"), animated: true, completion: nil)
+                case .networkError:
+                    print("Indicates a network error occurred")
+                    self.present(self.showAlert(title: "Network Error", text: "There is a problem with the network connection. Please check your internet connection and try again."), animated: true, completion: nil)
+                default:
+                    print("error logging in")
+                    self.present(self.showAlert(title: "Error", text: "An unexpected error occured while logging in. Please try again."), animated: true, completion: nil)
+                }
+                
                 return
             }
             guard let home = self.homeController else {return}
@@ -292,6 +311,14 @@ class LoginController: UIViewController {
             }
         }
         
+    }
+    
+    //MARK: - Login Alerts
+    
+    fileprivate func showAlert(title: String, text: String) -> UIAlertController {
+        let alert = UIAlertController(title: title, message: text, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+        return alert
     }
 
 }
