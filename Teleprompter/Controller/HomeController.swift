@@ -333,7 +333,15 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
     
     @objc func handleAddMarker() {
-        guard textBoxIsEditing else {return}
+        if textBoxIsEditing == false {
+            textBox.selectAll(nil)
+            insertMark()
+        } else {
+            insertMark()
+        }
+    }
+    
+    fileprivate func insertMark() {
         if let selectedRange = textBox.selectedTextRange {
             textBox.insertText("####")
             guard let newPosition = textBox.position(from: selectedRange.start, offset: 2) else {return}
