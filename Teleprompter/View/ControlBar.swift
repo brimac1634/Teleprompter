@@ -10,7 +10,7 @@ import UIKit
 
 class ControlBar: BaseView {
     
-    var universalFontSize: CGFloat = 24
+    var universalFontSize: CGFloat = 20
     var groupedStack: UIStackView!
     
     let backButton: BaseButton = {
@@ -224,7 +224,7 @@ class ControlBar: BaseView {
        super.setupView()
         
         if ( UIDevice.current.model.range(of: "iPad") != nil) {
-            markerInput.font = UIFont.systemFont(ofSize: 24)
+            markerInput.font = UIFont.systemFont(ofSize: 20)
         } else {
             markerInput.font = UIFont.systemFont(ofSize: 18)
         }

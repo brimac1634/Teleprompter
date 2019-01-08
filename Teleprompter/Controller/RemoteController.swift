@@ -12,6 +12,8 @@ import FirebaseDatabase
 
 class RemoteController: UIViewController {
     
+    let defaults = UserDefaults.standard
+    
     var ref: DatabaseReference!
     
     var scrollViewIsScrolling: Bool = false
@@ -49,12 +51,13 @@ class RemoteController: UIViewController {
         ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
         
         setupView()
+        checkIfFirstUse()
         setScrollSpeed()
         observeStateChange()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        navigationItem.title = "Remote Control"
+        self.navigationItem.title = "Remote Control"
     }
     
 
@@ -85,6 +88,12 @@ class RemoteController: UIViewController {
     }
     
     
+    fileprivate func checkIfFirstUse() {
+        if defaults.bool(forKey: "firstUseComplete") == false {
+            self.present(Alerts.showAlert(title: "Remote Control", text: "Login to a second device with the same credentials and start the teleprompter. You can then remotely control the scrolling from this device. NOTE: Both devices must be connected to the internet."), animated: true, completion: nil)
+            defaults.set(true, forKey: "firstUseComplete")
+        }
+    }
     
     //MARK: - Selector Methods
     
