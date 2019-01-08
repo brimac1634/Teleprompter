@@ -334,11 +334,16 @@ class ControlBar: BaseView {
         arrowModeSwitch.isOn = false
         highlightModeSwitch.isOn = false
         
-        
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleResignMark)))
 
     }
     
 
+    //MARK: - Selector
+    
+    @objc func handleResignMark() {
+        markerInput.resignFirstResponder()
+    }
     
     
 }
