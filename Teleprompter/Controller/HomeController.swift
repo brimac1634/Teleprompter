@@ -213,6 +213,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             handleLogout()
         } else if Auth.auth().currentUser?.uid != nil {
             let profileController = ProfileController()
+            profileController.homeController = self
             navigationController?.pushViewController(profileController, animated: true)
         }
         
@@ -228,8 +229,13 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             alert.preferredAction = alert.actions[1]
             self.present(alert, animated: true, completion: nil)
         } else if Auth.auth().currentUser?.uid != nil {
-            let remoteController = RemoteController()
-            navigationController?.pushViewController(remoteController, animated: true)
+            if Reachability.isConnectedToNetwork() {
+                let remoteController = RemoteController()
+                navigationController?.pushViewController(remoteController, animated: true)
+            } else {
+                self.present(Alerts.showAlert(title: "No Internet", text: "Internet connection is needed to use the remote control feature. Please check internet connection and try again."), animated: true, completion: nil)
+            }
+            
         }
     }
     

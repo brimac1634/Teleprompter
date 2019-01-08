@@ -12,6 +12,8 @@ import FirebaseDatabase
 
 class ProfileController: UIViewController {
     
+    var homeController: HomeController!
+    
     let logoView: UIImageView = {
         let image = UIImageView(image: UIImage(named: "NetRoadshowTeleprompterIcon"))
         image.contentMode = .scaleAspectFit
@@ -81,38 +83,50 @@ class ProfileController: UIViewController {
             print("Unable to sign out: ", error)
         }
         
+        guard let home = homeController else {return}
         navigationController?.popViewController(animated: true)
-        let loginController = LoginController()
-        navigationController?.present(loginController, animated: true, completion: nil)
+        home.handleLogout()
     }
     
     //MARK: - Firebase Methods
     
     fileprivate func configureDatabase() {
-        let loadingIndicator = UIActivityIndicatorView()
-        loadingIndicator.center = self.view.center
-        loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.style = .gray
-        view.addSubview(loadingIndicator)
-        loadingIndicator.startAnimating()
+        if Reachability.isConnectedToNetwork() {
+            let loadingIndicator = UIActivityIndicatorView()
+            loadingIndicator.center = self.view.center
+            loadingIndicator.hidesWhenStopped = true
+            loadingIndicator.style = .gray
+            view.addSubview(loadingIndicator)
+            loadingIndicator.startAnimating()
+            
+            guard let uid = Auth.auth().currentUser?.uid else {return}
+            let ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
+            ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                if let value = snapshot.value as? [String: AnyObject] {
+                    guard let currentUser = value["email"] else {return}
+                    let currentUserString = String(describing: currentUser)
+                    let paragraphStyle = NSMutableParagraphStyle()
+                    paragraphStyle.alignment = .center
+                    let attributedString = NSMutableAttributedString(attributedString: NSAttributedString(string: "You are currently signed in as...\n", attributes: [NSAttributedString.Key.foregroundColor: UIColor.netRoadshowDarkGray(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18), NSAttributedString.Key.paragraphStyle: paragraphStyle]))
+                    attributedString.append(NSAttributedString(string: currentUserString, attributes: [NSAttributedString.Key.foregroundColor: UIColor.netRoadshowBlue(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 22), NSAttributedString.Key.paragraphStyle: paragraphStyle]))
+                    self.userLabel.attributedText = attributedString
+                    
+                    loadingIndicator.stopAnimating()
+                } else {
+                    self.displayNoUserFound()
+                    loadingIndicator.stopAnimating()
+                }
+            }, withCancel: nil)
+        } else {
+            displayNoUserFound()
+        }
         
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        let ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
-        ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            if let value = snapshot.value as? [String: AnyObject] {
-                guard let currentUser = value["email"] else {return}
-                let currentUserString = String(describing: currentUser)
-                let paragraphStyle = NSMutableParagraphStyle()
-                paragraphStyle.alignment = .center
-                let attributedString = NSMutableAttributedString(attributedString: NSAttributedString(string: "You are currently signed in as...\n", attributes: [NSAttributedString.Key.foregroundColor: UIColor.netRoadshowDarkGray(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18), NSAttributedString.Key.paragraphStyle: paragraphStyle]))
-                attributedString.append(NSAttributedString(string: currentUserString, attributes: [NSAttributedString.Key.foregroundColor: UIColor.netRoadshowBlue(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 22), NSAttributedString.Key.paragraphStyle: paragraphStyle]))
-                self.userLabel.attributedText = attributedString
-                
-                loadingIndicator.stopAnimating()
-            } else {
-                self.userLabel.attributedText = NSAttributedString(string: "Unable to retrieve current user, please check internet signal", attributes: [NSAttributedString.Key.foregroundColor: UIColor.netRoadshowDarkGray(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)])
-                loadingIndicator.stopAnimating()
-            }
-        }, withCancel: nil)
+        
+    }
+    
+    fileprivate func displayNoUserFound() {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        self.userLabel.attributedText = NSAttributedString(string: "Unable to retrieve current user. Please check internet signal...", attributes: [NSAttributedString.Key.foregroundColor: UIColor.netRoadshowDarkGray(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18), NSAttributedString.Key.paragraphStyle: paragraphStyle])
     }
 }

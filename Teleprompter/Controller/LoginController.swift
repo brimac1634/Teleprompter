@@ -57,6 +57,7 @@ class LoginController: UIViewController {
     let logoView: UIImageView = {
         let image = UIImageView(image: UIImage(named: "NetRoadshowTeleprompterIcon"))
         image.contentMode = .scaleAspectFit
+        image.isUserInteractionEnabled = false
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
@@ -179,22 +180,25 @@ class LoginController: UIViewController {
             logoView.widthAnchor.constraint(equalToConstant: 200),
             logoView.heightAnchor.constraint(equalToConstant: 200),
             ])
+        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleKeyboardDismiss)))
     }
     
     
     //MARK: - Selector Functions
     
+    @objc func handleKeyboardDismiss() {
+        emailTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
+    }
+    
     @objc func handleWhy() {
-        let alert = UIAlertController(title: "Why Register?", message: "Registering allows you to log in to a second device to use the remote control function.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
-            self.emailTextField.selectAll(nil)
-        }))
-        self.present(alert, animated: true, completion: nil)
+        self.present(Alerts.showAlert(title: "Why Register?", text: "Registering allows you to log in to a second device to use the remote control function."), animated: true, completion: nil)
     }
     
     @objc func handleSkip() {
-        let alert = UIAlertController(title: "Skip Registration", message: "If you skip registration, then you will not be able to login to a second device and use the remote control functionality. If you skip now, you can always register later.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "register", style: .default, handler: { (_) in
+        let alert = UIAlertController(title: "Skip Login", message: "If you skip registration, then you will not be able to login to a second device and use the remote control functionality. If you skip now, you can always register later.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "login", style: .default, handler: { (_) in
             self.emailTextField.selectAll(nil)
         }))
         alert.addAction(UIAlertAction(title: "skip", style: .cancel, handler: { (_) in
@@ -229,96 +233,117 @@ class LoginController: UIViewController {
         UIApplication.shared.beginIgnoringInteractionEvents()
         
         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
-            if let errCode = AuthErrorCode(rawValue: error!._code){
-                print(errCode)
+            if Reachability.isConnectedToNetwork() {
+                print("connected")
+                if let errCode = error?._code {
+                    guard let err = AuthErrorCode(rawValue: errCode) else {return}
+                    self.loadingIndicator.stopAnimating()
+                    UIApplication.shared.endIgnoringInteractionEvents()
+                    
+                    switch err {
+                    case .invalidEmail:
+                        print("invalid email")
+                        self.present(Alerts.showAlert(title: "Invalid Email", text: "The email you entered was incomplete"), animated: true, completion: nil)
+                    case .userNotFound:
+                        print("Indicates the user account was not found")
+                        self.present(Alerts.showAlert(title: "Email not found", text: "The email you entered is not yet registered"), animated: true, completion: nil)
+                    case .wrongPassword:
+                        print("wrong password")
+                        self.present(Alerts.showAlert(title: "Invalid Password", text: "The password you entered was incorrect"), animated: true, completion: nil)
+                    case .networkError:
+                        print("Indicates a network error occurred")
+                        self.present(Alerts.showAlert(title: "Network Error", text: "There is a problem with the network connection. Please check your internet connection and try again."), animated: true, completion: nil)
+                    default:
+                        print("error logging in")
+                        self.present(Alerts.showAlert(title: "Error", text: "An unexpected error occured while logging in. Please try again."), animated: true, completion: nil)
+                    }
+                    
+                    return
+                } else {
+                    guard let home = self.homeController else {return}
+                    print("successfully signed in")
+                    home.defaults.set(false, forKey: "registrationSkipped")
+                    self.loadingIndicator.stopAnimating()
+                    UIApplication.shared.endIgnoringInteractionEvents()
+                    
+                    self.dismiss(animated: true, completion: nil)
+                }
+            } else {
+                print("no internet connection")
                 self.loadingIndicator.stopAnimating()
                 UIApplication.shared.endIgnoringInteractionEvents()
-                
-                switch errCode {
-                case .invalidEmail:
-                    print("invalid email")
-                    self.present(self.showAlert(title: "Invalid Email", text: "The email you entered was incomplete"), animated: true, completion: nil)
-                case .userNotFound:
-                    print("Indicates the user account was not found")
-                    self.present(self.showAlert(title: "Email not found", text: "The email you entered is not yet registered"), animated: true, completion: nil)
-                case .wrongPassword:
-                    print("wrong password")
-                    self.present(self.showAlert(title: "Invalid Password", text: "The password you entered was incorrect"), animated: true, completion: nil)
-                case .networkError:
-                    print("Indicates a network error occurred")
-                    self.present(self.showAlert(title: "Network Error", text: "There is a problem with the network connection. Please check your internet connection and try again."), animated: true, completion: nil)
-                default:
-                    print("error logging in")
-                    self.present(self.showAlert(title: "Error", text: "An unexpected error occured while logging in. Please try again."), animated: true, completion: nil)
-                }
-                
-                return
+                self.present(Alerts.showAlert(title: "Error", text: "There is a problem with the network. Please check your internet connection and try again."), animated: true, completion: nil)
             }
-            guard let home = self.homeController else {return}
-            home.defaults.set(false, forKey: "registrationSkipped")
-            self.loadingIndicator.stopAnimating()
-            UIApplication.shared.endIgnoringInteractionEvents()
-            
-            self.dismiss(animated: true, completion: nil)
             
         }
     }
     
     fileprivate func handleRegister() {
-        guard let email = emailTextField.text, let password = passwordTextField.text else {
-            print("Form is not valid")
-            return
-        }
-        if password.count < 6 {
-            let alert = UIAlertController(title: "Invalid Password", message: "Your password must contain at least 6 characters", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
-                self.passwordTextField.selectAll(nil)
-            }))
-            self.present(alert, animated: true, completion: nil)
-        } else {
-            loadingIndicator.alpha = 1
-            loadingIndicator.startAnimating()
-            UIApplication.shared.beginIgnoringInteractionEvents()
-            
-            Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
-                if error != nil {
-                    print(error ?? "")
-                    self.loadingIndicator.stopAnimating()
-                    UIApplication.shared.endIgnoringInteractionEvents()
-                    return
-                }
+        if Reachability.isConnectedToNetwork() {
+            guard let email = emailTextField.text, let password = passwordTextField.text else {
+                print("Form is not valid")
+                return
+            }
+            if password.count < 6 {
+                self.present(Alerts.showAlert(title: "Invalid Password", text: "Your password must contain at least 6 characters"), animated: true, completion: nil)
+            } else {
+                loadingIndicator.alpha = 1
+                loadingIndicator.startAnimating()
+                UIApplication.shared.beginIgnoringInteractionEvents()
                 
-                guard let uid = authResult?.user.uid else {return}
-                
-                self.ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
-                let userRef = self.ref.child("users").child(uid)
-                let values = ["email": email]
-                userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
-                    if err != nil {
-                        print(err ?? "")
+                Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
+                     if let errCode = error?._code {
+                        guard let err = AuthErrorCode(rawValue: errCode) else {return}
+                        switch err {
+                        case .invalidEmail:
+                            print("invalid email")
+                            self.present(Alerts.showAlert(title: "Invalid Email", text: "The email you entered was incomplete"), animated: true, completion: nil)
+                        case .emailAlreadyInUse:
+                            print("Indicates the email used to attempt a sign up is already in use.")
+                            self.present(Alerts.showAlert(title: "Email Unavailable", text: "The email you entered is already registered with an account."), animated: true, completion: nil)
+                        case .wrongPassword:
+                            print("wrong password")
+                            self.present(Alerts.showAlert(title: "Invalid Password", text: "The password you entered was incorrect"), animated: true, completion: nil)
+                        case .networkError:
+                            print("Indicates a network error occurred")
+                            self.present(Alerts.showAlert(title: "Network Error", text: "There is a problem with the network connection. Please check your internet connection and try again."), animated: true, completion: nil)
+                        default:
+                            print("error logging in")
+                            self.present(Alerts.showAlert(title: "Error", text: "An unexpected error occured while logging in. Please try again."), animated: true, completion: nil)
+                        }
+                        
                         self.loadingIndicator.stopAnimating()
                         UIApplication.shared.endIgnoringInteractionEvents()
                         return
                     }
-                    guard let home = self.homeController else {return}
-                    home.defaults.set(false, forKey: "registrationSkipped")
-                    print("saved user successfully into Firebase DB")
-                    self.loadingIndicator.stopAnimating()
-                    UIApplication.shared.endIgnoringInteractionEvents()
-                    self.dismiss(animated: true, completion: nil)
                     
-                })
+                    guard let uid = authResult?.user.uid else {return}
+                    
+                    self.ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
+                    let userRef = self.ref.child("users").child(uid)
+                    let values = ["email": email]
+                    userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
+                        if err != nil {
+                            print(err ?? "")
+                            self.loadingIndicator.stopAnimating()
+                            UIApplication.shared.endIgnoringInteractionEvents()
+                            return
+                        }
+                        guard let home = self.homeController else {return}
+                        home.defaults.set(false, forKey: "registrationSkipped")
+                        print("saved user successfully into Firebase DB")
+                        self.loadingIndicator.stopAnimating()
+                        UIApplication.shared.endIgnoringInteractionEvents()
+                        self.dismiss(animated: true, completion: nil)
+                        
+                    })
+                }
             }
+        } else {
+            self.present(Alerts.showAlert(title: "Error", text: "There is a problem with the network. Please check your internet connection and try again."), animated: true, completion: nil)
         }
         
-    }
-    
-    //MARK: - Login Alerts
-    
-    fileprivate func showAlert(title: String, text: String) -> UIAlertController {
-        let alert = UIAlertController(title: title, message: text, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
-        return alert
+        
     }
 
 }
