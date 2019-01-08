@@ -112,13 +112,17 @@ class ProfileController: UIViewController {
             guard let user = Auth.auth().currentUser else {return}
             let alert = UIAlertController(title: "Delete Account", message: "Are you sure you want to delete this account? All user data will be deleted forever and cannot be undone.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_) in
+                self.deleteData(uid: user.uid)
                 user.delete { error in
                     if let error = error {
                         print(error.localizedDescription)
                     } else {
-                        self.present(Alerts.showAlert(title: "Account Deleted", text: "Your user account has successfully been deleted."), animated: true, completion: {
-                            self.perform(#selector(self.handleLogout), with: nil, afterDelay: 1)
-                        })
+                        let alert = UIAlertController(title: "Account Deleted", message: "Your user account has successfully been deleted.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
+                            self.perform(#selector(self.handleLogout), with: nil, afterDelay: 0)
+                        }))
+                        
+                        self.present(alert, animated: true, completion: nil)
                     }
                 }
             }))
@@ -196,5 +200,16 @@ class ProfileController: UIViewController {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         self.userLabel.attributedText = NSAttributedString(string: "Unable to retrieve current user. Please check internet signal...", attributes: [NSAttributedString.Key.foregroundColor: UIColor.netRoadshowDarkGray(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18), NSAttributedString.Key.paragraphStyle: paragraphStyle])
+    }
+    
+    fileprivate func deleteData(uid: String) {
+        let ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
+        let userRef = ref.child("users").child(uid)
+        userRef.removeValue { (error, dataRef) in
+            if error != nil {
+                print(error)
+            }
+        }
+        
     }
 }
