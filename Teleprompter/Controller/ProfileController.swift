@@ -13,6 +13,7 @@ import FirebaseDatabase
 class ProfileController: UIViewController {
     
     var homeController: HomeController!
+    var currentEmail: String = ""
     
     let logoView: UIImageView = {
         let image = UIImageView(image: UIImage(named: "NetRoadshowTeleprompterIcon"))
@@ -34,9 +35,19 @@ class ProfileController: UIViewController {
         let btn = BaseButton()
         btn.setTitle("Logout", for: .normal)
         btn.titleLabel?.textColor = UIColor.white
-        btn.backgroundColor = UIColor.netRoadshowDarkGray(a: 1)
+        btn.backgroundColor = UIColor.netRoadshowBlue(a: 1)
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
+        return btn
+    }()
+    
+    lazy var resetPasswordButton: BaseButton = {
+        let btn = BaseButton()
+        btn.setTitle("Reset Password", for: .normal)
+        btn.titleLabel?.textColor = UIColor.white
+        btn.backgroundColor = UIColor.netRoadshowDarkGray(a: 1)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.addTarget(self, action: #selector(handleResetPassword), for: .touchUpInside)
         return btn
     }()
     
@@ -55,6 +66,7 @@ class ProfileController: UIViewController {
         view.addSubview(logoView)
         view.addSubview(userLabel)
         view.addSubview(logoutButton)
+        view.addSubview(resetPasswordButton)
         
         NSLayoutConstraint.activate([
             userLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -67,11 +79,18 @@ class ProfileController: UIViewController {
             logoutButton.widthAnchor.constraint(equalTo: userLabel.widthAnchor),
             logoutButton.heightAnchor.constraint(equalToConstant: 50),
             
+            resetPasswordButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            resetPasswordButton.topAnchor.constraint(equalTo: logoutButton.bottomAnchor, constant: 12),
+            resetPasswordButton.widthAnchor.constraint(equalTo: userLabel.widthAnchor),
+            resetPasswordButton.heightAnchor.constraint(equalToConstant: 50),
+            
             logoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             logoView.bottomAnchor.constraint(equalTo: userLabel.topAnchor, constant: -24),
             logoView.widthAnchor.constraint(equalToConstant: 200),
             logoView.heightAnchor.constraint(equalToConstant: 200)
             ])
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(handleDeleteAccount))
     }
     
     //MARK: - Selector Methods
@@ -86,6 +105,54 @@ class ProfileController: UIViewController {
         guard let home = homeController else {return}
         navigationController?.popViewController(animated: true)
         home.handleLogout()
+    }
+    
+    @objc func handleDeleteAccount() {
+        if Reachability.isConnectedToNetwork() {
+            guard let user = Auth.auth().currentUser else {return}
+            let alert = UIAlertController(title: "Delete Account", message: "Are you sure you want to delete this account? All user data will be deleted forever and cannot be undone.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_) in
+                user.delete { error in
+                    if let error = error {
+                        print(error.localizedDescription)
+                    } else {
+                        self.present(Alerts.showAlert(title: "Account Deleted", text: "Your user account has successfully been deleted."), animated: true, completion: {
+                            self.perform(#selector(self.handleLogout), with: nil, afterDelay: 1)
+                        })
+                    }
+                }
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        } else {
+            self.present(Alerts.showAlert(title: "No Internet", text: "You must be connected to the internet in order to delete your user account."), animated: true, completion: nil)
+        }
+        
+    }
+    
+    @objc func handleResetPassword() {
+        if Reachability.isConnectedToNetwork() {
+            guard currentEmail.count > 0 else {return}
+            let alert = UIAlertController(title: "Reset Password", message: "Are you sure you wish to reset your password?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "Reset", style: .default, handler: { (_) in
+                Auth.auth().sendPasswordReset(withEmail: self.currentEmail) { (error) in
+                    if error != nil {
+                        print(error?.localizedDescription)
+                        self.present(Alerts.showAlert(title: "Error", text: "There was an error while sending the password reset request. Please try again later."), animated: true, completion: nil)
+                        return
+                    } else {
+                        self.present(Alerts.showAlert(title: "Reset Password", text: "Please check your email for a password reset link."), animated: true, completion: nil)
+                    }
+                    
+                }
+            }))
+            alert.preferredAction = alert.actions[0]
+            self.present(alert, animated: true, completion: nil)
+        } else {
+            self.present(Alerts.showAlert(title: "No Internet", text: "You must be connected to the internet in order to delete your user account."), animated: true, completion: nil)
+        }
+        
     }
     
     //MARK: - Firebase Methods
@@ -105,6 +172,7 @@ class ProfileController: UIViewController {
                 if let value = snapshot.value as? [String: AnyObject] {
                     guard let currentUser = value["email"] else {return}
                     let currentUserString = String(describing: currentUser)
+                    self.currentEmail = currentUserString
                     let paragraphStyle = NSMutableParagraphStyle()
                     paragraphStyle.alignment = .center
                     let attributedString = NSMutableAttributedString(attributedString: NSAttributedString(string: "You are currently signed in as...\n", attributes: [NSAttributedString.Key.foregroundColor: UIColor.netRoadshowDarkGray(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18), NSAttributedString.Key.paragraphStyle: paragraphStyle]))

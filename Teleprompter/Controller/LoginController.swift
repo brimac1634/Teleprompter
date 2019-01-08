@@ -16,6 +16,7 @@ class LoginController: UIViewController {
     var ref: DatabaseReference!
     var homeController: HomeController!
     
+    
     let userInputView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -249,7 +250,14 @@ class LoginController: UIViewController {
                         self.present(Alerts.showAlert(title: "Email not found", text: "The email you entered is not yet registered"), animated: true, completion: nil)
                     case .wrongPassword:
                         print("wrong password")
-                        self.present(Alerts.showAlert(title: "Invalid Password", text: "The password you entered was incorrect"), animated: true, completion: nil)
+                        let alert = UIAlertController(title: "Invalid Password", message: "The password you entered was incorrect", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Reset", style: .default, handler: { (_) in
+                            self.resetPassword(email: email)
+                        }))
+                        alert.addAction(UIAlertAction(title: "Retry", style: .default, handler: nil))
+                        alert.preferredAction = alert.actions[1]
+                        self.present(alert, animated: true, completion: nil)
+                        
                     case .networkError:
                         print("Indicates a network error occurred")
                         self.present(Alerts.showAlert(title: "Network Error", text: "There is a problem with the network connection. Please check your internet connection and try again."), animated: true, completion: nil)
@@ -300,7 +308,9 @@ class LoginController: UIViewController {
                             self.present(Alerts.showAlert(title: "Invalid Email", text: "The email you entered was incomplete"), animated: true, completion: nil)
                         case .emailAlreadyInUse:
                             print("Indicates the email used to attempt a sign up is already in use.")
-                            self.present(Alerts.showAlert(title: "Email Unavailable", text: "The email you entered is already registered with an account."), animated: true, completion: nil)
+                            self.present(Alerts.showAlert(title: "Email Already Registered", text: "The email you entered is already registered with an account. Try logging in instead."), animated: true, completion: nil)
+                            self.loginRegisterSegmentedControl.selectedSegmentIndex = 0
+                            self.handleLoginRegisterChange()
                         case .wrongPassword:
                             print("wrong password")
                             self.present(Alerts.showAlert(title: "Invalid Password", text: "The password you entered was incorrect"), animated: true, completion: nil)
@@ -344,6 +354,17 @@ class LoginController: UIViewController {
         }
         
         
+    }
+    
+    fileprivate func resetPassword(email: String) {
+        Auth.auth().sendPasswordReset(withEmail: email) { (error) in
+            if error != nil {
+                print(error?.localizedDescription)
+                self.present(Alerts.showAlert(title: "Error", text: "There was an error while sending the password reset request. Please try again later."), animated: true, completion: nil)
+            } else {
+                self.present(Alerts.showAlert(title: "Reset Password", text: "Please check your email for a password reset link."), animated: true, completion: nil)
+            }
+        }
     }
 
 }
