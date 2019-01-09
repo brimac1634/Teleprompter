@@ -11,7 +11,7 @@ import Firebase
 import FirebaseAuth
 import FirebaseDatabase
 
-class LoginController: UIViewController {
+class LoginController: UIViewController, UITextFieldDelegate {
 
     var ref: DatabaseReference!
     var homeController: HomeController!
@@ -34,10 +34,11 @@ class LoginController: UIViewController {
         return button
     }()
     
-    let emailTextField: UITextField = {
+    lazy var emailTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "Email Address"
         field.translatesAutoresizingMaskIntoConstraints = false
+        field.delegate = self
         return field
     }()
     
@@ -47,11 +48,12 @@ class LoginController: UIViewController {
         return view
     }()
     
-    let passwordTextField: UITextField = {
+    lazy var passwordTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "Password"
         field.translatesAutoresizingMaskIntoConstraints = false
         field.isSecureTextEntry = true
+        field.delegate = self
         return field
     }()
     
@@ -365,6 +367,14 @@ class LoginController: UIViewController {
                 self.present(Alerts.showAlert(title: "Reset Password", text: "Please check your email for a password reset link."), animated: true, completion: nil)
             }
         }
+    }
+    
+    
+    //MARK: - TextField Methods
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
     }
 
 }
