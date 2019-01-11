@@ -746,30 +746,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     fileprivate func updateStateOfScroll() {
         scrollViewIsScrolling = !scrollViewIsScrolling
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        
-        let userRef = ref.child("users").child(uid)
-        let values = ["scrollViewIsScrolling": scrollViewIsScrolling]
-        userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
-            if err != nil {
-                print(err ?? "")
-                return
-            }
-            print("updated state of scroll")
-        })
+        TeleDatabase.saveData(values: ["scrollViewIsScrolling": scrollViewIsScrolling], uidChildren: nil)
     }
     
     fileprivate func updateScrollSpeed() {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        
-        let userRef = ref.child("users").child(uid)
-        let values = ["scrollSpeed": scrollSpeed]
-        userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
-            if err != nil {
-                print(err ?? "")
-                return
-            }
-        })
+        TeleDatabase.saveData(values: ["scrollSpeed": scrollSpeed], uidChildren: nil)
         
     }
     

@@ -482,15 +482,22 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             if let chosenScript = self.realm.objects(Script.self).filter("scriptName = %@", field.text!).first {
                 self.overWriteAlert(script: chosenScript)
             } else {
+                let name = field.text ?? "Untitled"
+                let scriptBody = self.textBox.text ?? ""
                 try! self.realm.write {
                     let script = Script()
-                    script.scriptName = field.text ?? "Untitled"
-                    script.scriptBody = self.textBox.text
+                    script.scriptName = name
+                    script.scriptBody = scriptBody
                     self.realm.add(script)
                 }
+//                let formatter = DateFormatter()
+//                formatter.dateStyle = .full
+//                let date = formatter.string(from: Date())
+                let databaseValues: [String: Any] = ["scriptBody": scriptBody, "dateCreated": Date()]
+                TeleDatabase.saveData(values: databaseValues, uidChildren: ["scripts", name])
                 self.topLabel.text = field.text
                 self.currentScriptName = field.text ?? ""
-//                self.savedConfirmation()
+                self.savedConfirmation()
             }
         }
         
@@ -507,10 +514,12 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     fileprivate func saveCurrentScript() {
         if let currentScript = self.realm.objects(Script.self).filter("scriptName = %@", currentScriptName).first {
             //save over current
+            let date = Date()
             try! realm.write {
                 currentScript.scriptBody = textBox.text
-                currentScript.dateCreated = Date()
+                currentScript.dateCreated = date
             }
+            TeleDatabase.saveData(values: ["scriptBody": textBox.text, "dateCreated": date], uidChildren: ["scripts", currentScriptName])
             savedConfirmation()
         } else {
             //save as new

@@ -27,6 +27,7 @@
 		D2AAC3DB21DC8230005C25EA /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2AAC3DA21DC8230005C25EA /* LoginController.swift */; };
 		D2AFE19121B8CD5E0020E736 /* Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2AFE19021B8CD5E0020E736 /* Script.swift */; };
 		D2AFE19321B8D7BB0020E736 /* SavedScriptsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2AFE19221B8D7BB0020E736 /* SavedScriptsController.swift */; };
+		D2E1E68221E8714700D3181F /* TeleDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E1E68121E8714700D3181F /* TeleDatabase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 		D2AFE19021B8CD5E0020E736 /* Script.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Script.swift; sourceTree = "<group>"; };
 		D2AFE19221B8D7BB0020E736 /* SavedScriptsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedScriptsController.swift; sourceTree = "<group>"; };
 		D2AFE19421BA847B0020E736 /* Teleprompter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Teleprompter.entitlements; sourceTree = "<group>"; };
+		D2E1E68121E8714700D3181F /* TeleDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleDatabase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 				D28C16C021A53DA10012D84D /* BaseView.swift */,
 				D27A2CC621E4713C005D61A0 /* CheckInternet.swift */,
 				D27A2CC821E474ED005D61A0 /* Alerts.swift */,
+				D2E1E68121E8714700D3181F /* TeleDatabase.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -328,6 +331,7 @@
 				D27A2CC721E4713C005D61A0 /* CheckInternet.swift in Sources */,
 				D28C16C321A554C80012D84D /* ControlBar.swift in Sources */,
 				D2AFE19321B8D7BB0020E736 /* SavedScriptsController.swift in Sources */,
+				D2E1E68221E8714700D3181F /* TeleDatabase.swift in Sources */,
 				D28C16BD21A533180012D84D /* Extensions.swift in Sources */,
 				D274AE1F21DE062A00CD20AC /* ProfileController.swift in Sources */,
 				D28C16C121A53DA10012D84D /* BaseView.swift in Sources */,
