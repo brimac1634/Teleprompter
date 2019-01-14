@@ -14,6 +14,7 @@ import FirebaseDatabase
 class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGestureRecognizerDelegate {
     
     let realm = try! Realm()
+    var ref: DatabaseReference!
     var homeController: HomeController?
     var usingIpad: Bool = true
 
@@ -39,6 +40,7 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         longPressGesture.delegate = self
         longPressGesture.minimumPressDuration = 0.5
         self.tableView.addGestureRecognizer(longPressGesture)
+        updadeFromDatabase()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,6 +48,8 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         logoImage.contentMode = .scaleAspectFit
         navigationItem.titleView = logoImage
     }
+    
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         guard let home = homeController else {return}
@@ -55,6 +59,7 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
             home.textBox.text = "Type or paste your script here..."
             home.textBox.textColor = .lightGray
         }
+        
     }
     
     private func loadData() {
@@ -198,4 +203,36 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         self.present(editAlert, animated: true, completion: nil)
     }
     
+    
+    //FireBase Methods
+    
+    fileprivate func updadeFromDatabase() {
+        ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
+            
+//            let key = snapshot.key
+//            if key == "scrollViewIsScrolling" {
+//                let valueChange = snapshot.value as! Int
+//                var isScrolling: Bool = false
+//                if valueChange == 0 {
+//                    isScrolling = false
+//                } else {
+//                    isScrolling = true
+//                }
+//                if isScrolling != self.scrollViewIsScrolling {
+//                    self.scrollViewIsScrolling = isScrolling
+//                    self.pauseStartScroll()
+//                }
+//
+//            } else if key == "scrollSpeed" {
+//                let valueChange = snapshot.value as! CGFloat
+//                if valueChange != self.scrollSpeed {
+//                    self.scrollSpeed = valueChange
+//                    self.updateTimerWithNewSpeed()
+//                }
+//
+//            }
+        }, withCancel: nil)
+    }
 }
