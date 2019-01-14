@@ -453,10 +453,14 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     fileprivate func overWriteAlert(script: Script) {
         let alert = UIAlertController(title: "There is already a script named \"\(script.scriptName)\"", message: "Do you wish to save over it?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
+            guard let scriptText = self.textBox.text else {return}
+            let date = Date()
             try! self.realm.write {
-                script.scriptBody = self.textBox.text
-                script.dateCreated = Date()
+                script.scriptBody = scriptText
+                script.dateCreated = date
             }
+            let values: [String: Any] = ["scriptBody": scriptText, "dateCreated": date]
+            TeleDatabase.saveData(values: values, uidChildren: ["scripts", script.scriptName])
             self.savedConfirmation()
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
@@ -466,9 +470,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     }
 
     fileprivate func savedConfirmation() {
-        let alert = UIAlertController(title: "Saved", message: "Your script has been saved", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+        self.present(Alerts.showAlert(title: "Saved", text: "Your script has been saved"), animated: true, completion: nil)
     }
     
     fileprivate func saveNewScript() {
@@ -490,9 +492,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                     script.scriptBody = scriptBody
                     self.realm.add(script)
                 }
-//                let formatter = DateFormatter()
-//                formatter.dateStyle = .full
-//                let date = formatter.string(from: Date())
                 let databaseValues: [String: Any] = ["scriptBody": scriptBody, "dateCreated": Date()]
                 TeleDatabase.saveData(values: databaseValues, uidChildren: ["scripts", name])
                 self.topLabel.text = field.text
@@ -543,12 +542,16 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 //ask to save then create new
                 let alert = UIAlertController(title: "\"\(currentScriptName)\" Script", message: "Would you like to save your current script?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
-                    
+                    guard let scriptText = self.textBox.text else {return}
+                    let date = Date()
                     //save over current
                     try! self.realm.write {
-                        currentScript.scriptBody = self.textBox.text
-                        currentScript.dateCreated = Date()
+                        currentScript.scriptBody = scriptText
+                        currentScript.dateCreated = date
                     }
+                    let values: [String: Any] = ["scriptBody": scriptText, "dateCreated": date]
+                    TeleDatabase.saveData(values: values, uidChildren: ["scripts", currentScript.scriptName])
+                    
                     let alert = UIAlertController(title: "Saved", message: "Your script has been saved", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
                         self.createNew()
@@ -590,12 +593,18 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 if let chosenScript = self.realm.objects(Script.self).filter("scriptName = %@", field.text!).first {
                     self.overWriteAlert(script: chosenScript)
                 } else {
+                    guard let scriptName = field.text else {return}
+                    guard let scriptText = self.textBox.text else {return}
                     try! self.realm.write {
                         let script = Script()
-                        script.scriptName = field.text ?? "Untitled"
-                        script.scriptBody = self.textBox.text
+                        script.scriptName = scriptName
+                        script.scriptBody = scriptText
                         self.realm.add(script)
                     }
+                    
+                    let values: [String: Any] = ["scriptBody": scriptText, "dateCreated": Date()]
+                    TeleDatabase.saveData(values: values, uidChildren: ["scripts", scriptName])
+                    
                     self.topLabel.text = field.text
                     self.currentScriptName = field.text ?? ""
                     let alert = UIAlertController(title: "Saved", message: "Your script has been saved", preferredStyle: .alert)

@@ -8,6 +8,8 @@
 
 import UIKit
 import RealmSwift
+import Firebase
+import FirebaseDatabase
 
 class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGestureRecognizerDelegate {
     
