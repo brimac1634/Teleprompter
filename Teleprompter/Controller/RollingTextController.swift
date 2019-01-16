@@ -32,7 +32,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var backgroundColorChosen: Bool = true
     var controlPanelMultiplier: CGFloat = 300
     var lastScale: CGFloat = 0
-    var markerArray: [String] = ["", "#Slide 1#", "#Slide 2#"]
+    var markerArray: [String] = []
     var scrollViewIsScrolling: Bool = false
     
     var style: NSMutableParagraphStyle!
@@ -131,6 +131,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         configureDatabase()
         scrollViewIsScrolling = true
         updateStateOfScroll()
+        updateMarkerList()
         observeStateChange()
     }
     
@@ -752,6 +753,10 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     fileprivate func updateScrollSpeed() {
         TeleDatabase.saveData(values: ["scrollSpeed": scrollSpeed], uidChildren: nil)
         
+    }
+    
+    fileprivate func updateMarkerList() {
+        TeleDatabase.saveData(values: ["markerList": markerArray], uidChildren: nil)
     }
     
     fileprivate func observeStateChange() {
