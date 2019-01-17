@@ -538,6 +538,20 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     //MARK: - View Updaters
     
+    func jumpToMarker(row: Int) {
+        guard !markerArray.isEmpty else {return}
+        let marker = "## [\(row + 1)]"
+        let text = textView.attributedText.string
+        if let range = text.range(of: marker) {
+            let nsRange = text.nsRange(from: range)
+            textView.scrollRangeToVisible(nsRange)
+            updateJumpToMarker(markerIndex: row)
+            
+        }
+        controlBar.markerInput.text = "Skip to \"\(markerArray[row])\""
+        controlBar.markerInput.resignFirstResponder()
+    }
+    
     fileprivate func updateTimerWithNewSpeed() {
         guard let timer = scrollTimer else {return}
         guard timer.isValid else {return}
@@ -759,6 +773,10 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         TeleDatabase.saveData(values: ["markerList": markerArray], uidChildren: nil)
     }
     
+    func updateJumpToMarker(markerIndex: Int) {
+        TeleDatabase.saveData(values: ["jumpToMarker": markerIndex], uidChildren: nil)
+    }
+    
     fileprivate func observeStateChange() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
@@ -782,7 +800,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
                     self.scrollSpeed = valueChange
                     self.updateTimerWithNewSpeed()
                 }
-                
+            } else if key == "jumpToMarker" {
+                let valueChange = snapshot.value as! Int
+                self.controlBar.picker.selectRow(valueChange, inComponent: 0, animated: true)
             }
         }, withCancel: nil)
     }
