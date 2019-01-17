@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import FirebaseDatabase
 
-class RemoteController: UIViewController {
+class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
     
     let defaults = UserDefaults.standard
     
@@ -18,6 +18,7 @@ class RemoteController: UIViewController {
     
     var scrollViewIsScrolling: Bool = false
     var scrollSpeed: CGFloat = 0
+    var markerList: [String] = []
     
     lazy var playPauseButton: RemoteButton = {
         let btn = RemoteButton()
@@ -45,6 +46,11 @@ class RemoteController: UIViewController {
         btn.addTarget(self, action: #selector(handleFast), for: .touchUpInside)
         return btn
     }()
+    
+    let markerInput: MarkerInput = {
+        let input = MarkerInput()
+        return input
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,6 +59,7 @@ class RemoteController: UIViewController {
         setupView()
         checkIfFirstUse()
         setScrollSpeed()
+        setMarkerList()
         observeStateChange()
     }
     
@@ -63,11 +70,14 @@ class RemoteController: UIViewController {
 
     fileprivate func setupView() {
         view.backgroundColor = UIColor.netRoadshowDarkGray(a: 1)
-        
+        markerInput.picker.dataSource = self
+        markerInput.picker.delegate = self
+        markerInput.markerInputField.delegate = self
         
         view.addSubview(playPauseButton)
         view.addSubview(slowButton)
         view.addSubview(fastButton)
+        view.addSubview(markerInput)
         
         NSLayoutConstraint.activate([
             playPauseButton.topAnchor.constraint(equalTo: view.topAnchor),
@@ -75,16 +85,24 @@ class RemoteController: UIViewController {
             playPauseButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             playPauseButton.bottomAnchor.constraint(equalTo: view.centerYAnchor, constant: -1),
             
+            markerInput.heightAnchor.constraint(equalToConstant: 100),
+            markerInput.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            markerInput.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            markerInput.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             slowButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 1),
             slowButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             slowButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -1),
-            slowButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            slowButton.bottomAnchor.constraint(equalTo: markerInput.topAnchor),
             
             fastButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 1),
             fastButton.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 1),
             fastButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            fastButton.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            fastButton.bottomAnchor.constraint(equalTo: markerInput.topAnchor)
+            
             ])
+        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleResignMark)))
     }
     
     
@@ -111,6 +129,10 @@ class RemoteController: UIViewController {
         guard scrollSpeed <= 95 else {return}
         scrollSpeed = scrollSpeed + 5
         updateScrollSpeed()
+    }
+    
+    @objc func handleResignMark() {
+        markerInput.markerInputField.resignFirstResponder()
     }
     
     //MARK: - Firebase Methods
@@ -156,6 +178,17 @@ class RemoteController: UIViewController {
         }, withCancel: nil)
     }
     
+    fileprivate func setMarkerList() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            if let value = snapshot.value as? [String: AnyObject] {
+                guard let markerArray = value["markerList"] else {return}
+                self.markerList = markerArray as! [String]
+                self.markerInput.picker.reloadAllComponents()
+            }
+        }, withCancel: nil)
+    }
+    
     fileprivate func observeStateChange() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
@@ -176,9 +209,43 @@ class RemoteController: UIViewController {
                 let valueChange = snapshot.value as! CGFloat
                 if valueChange != self.scrollSpeed {
                     self.scrollSpeed = valueChange
-                }
-                
+                }  
+            } else if key == "markerList" {
+                let valueChange = snapshot.value as! [String]
+                self.markerList = valueChange
+                self.markerInput.picker.reloadAllComponents()
             }
         }, withCancel: nil)
+    }
+    
+    //MARK: - UIPickerView and UITextField Methods
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        playPauseButton.isUserInteractionEnabled = false
+        fastButton.isUserInteractionEnabled = false
+        slowButton.isUserInteractionEnabled = false
+        
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        playPauseButton.isUserInteractionEnabled = true
+        fastButton.isUserInteractionEnabled = true
+        slowButton.isUserInteractionEnabled = true
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return markerList.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return markerList[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        //do something
     }
 }

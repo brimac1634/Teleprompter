@@ -321,7 +321,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     fileprivate func pauseStartScroll() {
-        controlBar.markerInput.resignFirstResponder()
+        controlBar.markerInput.markerInputField.resignFirstResponder()
         guard let scrollTap = scrollSpeedDoubleTapGesture else {return}
         if let timer = scrollTimer {
             if timer.isValid {
