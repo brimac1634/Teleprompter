@@ -117,8 +117,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        controlBar.picker.dataSource = self
-        controlBar.picker.delegate = self
+        controlBar.markerInput.picker.dataSource = self
+        controlBar.markerInput.picker.delegate = self
         
         if ( UIDevice.current.model.range(of: "iPad") != nil){
             usingIpad = true
@@ -548,8 +548,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             updateJumpToMarker(markerIndex: row)
             
         }
-        controlBar.markerInput.text = "Skip to \"\(markerArray[row])\""
-        controlBar.markerInput.resignFirstResponder()
+        controlBar.markerInput.markerInputField.text = "Skip to \"\(markerArray[row])\""
+        controlBar.markerInput.markerInputField.resignFirstResponder()
     }
     
     fileprivate func updateTimerWithNewSpeed() {
@@ -802,7 +802,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
                 }
             } else if key == "jumpToMarker" {
                 let valueChange = snapshot.value as! Int
-                self.controlBar.picker.selectRow(valueChange, inComponent: 0, animated: true)
+                self.controlBar.markerInput.picker.selectRow(valueChange, inComponent: 0, animated: true)
             }
         }, withCancel: nil)
     }

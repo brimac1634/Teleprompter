@@ -22,12 +22,6 @@ class ControlBar: BaseView {
         return button
     }()
     
-    let picker: UIPickerView = {
-        let picker = UIPickerView()
-        picker.showsSelectionIndicator = true
-        picker.tintColor = UIColor.netRoadshowBlue(a: 1)
-        return picker
-    }()
     
     let saveButton: BaseButton = {
         let button = BaseButton()
@@ -197,17 +191,9 @@ class ControlBar: BaseView {
         return button
     }()
     
-    let markerInput: UITextField = {
-        let field = UITextField()
-        field.borderStyle = .none
-        field.backgroundColor = UIColor.netRoadshowGray(a: 1)
-        field.textColor = UIColor.netRoadshowDarkGray(a: 1)
-        field.placeholder = "Skip to..."
-        field.contentMode = .center
-        field.textAlignment = .center
-        field.autocorrectionType = .no
-        field.translatesAutoresizingMaskIntoConstraints = false
-        return field
+    let markerInput: MarkerInput = {
+        let input = MarkerInput()
+        return input
     }()
     
     let startButton: BaseButton = {
@@ -222,15 +208,6 @@ class ControlBar: BaseView {
     
     override func setupView() {
        super.setupView()
-        
-        if ( UIDevice.current.model.range(of: "iPad") != nil) {
-            markerInput.font = UIFont.systemFont(ofSize: 20)
-        } else {
-            markerInput.font = UIFont.systemFont(ofSize: 18)
-        }
-        
-        
-        markerInput.inputView = picker
         
         let switches = [[mirrorModeLabel, mirrorModeSwitch], [arrowModeLabel, arrowModeSwitch], [highlightModeLabel, highlightModeSwitch]]
         var switchViews: [UIView] = []
@@ -342,7 +319,7 @@ class ControlBar: BaseView {
     //MARK: - Selector
     
     @objc func handleResignMark() {
-        markerInput.resignFirstResponder()
+        markerInput.markerInputField.resignFirstResponder()
     }
     
     

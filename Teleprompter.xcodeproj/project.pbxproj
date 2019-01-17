@@ -11,6 +11,7 @@
 		D22BAC2121C20B2800A70504 /* FolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22BAC2021C20B2800A70504 /* FolderCell.swift */; };
 		D22BAC2321C21F8400A70504 /* InfoPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22BAC2221C21F8400A70504 /* InfoPopUp.swift */; };
 		D22BAC2521C2343500A70504 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D22BAC2421C2343500A70504 /* Assets.xcassets */; };
+		D245316121F08EC500BAE460 /* MarkerInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = D245316021F08EC500BAE460 /* MarkerInput.swift */; };
 		D274AE1D21DDE87C00CD20AC /* RemoteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D274AE1C21DDE87C00CD20AC /* RemoteController.swift */; };
 		D274AE1F21DE062A00CD20AC /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D274AE1E21DE062A00CD20AC /* ProfileController.swift */; };
 		D27A2CC721E4713C005D61A0 /* CheckInternet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27A2CC621E4713C005D61A0 /* CheckInternet.swift */; };
@@ -37,6 +38,7 @@
 		D22BAC2021C20B2800A70504 /* FolderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCell.swift; sourceTree = "<group>"; };
 		D22BAC2221C21F8400A70504 /* InfoPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPopUp.swift; sourceTree = "<group>"; };
 		D22BAC2421C2343500A70504 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Teleprompter/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		D245316021F08EC500BAE460 /* MarkerInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerInput.swift; sourceTree = "<group>"; };
 		D274AE1C21DDE87C00CD20AC /* RemoteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteController.swift; sourceTree = "<group>"; };
 		D274AE1E21DE062A00CD20AC /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		D27A2CC621E4713C005D61A0 /* CheckInternet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInternet.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				D28C16C221A554C80012D84D /* ControlBar.swift */,
 				D22BAC2021C20B2800A70504 /* FolderCell.swift */,
 				D22BAC2221C21F8400A70504 /* InfoPopUp.swift */,
+				D245316021F08EC500BAE460 /* MarkerInput.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -323,6 +326,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D245316121F08EC500BAE460 /* MarkerInput.swift in Sources */,
 				D274AE1D21DDE87C00CD20AC /* RemoteController.swift in Sources */,
 				D28C16A921A529210012D84D /* AppDelegate.swift in Sources */,
 				D27A2CC921E474ED005D61A0 /* Alerts.swift in Sources */,
