@@ -802,7 +802,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
                 }
             } else if key == "jumpToMarker" {
                 let valueChange = snapshot.value as! Int
-                self.controlBar.markerInput.picker.selectRow(valueChange, inComponent: 0, animated: true)
+                self.jumpToMarker(row: valueChange)
+//                self.controlBar.markerInput.picker.selectRow(valueChange, inComponent: 0, animated: true)
             }
         }, withCancel: nil)
     }

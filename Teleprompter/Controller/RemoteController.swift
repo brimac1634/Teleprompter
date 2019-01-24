@@ -168,6 +168,19 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         
     }
     
+    fileprivate func jumpToMarker(marker: Int) {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let userRef = ref.child("users").child(uid)
+        let values = ["jumpToMarker": marker]
+        userRef.updateChildValues(values) { (err, ref) in
+            if err != nil {
+                print(err ?? "")
+                return
+            }
+            print("jumped to \(self.markerList[marker])")
+        }
+    }
+    
     fileprivate func setScrollSpeed() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
@@ -246,6 +259,7 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        //do something
+        jumpToMarker(marker: row)
+        markerInput.markerInputField.resignFirstResponder()
     }
 }
