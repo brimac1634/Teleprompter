@@ -86,7 +86,7 @@ class ControlBar: BaseView {
         let slider = UISlider()
         slider.tintColor = UIColor.netRoadshowBlue(a: 1)
         slider.minimumValue = 5
-        slider.maximumValue = 100
+        slider.maximumValue = 150
         return slider
     }()
     

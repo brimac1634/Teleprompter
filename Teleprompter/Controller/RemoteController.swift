@@ -126,7 +126,7 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     }
     
     @objc func handleFast() {
-        guard scrollSpeed <= 95 else {return}
+        guard scrollSpeed <= 145 else {return}
         scrollSpeed = scrollSpeed + 5
         updateScrollSpeed()
     }

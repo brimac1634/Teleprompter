@@ -401,7 +401,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
         if leftSide.contains(point1) && leftSide.contains(point2) && scrollSpeed > 5 {
             scrollSpeed = scrollSpeed - 5
-        } else if rightSide.contains(point1) && rightSide.contains(point2) && scrollSpeed <= 95 {
+        } else if rightSide.contains(point1) && rightSide.contains(point2) && scrollSpeed <= 145 {
             scrollSpeed = scrollSpeed + 5
         }
         
@@ -799,6 +799,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
                 if valueChange != self.scrollSpeed {
                     self.scrollSpeed = valueChange
                     self.updateTimerWithNewSpeed()
+                    self.controlBar.scrollSpeedSlider.setValue(Float(valueChange), animated: true)
+                    self.controlBar.scrollSpeedLabel.text = "Scroll Speed: \(valueChange)"
                 }
             } else if key == "jumpToMarker" {
                 let valueChange = snapshot.value as! Int
