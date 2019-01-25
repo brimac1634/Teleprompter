@@ -49,6 +49,9 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         navigationItem.titleView = logoImage
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        //
+    }
     
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -210,29 +213,16 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
         guard let uid = Auth.auth().currentUser?.uid else {return}
         ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
-            
-//            let key = snapshot.key
-//            if key == "scrollViewIsScrolling" {
-//                let valueChange = snapshot.value as! Int
-//                var isScrolling: Bool = false
-//                if valueChange == 0 {
-//                    isScrolling = false
-//                } else {
-//                    isScrolling = true
-//                }
-//                if isScrolling != self.scrollViewIsScrolling {
-//                    self.scrollViewIsScrolling = isScrolling
-//                    self.pauseStartScroll()
-//                }
-//
-//            } else if key == "scrollSpeed" {
-//                let valueChange = snapshot.value as! CGFloat
-//                if valueChange != self.scrollSpeed {
-//                    self.scrollSpeed = valueChange
-//                    self.updateTimerWithNewSpeed()
-//                }
-//
-//            }
+            let key = snapshot.key
+            if key == "scripts" {
+               print(snapshot.value)
+                
+                for script in snapshot.children.allObjects {
+                    
+                }
+                
+            }
         }, withCancel: nil)
+        
     }
 }
