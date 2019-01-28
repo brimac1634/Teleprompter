@@ -22,6 +22,8 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     var scrollSpeed: CGFloat = 0
     var markerList: [String] = []
     
+    var currentUserEmail: String = ""
+    
     lazy var playPauseButton: RemoteButton = {
         let btn = RemoteButton()
         btn.setImage(UIImage(named: "play_pause")?.withRenderingMode(.alwaysTemplate), for: .normal)
@@ -57,13 +59,20 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
-        
+       
         setupView()
         checkIfFirstUse()
         setScrollSpeed()
         setMarkerList()
         observeStateChange()
-        createAndLoadInterstitial()
+        getCurrentUser()
+        
+        
+        if currentUserEmail.contains("netroadshow.com") == false {
+            print("no netroadshow found")
+            createAndLoadInterstitial()
+        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,7 +83,8 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     override func willMove(toParent parent: UIViewController?) {
         super.willMove(toParent: parent)
         if parent == nil {
-            if interstitial.isReady {
+            guard interstitial != nil else {return}
+            if interstitial.isReady && currentUserEmail.contains("netroadshow.com") == false {
                 interstitial.present(fromRootViewController: self)
             } else {
                 print("Ad wasn't ready")
@@ -108,12 +118,12 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
             slowButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 1),
             slowButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             slowButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -1),
-            slowButton.bottomAnchor.constraint(equalTo: markerInput.topAnchor),
+            slowButton.bottomAnchor.constraint(equalTo: markerInput.topAnchor, constant: -2),
             
             fastButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 1),
             fastButton.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 1),
             fastButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            fastButton.bottomAnchor.constraint(equalTo: markerInput.topAnchor)
+            fastButton.bottomAnchor.constraint(equalTo: markerInput.topAnchor, constant: -2)
             
             ])
         
@@ -217,6 +227,16 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         }, withCancel: nil)
     }
     
+    fileprivate func getCurrentUser() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            if let value = snapshot.value as? [String: AnyObject] {
+                guard let currentEmail = value["email"] else {return}
+                self.currentUserEmail = currentEmail as! String
+            }
+        }, withCancel: nil)
+    }
+    
     fileprivate func observeStateChange() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
@@ -281,6 +301,8 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     //MARK: - AdMob Methods
     
     func createAndLoadInterstitial() -> GADInterstitial {
+        //my app unit ID
+        //ca-app-pub-7610437866891957/7350210908
         interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
         interstitial.delegate = self
         interstitial.load(GADRequest())
