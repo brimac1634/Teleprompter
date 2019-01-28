@@ -9,12 +9,14 @@
 import UIKit
 import Firebase
 import FirebaseDatabase
+import GoogleMobileAds
 
-class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
+class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, GADInterstitialDelegate {
     
     let defaults = UserDefaults.standard
     
     var ref: DatabaseReference!
+    var interstitial: GADInterstitial!
     
     var scrollViewIsScrolling: Bool = false
     var scrollSpeed: CGFloat = 0
@@ -61,10 +63,23 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         setScrollSpeed()
         setMarkerList()
         observeStateChange()
+        createAndLoadInterstitial()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationItem.title = "Remote Control"
+    }
+    
+   
+    override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        if parent == nil {
+            if interstitial.isReady {
+                interstitial.present(fromRootViewController: self)
+            } else {
+                print("Ad wasn't ready")
+            }
+        }
     }
     
 
@@ -261,5 +276,18 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         jumpToMarker(marker: row)
         markerInput.markerInputField.resignFirstResponder()
+    }
+    
+    //MARK: - AdMob Methods
+    
+    func createAndLoadInterstitial() -> GADInterstitial {
+        interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+        interstitial.delegate = self
+        interstitial.load(GADRequest())
+        return interstitial
+    }
+    
+    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
+        interstitial = createAndLoadInterstitial()
     }
 }

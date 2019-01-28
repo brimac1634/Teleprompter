@@ -1,5 +1,8 @@
 PODS:
   - ChromaColorPicker (1.7)
+  - Firebase/AdMob (5.5.0):
+    - Firebase/Core
+    - Google-Mobile-Ads-SDK (= 7.31.0)
   - Firebase/Auth (5.5.0):
     - Firebase/CoreOnly
     - FirebaseAuth (= 5.0.3)
@@ -34,6 +37,7 @@ PODS:
   - FirebaseInstanceID (3.2.0):
     - FirebaseCore (~> 5.1)
     - GoogleUtilities/Environment (~> 5.2)
+  - Google-Mobile-Ads-SDK (7.31.0)
   - GoogleAppMeasurement (5.1.0):
     - GoogleUtilities/AppDelegateSwizzler (~> 5.2.0)
     - GoogleUtilities/MethodSwizzler (~> 5.2.0)
@@ -71,6 +75,7 @@ PODS:
 
 DEPENDENCIES:
   - ChromaColorPicker
+  - Firebase/AdMob
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Database
@@ -85,6 +90,7 @@ SPEC CHECKSUMS:
   FirebaseCore: ee4b35cf8c8e781da296cc7c15125e4608bb954d
   FirebaseDatabase: 27be5ac5bc75e0b17537b2bbfada8258addcc8cd
   FirebaseInstanceID: 8cd2c6cfe7b9ab65ce7e248f6da7f26f6775b9be
+  Google-Mobile-Ads-SDK: 6e529e748b45507a2ca904e0b5a52669ba3920c4
   GoogleAppMeasurement: e785bdb86d3d280abc778156cec323a975f11d1d
   GoogleUtilities: 06b66f9567769a7958db20a92f0128b2843e49d5
   GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
@@ -93,6 +99,6 @@ SPEC CHECKSUMS:
   Realm: c286caf4dbf346ce24aad49ca76c7ce622d4a082
   RealmSwift: 2a9281e37d6de55f66f76254d49d28aeb1b729e4
 
-PODFILE CHECKSUM: 3835460f9697ee19a4dd5c771171d52e2b5d302d
+PODFILE CHECKSUM: 9ab29bd4cf51b26f6c1c65cc490daceed802a787
 
 COCOAPODS: 1.4.0

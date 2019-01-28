@@ -9,11 +9,13 @@
 import UIKit
 import RealmSwift
 
+
 class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGestureRecognizerDelegate {
     
     let realm = try! Realm()
     var homeController: HomeController?
     var usingIpad: Bool = true
+    
 
     var scriptList: Results<Script>? {
         didSet {
@@ -37,6 +39,8 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         longPressGesture.delegate = self
         longPressGesture.minimumPressDuration = 0.5
         self.tableView.addGestureRecognizer(longPressGesture)
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,9 +49,6 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         navigationItem.titleView = logoImage
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        //
-    }
     
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -201,6 +202,9 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         editAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         self.present(editAlert, animated: true, completion: nil)
     }
+    
+    
+    
     
 
 }
