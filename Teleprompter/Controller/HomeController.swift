@@ -459,8 +459,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 script.scriptBody = scriptText
                 script.dateCreated = date
             }
-            let values: [String: Any] = ["scriptBody": scriptText, "dateCreated": date]
-            TeleDatabase.saveData(values: values, uidChildren: ["scripts", script.scriptName])
+            
             self.savedConfirmation()
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
@@ -493,7 +492,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                     self.realm.add(script)
                 }
                 let databaseValues: [String: Any] = ["scriptBody": scriptBody, "dateCreated": Date()]
-                TeleDatabase.saveData(values: databaseValues, uidChildren: ["scripts", name])
                 self.topLabel.text = field.text
                 self.currentScriptName = field.text ?? ""
                 self.savedConfirmation()
@@ -518,7 +516,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                 currentScript.scriptBody = textBox.text
                 currentScript.dateCreated = date
             }
-            TeleDatabase.saveData(values: ["scriptBody": textBox.text, "dateCreated": date], uidChildren: ["scripts", currentScriptName])
+            
             savedConfirmation()
         } else {
             //save as new
@@ -549,8 +547,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                         currentScript.scriptBody = scriptText
                         currentScript.dateCreated = date
                     }
-                    let values: [String: Any] = ["scriptBody": scriptText, "dateCreated": date]
-                    TeleDatabase.saveData(values: values, uidChildren: ["scripts", currentScript.scriptName])
                     
                     let alert = UIAlertController(title: "Saved", message: "Your script has been saved", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
@@ -601,9 +597,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
                         script.scriptBody = scriptText
                         self.realm.add(script)
                     }
-                    
-                    let values: [String: Any] = ["scriptBody": scriptText, "dateCreated": Date()]
-                    TeleDatabase.saveData(values: values, uidChildren: ["scripts", scriptName])
                     
                     self.topLabel.text = field.text
                     self.currentScriptName = field.text ?? ""

@@ -8,13 +8,10 @@
 
 import UIKit
 import RealmSwift
-import Firebase
-import FirebaseDatabase
 
 class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGestureRecognizerDelegate {
     
     let realm = try! Realm()
-    var ref: DatabaseReference!
     var homeController: HomeController?
     var usingIpad: Bool = true
 
@@ -23,8 +20,6 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
             loadData()
         }
     }
-    
-//    var scripts
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +37,6 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         longPressGesture.delegate = self
         longPressGesture.minimumPressDuration = 0.5
         self.tableView.addGestureRecognizer(longPressGesture)
-        updadeFromDatabase()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -208,16 +202,5 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         self.present(editAlert, animated: true, completion: nil)
     }
     
-    
-    //FireBase Methods
-    
-    fileprivate func updadeFromDatabase() {
-        ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        ref.child("users").child(uid).child("scripts").observe(.childAdded, with: { (snapshot) in
-            
-            print(snapshot)
-        }, withCancel: nil)
-        
-    }
+
 }
