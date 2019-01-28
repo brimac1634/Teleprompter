@@ -24,6 +24,8 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         }
     }
     
+//    var scripts
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if ( UIDevice.current.model.range(of: "iPad") != nil) {
@@ -212,16 +214,9 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
     fileprivate func updadeFromDatabase() {
         ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        ref.child("users").child(uid).observe(.childChanged, with: { (snapshot) in
-            let key = snapshot.key
-            if key == "scripts" {
-               print(snapshot.value)
-                
-                for script in snapshot.children.allObjects {
-                    
-                }
-                
-            }
+        ref.child("users").child(uid).child("scripts").observe(.childAdded, with: { (snapshot) in
+            
+            print(snapshot)
         }, withCancel: nil)
         
     }
