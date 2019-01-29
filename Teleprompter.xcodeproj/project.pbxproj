@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		024CC9517648145EA08A89D4 /* Pods_Teleprompter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2550E8CE3A3166563604E647 /* Pods_Teleprompter.framework */; };
+		D22646282200513D00011A90 /* IAPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22646272200513D00011A90 /* IAPHandler.swift */; };
 		D22BAC2121C20B2800A70504 /* FolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22BAC2021C20B2800A70504 /* FolderCell.swift */; };
 		D22BAC2321C21F8400A70504 /* InfoPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22BAC2221C21F8400A70504 /* InfoPopUp.swift */; };
 		D22BAC2521C2343500A70504 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D22BAC2421C2343500A70504 /* Assets.xcassets */; };
@@ -35,6 +36,7 @@
 		2550E8CE3A3166563604E647 /* Pods_Teleprompter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Teleprompter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F678B07C8C57536C0733047 /* Pods-Teleprompter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teleprompter.release.xcconfig"; path = "Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter.release.xcconfig"; sourceTree = "<group>"; };
 		9BDEEB54421D7ECCE7A5CE55 /* Pods-Teleprompter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teleprompter.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter.debug.xcconfig"; sourceTree = "<group>"; };
+		D22646272200513D00011A90 /* IAPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHandler.swift; sourceTree = "<group>"; };
 		D22BAC2021C20B2800A70504 /* FolderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCell.swift; sourceTree = "<group>"; };
 		D22BAC2221C21F8400A70504 /* InfoPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPopUp.swift; sourceTree = "<group>"; };
 		D22BAC2421C2343500A70504 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Teleprompter/Assets.xcassets; sourceTree = SOURCE_ROOT; };
@@ -136,6 +138,7 @@
 				D27A2CC621E4713C005D61A0 /* CheckInternet.swift */,
 				D27A2CC821E474ED005D61A0 /* Alerts.swift */,
 				D2E1E68121E8714700D3181F /* TeleDatabase.swift */,
+				D22646272200513D00011A90 /* IAPHandler.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -336,6 +339,7 @@
 				D28C16C321A554C80012D84D /* ControlBar.swift in Sources */,
 				D2AFE19321B8D7BB0020E736 /* SavedScriptsController.swift in Sources */,
 				D2E1E68221E8714700D3181F /* TeleDatabase.swift in Sources */,
+				D22646282200513D00011A90 /* IAPHandler.swift in Sources */,
 				D28C16BD21A533180012D84D /* Extensions.swift in Sources */,
 				D274AE1F21DE062A00CD20AC /* ProfileController.swift in Sources */,
 				D28C16C121A53DA10012D84D /* BaseView.swift in Sources */,

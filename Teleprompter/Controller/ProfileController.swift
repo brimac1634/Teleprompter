@@ -67,6 +67,7 @@ class ProfileController: UIViewController {
         
         setupView()
         configureDatabase()
+        configureIAP()
         
     }
     
@@ -177,6 +178,7 @@ class ProfileController: UIViewController {
     
     @objc func handleRemoveAds() {
         print(123)
+        IAPHandler.shared.purchaseMyProduct(index: 0)
     }
     
     //MARK: - Firebase Methods
@@ -232,4 +234,23 @@ class ProfileController: UIViewController {
         }
         
     }
+    
+    //MARK: - IAP Methods
+    
+    fileprivate func configureIAP() {
+        IAPHandler.shared.fetchAvailableProducts()
+        
+        IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
+            guard let strongSelf = self else { return }
+            if type == .purchased {
+                let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
+                let action = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
+        
+                })
+                alertView.addAction(action)
+                strongSelf.present(alertView, animated: true, completion: nil)
+            }
+        }
+    }
+    
 }
