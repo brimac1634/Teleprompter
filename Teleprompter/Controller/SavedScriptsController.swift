@@ -10,18 +10,44 @@ import UIKit
 import RealmSwift
 
 
-class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGestureRecognizerDelegate {
+class SavedScriptsController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate, UIGestureRecognizerDelegate, UISearchBarDelegate {
     
     let realm = try! Realm()
     var homeController: HomeController?
     var usingIpad: Bool = true
-    
+    var filteredtList: Results<Script>!
 
     var scriptList: Results<Script>? {
         didSet {
             loadData()
+            filteredtList = scriptList
         }
     }
+    
+    
+    
+    lazy var tableView: UITableView = {
+        let view = UITableView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.register(FolderCell.self, forCellReuseIdentifier: "cellID")
+        view.separatorStyle = .none
+        view.delegate = self
+        view.dataSource = self
+        return view
+    }()
+    
+    lazy var searchBar: UISearchBar = {
+        let bar = UISearchBar()
+        bar.autocorrectionType = .no
+        bar.delegate = self
+        bar.searchBarStyle = .prominent
+        bar.placeholder = "Search scripts..."
+        bar.tintColor = UIColor.netRoadshowDarkGray(a: 1)
+        bar.barTintColor = UIColor.netRoadshowGray(a: 1)
+        
+        bar.translatesAutoresizingMaskIntoConstraints = false
+        return bar
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,8 +56,8 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         } else {
             usingIpad = false
         }
-        tableView.register(FolderCell.self, forCellReuseIdentifier: "cellID")
-        tableView.separatorStyle = .none
+
+        setupView()
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAdd))
         
@@ -39,8 +65,6 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         longPressGesture.delegate = self
         longPressGesture.minimumPressDuration = 0.5
         self.tableView.addGestureRecognizer(longPressGesture)
-        
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,42 +86,67 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
         
     }
     
+    fileprivate func setupView() {
+        view.addSubview(tableView)
+        view.addSubview(searchBar)
+        
+        if #available(iOS 11.0, *) {
+            NSLayoutConstraint.activate([
+                searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                searchBar.heightAnchor.constraint(equalToConstant: 50),
+                
+                tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+                tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+                ])
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+    
     private func loadData() {
         tableView.reloadData()
     }
 
     // MARK: - Table view data source
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let script = scriptList?[indexPath.row] {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let script = filteredtList?[indexPath.row] {
             popToHomeWithScript(script: script)
         }
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return scriptList?.count ?? 0
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return filteredtList?.count ?? 0
     }
 
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellID", for: indexPath) as! FolderCell
-        if let script = scriptList?[indexPath.row] {
+        if let script = filteredtList?[indexPath.row] {
             cell.script = script
         }
         return cell
     }
 
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        guard let script = scriptList?[indexPath.row] else {return}
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard let script = filteredtList?[indexPath.row] else {return}
         if editingStyle == .delete {
             deleteScript(script, tableView, indexPath)
         }
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let height: CGFloat = usingIpad ? 100 : 60
         return height
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        searchBar.resignFirstResponder()
     }
 
     //MARK: - Gesture Methods
@@ -204,7 +253,17 @@ class SavedScriptsController: UITableViewController, UIActionSheetDelegate, UIGe
     }
     
     
+    //MARK: - Search Bar Methods
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+
+        if searchText.count == 0 {
+            filteredtList = scriptList
+        } else {
+            filteredtList = scriptList?.filter("scriptName CONTAINS[cd] %@", searchText)
+        }
+        tableView.reloadData()
+    }
     
 
 }
