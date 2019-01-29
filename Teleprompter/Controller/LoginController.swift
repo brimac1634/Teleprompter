@@ -331,9 +331,14 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     
                     guard let uid = authResult?.user.uid else {return}
                     
+                    var canSkipAds: Bool = false
+                    if email.contains("netroadshow.com") {
+                        canSkipAds = true
+                    }
+                    
                     self.ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
                     let userRef = self.ref.child("users").child(uid)
-                    let values = ["email": email]
+                    let values = ["email": email, "canSkipAds": canSkipAds] as [String : Any]
                     userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
                         if err != nil {
                             print(err ?? "")

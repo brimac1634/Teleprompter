@@ -34,8 +34,8 @@ class ProfileController: UIViewController {
     lazy var logoutButton: BaseButton = {
         let btn = BaseButton()
         btn.setTitle("Logout", for: .normal)
-        btn.titleLabel?.textColor = UIColor.white
-        btn.backgroundColor = UIColor.netRoadshowBlue(a: 1)
+        btn.setTitleColor(UIColor.netRoadshowBlue(a: 1), for: .normal)
+        btn.backgroundColor = UIColor.netRoadshowGray(a: 1)
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
         return btn
@@ -44,10 +44,20 @@ class ProfileController: UIViewController {
     lazy var resetPasswordButton: BaseButton = {
         let btn = BaseButton()
         btn.setTitle("Reset Password", for: .normal)
-        btn.titleLabel?.textColor = UIColor.white
-        btn.backgroundColor = UIColor.netRoadshowDarkGray(a: 1)
+        btn.setTitleColor(UIColor.netRoadshowBlue(a: 1), for: .normal)
+        btn.backgroundColor = UIColor.netRoadshowGray(a: 1)
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.addTarget(self, action: #selector(handleResetPassword), for: .touchUpInside)
+        return btn
+    }()
+    
+    lazy var removeAdsButton: BaseButton = {
+        let btn = BaseButton()
+        btn.setTitle("Remove Ads", for: .normal)
+        btn.titleLabel?.textColor = UIColor.white
+        btn.backgroundColor = UIColor.netRoadshowBlue(a: 1)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.addTarget(self, action: #selector(handleRemoveAds), for: .touchUpInside)
         return btn
     }()
     
@@ -67,6 +77,7 @@ class ProfileController: UIViewController {
         view.addSubview(userLabel)
         view.addSubview(logoutButton)
         view.addSubview(resetPasswordButton)
+        view.addSubview(removeAdsButton)
         
         NSLayoutConstraint.activate([
             userLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -87,7 +98,12 @@ class ProfileController: UIViewController {
             logoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             logoView.bottomAnchor.constraint(equalTo: userLabel.topAnchor, constant: -24),
             logoView.widthAnchor.constraint(equalToConstant: 200),
-            logoView.heightAnchor.constraint(equalToConstant: 200)
+            logoView.heightAnchor.constraint(equalToConstant: 200),
+            
+            removeAdsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            removeAdsButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+            removeAdsButton.widthAnchor.constraint(equalTo: userLabel.widthAnchor),
+            removeAdsButton.heightAnchor.constraint(equalToConstant: 50),
             ])
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(handleDeleteAccount))
@@ -157,6 +173,10 @@ class ProfileController: UIViewController {
             self.present(Alerts.showAlert(title: "No Internet", text: "You must be connected to the internet in order to delete your user account."), animated: true, completion: nil)
         }
         
+    }
+    
+    @objc func handleRemoveAds() {
+        print(123)
     }
     
     //MARK: - Firebase Methods

@@ -22,7 +22,7 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     var scrollSpeed: CGFloat = 0
     var markerList: [String] = []
     
-    var currentUserEmail: String = ""
+    var canSkipAds: Bool = false
     
     lazy var playPauseButton: RemoteButton = {
         let btn = RemoteButton()
@@ -65,10 +65,10 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         setScrollSpeed()
         setMarkerList()
         observeStateChange()
-        getCurrentUser()
+        getCanSkipAds()
         
         
-        if currentUserEmail.contains("netroadshow.com") == false {
+        if canSkipAds == false {
             print("no netroadshow found")
             createAndLoadInterstitial()
         }
@@ -84,7 +84,7 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         super.willMove(toParent: parent)
         if parent == nil {
             guard interstitial != nil else {return}
-            if interstitial.isReady && currentUserEmail.contains("netroadshow.com") == false {
+            if interstitial.isReady && canSkipAds == false {
                 interstitial.present(fromRootViewController: self)
             } else {
                 print("Ad wasn't ready")
@@ -227,12 +227,12 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         }, withCancel: nil)
     }
     
-    fileprivate func getCurrentUser() {
+    fileprivate func getCanSkipAds() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             if let value = snapshot.value as? [String: AnyObject] {
-                guard let currentEmail = value["email"] else {return}
-                self.currentUserEmail = currentEmail as! String
+                guard let skipAds = value["canSkipAds"] else {return}
+                self.canSkipAds = skipAds as! Bool
             }
         }, withCancel: nil)
     }
