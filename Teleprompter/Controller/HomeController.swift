@@ -12,8 +12,10 @@ import MobileCoreServices
 import RealmSwift
 import Firebase
 import FirebaseDatabase
+import GoogleMobileAds
 
-class HomeController: UIViewController, UIDocumentPickerDelegate {
+class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBasedVideoAdDelegate {
+    
     
     let realm = try! Realm()
     var ref: DatabaseReference!
@@ -22,6 +24,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     var usingIpad: Bool = true
     var textBoxIsEditing: Bool = false
     var infoIsShowing: Bool = false
+    var canSkipAds: Bool = false
 
     
     let topLabel: UILabel = {
@@ -87,7 +90,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
         checkIfUserIsLoggedIn()
         
         if ( UIDevice.current.model.range(of: "iPad") != nil) {
@@ -98,6 +101,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         
         setupView()
         setupNavBar()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -107,6 +111,12 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             name: UIResponder.keyboardWillShowNotification,
             object: nil
         )
+        getCanSkipAds()
+        
+        if canSkipAds == false {
+            print("cannot skip ads")
+            setupAd()
+        }
     }
     
     private func setupView() {
@@ -230,8 +240,15 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
             self.present(alert, animated: true, completion: nil)
         } else if Auth.auth().currentUser?.uid != nil {
             if Reachability.isConnectedToNetwork() {
-                let remoteController = RemoteController()
-                navigationController?.pushViewController(remoteController, animated: true)
+                if canSkipAds == false {
+                    print("should play video")
+                    if GADRewardBasedVideoAd.sharedInstance().isReady == true {
+                        GADRewardBasedVideoAd.sharedInstance().present(fromRootViewController: self)
+                    }
+                } else {
+                    let remoteController = RemoteController()
+                    navigationController?.pushViewController(remoteController, animated: true)
+                }
             } else {
                 self.present(Alerts.showAlert(title: "No Internet", text: "Internet connection is needed to use the remote control feature. Please check internet connection and try again."), animated: true, completion: nil)
             }
@@ -645,6 +662,37 @@ class HomeController: UIViewController, UIDocumentPickerDelegate {
         return markerList
     }
     
+    //MARK: - Firebase Methods
+    
+    fileprivate func getCanSkipAds() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            if let value = snapshot.value as? [String: AnyObject] {
+                guard let skipAds = value["canSkipAds"] else {return}
+                self.canSkipAds = skipAds as! Bool
+            }
+        }, withCancel: nil)
+    }
+    
+    
+    //MARK: - AdMob Method
+    
+    fileprivate func setupAd() {
+        GADRewardBasedVideoAd.sharedInstance().delegate = self
+        //ca-app-pub-7610437866891957/2341921646
+        GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
+                                                    withAdUnitID: "ca-app-pub-3940256099942544/1712485313")
+    }
+    
+    func rewardBasedVideoAdDidClose(_ rewardBasedVideoAd: GADRewardBasedVideoAd) {
+        GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
+                                                    withAdUnitID: "ca-app-pub-3940256099942544/1712485313")
+    }
+    
+    func rewardBasedVideoAd(_ rewardBasedVideoAd: GADRewardBasedVideoAd, didRewardUserWith reward: GADAdReward) {
+        let remoteController = RemoteController()
+        navigationController?.pushViewController(remoteController, animated: true)
+    }
     
     
 }

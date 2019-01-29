@@ -271,7 +271,14 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     return
                 } else {
                     guard let home = self.homeController else {return}
-                    print("successfully signed in")
+                    guard let uid = Auth.auth().currentUser?.uid else {return}
+                    let ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
+                    ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                        if let value = snapshot.value as? [String: AnyObject] {
+                            guard let skipAds = value["canSkipAds"] else {return}
+                            home.canSkipAds = skipAds as! Bool
+                        }
+                    }, withCancel: nil)
                     home.defaults.set(false, forKey: "registrationSkipped")
                     self.loadingIndicator.stopAnimating()
                     UIApplication.shared.endIgnoringInteractionEvents()
@@ -348,6 +355,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                         }
                         guard let home = self.homeController else {return}
                         home.defaults.set(false, forKey: "registrationSkipped")
+                        home.canSkipAds = canSkipAds
                         print("saved user successfully into Firebase DB")
                         self.loadingIndicator.stopAnimating()
                         UIApplication.shared.endIgnoringInteractionEvents()

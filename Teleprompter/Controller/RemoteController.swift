@@ -9,20 +9,16 @@
 import UIKit
 import Firebase
 import FirebaseDatabase
-import GoogleMobileAds
 
-class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, GADInterstitialDelegate {
+class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
     
     let defaults = UserDefaults.standard
     
     var ref: DatabaseReference!
-    var interstitial: GADInterstitial!
     
     var scrollViewIsScrolling: Bool = false
     var scrollSpeed: CGFloat = 0
     var markerList: [String] = []
-    
-    var canSkipAds: Bool = false
     
     lazy var playPauseButton: RemoteButton = {
         let btn = RemoteButton()
@@ -65,13 +61,7 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         setScrollSpeed()
         setMarkerList()
         observeStateChange()
-        getCanSkipAds()
         
-        
-        if canSkipAds == false {
-            print("no netroadshow found")
-            createAndLoadInterstitial()
-        }
         
     }
     
@@ -80,17 +70,7 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     }
     
    
-    override func willMove(toParent parent: UIViewController?) {
-        super.willMove(toParent: parent)
-        if parent == nil {
-            guard interstitial != nil else {return}
-            if interstitial.isReady && canSkipAds == false {
-                interstitial.present(fromRootViewController: self)
-            } else {
-                print("Ad wasn't ready")
-            }
-        }
-    }
+
     
 
     fileprivate func setupView() {
@@ -226,16 +206,7 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
             }
         }, withCancel: nil)
     }
-    
-    fileprivate func getCanSkipAds() {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            if let value = snapshot.value as? [String: AnyObject] {
-                guard let skipAds = value["canSkipAds"] else {return}
-                self.canSkipAds = skipAds as! Bool
-            }
-        }, withCancel: nil)
-    }
+
     
     fileprivate func observeStateChange() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
@@ -298,18 +269,18 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         markerInput.markerInputField.resignFirstResponder()
     }
     
-    //MARK: - AdMob Methods
-    
-    func createAndLoadInterstitial() -> GADInterstitial {
-        //my app unit ID
-        //ca-app-pub-7610437866891957/7350210908
-        interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
-        interstitial.delegate = self
-        interstitial.load(GADRequest())
-        return interstitial
-    }
-    
-    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
-        interstitial = createAndLoadInterstitial()
-    }
+//    //MARK: - AdMob Methods
+//
+//    func createAndLoadInterstitial() -> GADInterstitial {
+//        //my app unit ID
+//        //ca-app-pub-7610437866891957/7350210908
+//        interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+//        interstitial.delegate = self
+//        interstitial.load(GADRequest())
+//        return interstitial
+//    }
+//
+//    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
+//        interstitial = createAndLoadInterstitial()
+//    }
 }
