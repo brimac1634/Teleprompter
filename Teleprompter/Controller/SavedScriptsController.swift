@@ -90,20 +90,21 @@ class SavedScriptsController: UIViewController, UITableViewDelegate, UITableView
         view.addSubview(tableView)
         view.addSubview(searchBar)
         
+        NSLayoutConstraint.activate([
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            searchBar.heightAnchor.constraint(equalToConstant: 50),
+            
+            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            ])
+        
         if #available(iOS 11.0, *) {
-            NSLayoutConstraint.activate([
-                searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                searchBar.heightAnchor.constraint(equalToConstant: 50),
-                
-                tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
-                tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-                ])
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         } else {
-            // Fallback on earlier versions
+            searchBar.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         }
     }
     

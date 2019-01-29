@@ -67,13 +67,11 @@ class FolderCell: UITableViewCell {
         
         NSLayoutConstraint.activate([
             scriptLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            scriptLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             scriptLabel.trailingAnchor.constraint(equalTo: centerXAnchor, constant: -16),
             scriptLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
             
             dateLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             dateLabel.leadingAnchor.constraint(equalTo: centerXAnchor, constant: 16),
-            dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             dateLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
             
             dividerView.widthAnchor.constraint(equalTo: widthAnchor),
@@ -81,6 +79,14 @@ class FolderCell: UITableViewCell {
             dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             dividerView.centerXAnchor.constraint(equalTo: centerXAnchor)
             ])
+        
+        if #available(iOS 11.0, *) {
+            scriptLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
+            dateLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
+        } else {
+            scriptLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16).isActive = true
+            dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16).isActive = true
+        }
         
     }
     
