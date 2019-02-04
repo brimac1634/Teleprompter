@@ -235,10 +235,27 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         } else if Auth.auth().currentUser?.uid != nil {
             if Reachability.isConnectedToNetwork() {
                 if defaults.bool(forKey: "canSkipAds") == false {
-                    print("should play video")
-                    if GADRewardBasedVideoAd.sharedInstance().isReady == true {
-                        GADRewardBasedVideoAd.sharedInstance().present(fromRootViewController: self)
+                    let alert = UIAlertController(title: "Remote Control Feature", message: "Choose one of the options below to unlock the remote control...", preferredStyle: .actionSheet)
+                    alert.addAction(UIAlertAction(title: "Watch brief ad to unlock once", style: .default, handler: { (_) in
+                        print("should play video")
+                        if GADRewardBasedVideoAd.sharedInstance().isReady == true {
+                            GADRewardBasedVideoAd.sharedInstance().present(fromRootViewController: self)
+                        }
+                    }))
+                    alert.addAction(UIAlertAction(title: "Unlock for life", style: .default, handler: { (_) in
+                        print("life")
+                    }))
+                    alert.addAction(UIAlertAction(title: "cancel", style: .cancel, handler: { (_) in
+                        print("cancel")
+                    }))
+                    alert.preferredAction = alert.actions[0]
+                    
+                    if let popoverController = alert.popoverPresentationController {
+                        guard let remoteButton = navigationItem.leftBarButtonItems?[1] else {return}
+                        popoverController.barButtonItem = remoteButton
                     }
+                    self.present(alert, animated: true, completion: nil)
+                    
                 } else {
                     let remoteController = RemoteController()
                     navigationController?.pushViewController(remoteController, animated: true)
