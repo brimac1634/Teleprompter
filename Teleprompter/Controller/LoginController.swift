@@ -275,8 +275,12 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     let ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
                     ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                         if let value = snapshot.value as? [String: AnyObject] {
-                            guard let skipAds = value["canSkipAds"] else {return}
-                            home.defaults.set(skipAds, forKey: "canSkipAds")
+                            if let skipAds = value["canSkipAds"] {
+                                home.defaults.set(skipAds, forKey: "canSkipAds")
+                            } else {
+                                home.defaults.set(false, forKey: "canSkipAds")
+                            }
+                            
                         }
                     }, withCancel: nil)
                     home.defaults.set(false, forKey: "registrationSkipped")
