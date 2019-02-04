@@ -24,8 +24,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
     var usingIpad: Bool = true
     var textBoxIsEditing: Bool = false
     var infoIsShowing: Bool = false
-    var canSkipAds: Bool = false
-
     
     let topLabel: UILabel = {
         let label = UILabel()
@@ -101,7 +99,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         
         setupView()
         setupNavBar()
-        
+        setupAd()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -111,12 +109,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
             name: UIResponder.keyboardWillShowNotification,
             object: nil
         )
-        getCanSkipAds()
         
-        if canSkipAds == false {
-            print("cannot skip ads")
-            setupAd()
-        }
+        setupAd()
     }
     
     private func setupView() {
@@ -240,7 +234,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
             self.present(alert, animated: true, completion: nil)
         } else if Auth.auth().currentUser?.uid != nil {
             if Reachability.isConnectedToNetwork() {
-                if canSkipAds == false {
+                if defaults.bool(forKey: "canSkipAds") == false {
                     print("should play video")
                     if GADRewardBasedVideoAd.sharedInstance().isReady == true {
                         GADRewardBasedVideoAd.sharedInstance().present(fromRootViewController: self)
@@ -662,31 +656,26 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         return markerList
     }
     
-    //MARK: - Firebase Methods
-    
-    fileprivate func getCanSkipAds() {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            if let value = snapshot.value as? [String: AnyObject] {
-                guard let skipAds = value["canSkipAds"] else {return}
-                self.canSkipAds = skipAds as! Bool
-            }
-        }, withCancel: nil)
-    }
-    
-    
     //MARK: - AdMob Method
+    
+    fileprivate func loadAd() {
+        if defaults.bool(forKey: "canSkipAds") == false {
+            print("cannot skip ads")
+            //ca-app-pub-7610437866891957/2341921646
+            GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
+                                                        withAdUnitID: "ca-app-pub-3940256099942544/1712485313")
+        } else {
+            print("can skip ads")
+        }
+    }
     
     fileprivate func setupAd() {
         GADRewardBasedVideoAd.sharedInstance().delegate = self
-        //ca-app-pub-7610437866891957/2341921646
-        GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
-                                                    withAdUnitID: "ca-app-pub-3940256099942544/1712485313")
+        loadAd()
     }
     
     func rewardBasedVideoAdDidClose(_ rewardBasedVideoAd: GADRewardBasedVideoAd) {
-        GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
-                                                    withAdUnitID: "ca-app-pub-3940256099942544/1712485313")
+        loadAd()
     }
     
     func rewardBasedVideoAd(_ rewardBasedVideoAd: GADRewardBasedVideoAd, didRewardUserWith reward: GADAdReward) {
