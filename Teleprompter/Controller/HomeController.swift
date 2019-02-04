@@ -246,7 +246,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
                         print("life")
                     }))
                     alert.addAction(UIAlertAction(title: "cancel", style: .cancel, handler: { (_) in
-                        print("cancel")
                     }))
                     alert.preferredAction = alert.actions[0]
                     

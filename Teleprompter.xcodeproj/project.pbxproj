@@ -13,6 +13,7 @@
 		D22BAC2321C21F8400A70504 /* InfoPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22BAC2221C21F8400A70504 /* InfoPopUp.swift */; };
 		D22BAC2521C2343500A70504 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D22BAC2421C2343500A70504 /* Assets.xcassets */; };
 		D245316121F08EC500BAE460 /* MarkerInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = D245316021F08EC500BAE460 /* MarkerInput.swift */; };
+		D26DCC5022087EE200CE7BA4 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26DCC4F22087EE200CE7BA4 /* StoreKit.framework */; };
 		D274AE1D21DDE87C00CD20AC /* RemoteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D274AE1C21DDE87C00CD20AC /* RemoteController.swift */; };
 		D274AE1F21DE062A00CD20AC /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D274AE1E21DE062A00CD20AC /* ProfileController.swift */; };
 		D27A2CC721E4713C005D61A0 /* CheckInternet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27A2CC621E4713C005D61A0 /* CheckInternet.swift */; };
@@ -41,6 +42,7 @@
 		D22BAC2221C21F8400A70504 /* InfoPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPopUp.swift; sourceTree = "<group>"; };
 		D22BAC2421C2343500A70504 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Teleprompter/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		D245316021F08EC500BAE460 /* MarkerInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerInput.swift; sourceTree = "<group>"; };
+		D26DCC4F22087EE200CE7BA4 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		D274AE1C21DDE87C00CD20AC /* RemoteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteController.swift; sourceTree = "<group>"; };
 		D274AE1E21DE062A00CD20AC /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		D27A2CC621E4713C005D61A0 /* CheckInternet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInternet.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				024CC9517648145EA08A89D4 /* Pods_Teleprompter.framework in Frameworks */,
+				D26DCC5022087EE200CE7BA4 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,6 +179,7 @@
 		F6DF7CE1FFE95BE8D1E46D88 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D26DCC4F22087EE200CE7BA4 /* StoreKit.framework */,
 				2550E8CE3A3166563604E647 /* Pods_Teleprompter.framework */,
 			);
 			name = Frameworks;
@@ -217,6 +221,9 @@
 					D28C16A421A529210012D84D = {
 						CreatedOnToolsVersion = 10.1;
 						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
 							com.apple.Keychain = {
 								enabled = 0;
 							};
