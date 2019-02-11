@@ -12,7 +12,9 @@ import Firebase
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    public static let remoteControl = "remote"
     var window: UIWindow?
+    let iapHelper = IAPHelper(prodIds: Set([remoteControl]))
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -25,6 +27,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = UINavigationController(rootViewController: HomeController())
         window?.makeKeyAndVisible()
+        
+        iapHelper.requestProducts { (products) in
+            guard let products = products else {return}
+            print("iapHELPER HERE", products.map { $0.productIdentifier })
+        }
         
         return true
     }
