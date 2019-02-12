@@ -12,7 +12,7 @@ import Firebase
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    public static let remoteControl = "remote"
+    public static let remoteControl = "Remote"
     var window: UIWindow?
     let iapHelper = IAPHelper(prodIds: Set([remoteControl]))
 
