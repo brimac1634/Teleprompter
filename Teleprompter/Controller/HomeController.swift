@@ -100,6 +100,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         setupView()
         setupNavBar()
         setupAd()
+        configureIAP()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -235,6 +236,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         } else if Auth.auth().currentUser?.uid != nil {
             if Reachability.isConnectedToNetwork() {
                 if defaults.bool(forKey: "canSkipAds") == false {
+                    defaults.set(false, forKey: "canSkipAds")
                     let alert = UIAlertController(title: "Remote Control Feature", message: "Choose one of the options below to unlock the remote control...", preferredStyle: .actionSheet)
                     alert.addAction(UIAlertAction(title: "Watch brief ad to unlock once", style: .default, handler: { (_) in
                         print("should play video")
@@ -244,6 +246,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
                     }))
                     alert.addAction(UIAlertAction(title: "Unlock for life", style: .default, handler: { (_) in
                         print("life")
+                        IAPHandler.shared.purchaseMyProduct(index: IAPHandler.shared.NON_CONSUMABLE_PURCHASE_PRODUCT_ID)
                     }))
                     alert.addAction(UIAlertAction(title: "cancel", style: .cancel, handler: { (_) in
                     }))
@@ -399,7 +402,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
     //MARK: - Document Picker Methods
     
     fileprivate func importRTF(fileURL: URL) {
-        print(".rtf coming")
         var readString = ""
         do {
             let attributedStringWithRtf: NSAttributedString = try NSAttributedString(url: fileURL, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)
@@ -408,11 +410,11 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
             textBox.text = readString
         } catch {
             print("Failed to read file: \(error)")
+            presentImportFailAlert()
         }
     }
     
     fileprivate func importTxt(fileURL: URL) {
-        print(".txt coming")
         var readString = ""
         do {
             let attributedStringWithRtf: NSAttributedString = try NSAttributedString(url: fileURL, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.plain], documentAttributes: nil)
@@ -421,6 +423,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
             textBox.text = readString
         } catch {
             print("Failed to read file: \(error)")
+            presentImportFailAlert()
         }
     }
     
@@ -699,6 +702,29 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         navigationController?.pushViewController(remoteController, animated: true)
     }
     
+    //MARK: - IAP Methods
+    
+    fileprivate func configureIAP() {
+        guard defaults.bool(forKey: "canSkipAds") == false else {return}
+        print("can skip ads: ", defaults.bool(forKey: "canSkipAds"))
+        IAPHandler.shared.fetchAvailableProducts()
+        IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
+            print("purchasing")
+            guard let strongSelf = self else{ return }
+            if type == .purchased {
+                TeleDatabase.saveData(values: ["canSkipAds": true], uidChildren: nil)
+                let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
+                let action = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
+                    
+                })
+                alertView.addAction(action)
+                strongSelf.present(alertView, animated: true, completion: nil)
+                strongSelf.defaults.set(true, forKey: "canSkipAds")
+                print("defaults: ", strongSelf.defaults.bool(forKey: "canSkipAds"))
+            }
+        }
+        
+    }
     
 }
 

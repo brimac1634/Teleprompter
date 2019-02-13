@@ -18,7 +18,7 @@ enum IAPHandlerAlertType{
         switch self {
         case .disabled: return "Purchases are disabled in your device!"
         case .restored: return "You've successfully restored your purchase!"
-        case .purchased: return "You've successfully bought this purchase!"
+        case .purchased: return "You've successfully removed ads and unlocked the remote control!"
         }
     }
 }
@@ -43,7 +43,7 @@ class IAPHandler: NSObject {
         if iapProducts.count == 0 { return }
         
         if self.canMakePurchases() {
-            let product = iapProducts[0]
+            var product = iapProducts[0]
             var continue_action = false
             
             for products in iapProducts {
@@ -118,7 +118,6 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
                     purchaseStatusBlock?(.purchased)
                     break
-                    
                 case .failed:
                     print("failed")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
@@ -132,50 +131,3 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
                 }}}
     }
 }
-
-
-
-
-//class IAPHelper: NSObject {
-//
-//    typealias ProductsRequestCompletionHandler = (_ products: [SKProduct]?) -> ()
-//
-//    private let productIdentifiers: Set<String>
-//    private var productsRequest: SKProductsRequest?
-//    private var productsRequestCompletionHandler: ProductsRequestCompletionHandler?
-//
-//    init(prodIds: Set<String>) {
-//        productIdentifiers = prodIds
-//        super.init()
-//    }
-//
-//
-//}
-//
-//extension IAPHelper {
-//    func requestProducts(completionHandler: @escaping ProductsRequestCompletionHandler) {
-//        productsRequest?.cancel()
-//        productsRequestCompletionHandler = completionHandler
-//
-//        productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers)
-//        productsRequest?.delegate = self
-//        productsRequest?.start()
-//    }
-//}
-//
-//extension IAPHelper: SKProductsRequestDelegate {
-//
-//    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-//        productsRequestCompletionHandler?(response.products)
-//        productsRequestCompletionHandler = .none
-//        productsRequest = .none
-//    }
-//
-//    func request(_ request: SKRequest, didFailWithError error: Error) {
-//        print("Error: \(error.localizedDescription)")
-//        productsRequestCompletionHandler?(.none)
-//        productsRequestCompletionHandler = .none
-//        productsRequest = .none
-//    }
-//
-//}

@@ -80,6 +80,20 @@ class ProfileController: UIViewController {
         view.addSubview(resetPasswordButton)
         view.addSubview(removeAdsButton)
         
+        if ( UIDevice.current.model.range(of: "iPad") != nil) {
+            NSLayoutConstraint.activate([
+                logoView.widthAnchor.constraint(equalToConstant: 200),
+                logoView.heightAnchor.constraint(equalToConstant: 200)
+                ])
+            
+        } else {
+            NSLayoutConstraint.activate([
+                logoView.widthAnchor.constraint(equalToConstant: 150),
+                logoView.heightAnchor.constraint(equalToConstant: 150)
+                ])
+            
+        }
+        
         NSLayoutConstraint.activate([
             userLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             userLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -98,8 +112,6 @@ class ProfileController: UIViewController {
             
             logoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             logoView.bottomAnchor.constraint(equalTo: userLabel.topAnchor, constant: -24),
-            logoView.widthAnchor.constraint(equalToConstant: 200),
-            logoView.heightAnchor.constraint(equalToConstant: 200),
             
             removeAdsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             removeAdsButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
@@ -177,7 +189,7 @@ class ProfileController: UIViewController {
     }
     
     @objc func handleRemoveAds() {
-        IAPHandler.shared.purchaseMyProduct(index: 0)
+        IAPHandler.shared.purchaseMyProduct(index: IAPHandler.shared.NON_CONSUMABLE_PURCHASE_PRODUCT_ID)
     }
     
     //MARK: - Firebase Methods
@@ -237,16 +249,19 @@ class ProfileController: UIViewController {
     //MARK: - IAP Methods
     
     fileprivate func configureIAP() {
+        guard homeController.defaults.bool(forKey: "canSkipAds") == false else {return}
         IAPHandler.shared.fetchAvailableProducts()
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
             guard let strongSelf = self else{ return }
             if type == .purchased {
+                TeleDatabase.saveData(values: ["canSkipAds": true], uidChildren: nil)
                 let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
                 let action = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
                     
                 })
                 alertView.addAction(action)
                 strongSelf.present(alertView, animated: true, completion: nil)
+                strongSelf.homeController.defaults.set(true, forKey: "canSkipAds")
             }
         }
     }

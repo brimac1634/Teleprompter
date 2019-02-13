@@ -140,13 +140,30 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 skipButton.widthAnchor.constraint(equalToConstant: 50)
                 ])
         }
+        
+        if ( UIDevice.current.model.range(of: "iPad") != nil) {
+            NSLayoutConstraint.activate([
+                userInputView.widthAnchor.constraint(equalToConstant: 350),
+                userInputView.heightAnchor.constraint(equalToConstant: 120),
+                logoView.widthAnchor.constraint(equalToConstant: 200),
+                logoView.heightAnchor.constraint(equalToConstant: 200)
+                ])
+            
+        } else {
+            NSLayoutConstraint.activate([
+                userInputView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
+                userInputView.heightAnchor.constraint(equalToConstant: 100),
+                logoView.widthAnchor.constraint(equalToConstant: 150),
+                logoView.heightAnchor.constraint(equalToConstant: 150)
+                ])
+            
+        }
 
         
         NSLayoutConstraint.activate([
             userInputView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             userInputView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            userInputView.widthAnchor.constraint(equalToConstant: 350),
-            userInputView.heightAnchor.constraint(equalToConstant: 120),
+            
             
             emailTextField.leadingAnchor.constraint(equalTo: userInputView.leadingAnchor, constant: 12),
             emailTextField.trailingAnchor.constraint(equalTo: userInputView.trailingAnchor, constant: -12),
@@ -180,8 +197,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
             
             logoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             logoView.bottomAnchor.constraint(equalTo: loginRegisterSegmentedControl.topAnchor, constant: -24),
-            logoView.widthAnchor.constraint(equalToConstant: 200),
-            logoView.heightAnchor.constraint(equalToConstant: 200),
             ])
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleKeyboardDismiss)))
@@ -359,7 +374,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                         }
                         guard let home = self.homeController else {return}
                         home.defaults.set(false, forKey: "registrationSkipped")
-                        home.defaults.set(canSkipAds, forKey: "canSkipAds")
+//                        home.defaults.set(canSkipAds, forKey: "canSkipAds")
                         print("saved user successfully into Firebase DB")
                         self.loadingIndicator.stopAnimating()
                         UIApplication.shared.endIgnoringInteractionEvents()
