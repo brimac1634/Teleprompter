@@ -100,7 +100,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         setupView()
         setupNavBar()
         setupAd()
-        configureIAP()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -112,6 +111,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         )
         
         setupAd()
+        configureIAP()
     }
     
     private func setupView() {

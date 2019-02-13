@@ -61,6 +61,16 @@ class ProfileController: UIViewController {
         return btn
     }()
     
+    lazy var restorePurchaseButton: BaseButton = {
+        let btn = BaseButton()
+        btn.setTitle("Restore Purchase", for: .normal)
+        btn.titleLabel?.textColor = UIColor.white
+        btn.backgroundColor = UIColor.netRoadshowBlue(a: 1)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.addTarget(self, action: #selector(handleRestorePurchase), for: .touchUpInside)
+        return btn
+    }()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,44 +89,51 @@ class ProfileController: UIViewController {
         view.addSubview(logoutButton)
         view.addSubview(resetPasswordButton)
         view.addSubview(removeAdsButton)
+        view.addSubview(restorePurchaseButton)
         
         if ( UIDevice.current.model.range(of: "iPad") != nil) {
             NSLayoutConstraint.activate([
                 logoView.widthAnchor.constraint(equalToConstant: 200),
-                logoView.heightAnchor.constraint(equalToConstant: 200)
+                logoView.heightAnchor.constraint(equalToConstant: 200),
+                logoutButton.heightAnchor.constraint(equalToConstant: 50)
                 ])
             
         } else {
             NSLayoutConstraint.activate([
                 logoView.widthAnchor.constraint(equalToConstant: 150),
-                logoView.heightAnchor.constraint(equalToConstant: 150)
+                logoView.heightAnchor.constraint(equalToConstant: 150),
+                logoutButton.heightAnchor.constraint(equalToConstant: 45)
                 ])
             
         }
         
         NSLayoutConstraint.activate([
             userLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            userLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            userLabel.widthAnchor.constraint(equalToConstant: 300),
+            userLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -12),
+            userLabel.widthAnchor.constraint(equalToConstant: 280),
             userLabel.heightAnchor.constraint(equalToConstant: 100),
             
             logoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logoutButton.topAnchor.constraint(equalTo: userLabel.bottomAnchor, constant: 12),
+            logoutButton.topAnchor.constraint(equalTo: userLabel.bottomAnchor, constant: 8),
             logoutButton.widthAnchor.constraint(equalTo: userLabel.widthAnchor),
-            logoutButton.heightAnchor.constraint(equalToConstant: 50),
             
             resetPasswordButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            resetPasswordButton.topAnchor.constraint(equalTo: logoutButton.bottomAnchor, constant: 12),
+            resetPasswordButton.topAnchor.constraint(equalTo: logoutButton.bottomAnchor, constant: 8),
             resetPasswordButton.widthAnchor.constraint(equalTo: userLabel.widthAnchor),
-            resetPasswordButton.heightAnchor.constraint(equalToConstant: 50),
+            resetPasswordButton.heightAnchor.constraint(equalTo: logoutButton.heightAnchor),
             
             logoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logoView.bottomAnchor.constraint(equalTo: userLabel.topAnchor, constant: -24),
+            logoView.bottomAnchor.constraint(equalTo: userLabel.topAnchor, constant: -12),
             
             removeAdsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            removeAdsButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+            removeAdsButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
             removeAdsButton.widthAnchor.constraint(equalTo: userLabel.widthAnchor),
-            removeAdsButton.heightAnchor.constraint(equalToConstant: 50),
+            removeAdsButton.heightAnchor.constraint(equalTo: logoutButton.heightAnchor),
+            
+            restorePurchaseButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            restorePurchaseButton.bottomAnchor.constraint(equalTo: removeAdsButton.topAnchor, constant: -8),
+            restorePurchaseButton.widthAnchor.constraint(equalTo: userLabel.widthAnchor),
+            restorePurchaseButton.heightAnchor.constraint(equalTo: logoutButton.heightAnchor)
             ])
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(handleDeleteAccount))
@@ -189,7 +206,20 @@ class ProfileController: UIViewController {
     }
     
     @objc func handleRemoveAds() {
-        IAPHandler.shared.purchaseMyProduct(index: IAPHandler.shared.NON_CONSUMABLE_PURCHASE_PRODUCT_ID)
+        if Reachability.isConnectedToNetwork() {
+            IAPHandler.shared.purchaseMyProduct(index: IAPHandler.shared.NON_CONSUMABLE_PURCHASE_PRODUCT_ID)
+        } else {
+            self.present(Alerts.showAlert(title: "No Internet", text: "You must be connected to the internet in order to delete your user account."), animated: true, completion: nil)
+        }
+    }
+    
+    @objc func handleRestorePurchase() {
+        if Reachability.isConnectedToNetwork() {
+            IAPHandler.shared.restorePurchase()
+            self.present(Alerts.showAlert(title: "Purchases Restored", text: "Any purchases previously made have been restored"), animated: true, completion: nil)
+        } else {
+            self.present(Alerts.showAlert(title: "No Internet", text: "You must be connected to the internet in order to delete your user account."), animated: true, completion: nil)
+        }
     }
     
     //MARK: - Firebase Methods

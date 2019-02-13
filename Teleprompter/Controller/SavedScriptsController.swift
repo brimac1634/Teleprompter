@@ -90,6 +90,12 @@ class SavedScriptsController: UIViewController, UITableViewDelegate, UITableView
         view.addSubview(tableView)
         view.addSubview(searchBar)
         
+        if #available(iOS 11.0, *) {
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        } else {
+            searchBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 63).isActive = true
+        }
+        
         NSLayoutConstraint.activate([
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -100,12 +106,6 @@ class SavedScriptsController: UIViewController, UITableViewDelegate, UITableView
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
-        
-        if #available(iOS 11.0, *) {
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        } else {
-            searchBar.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        }
     }
     
     private func loadData() {
