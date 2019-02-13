@@ -61,8 +61,6 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         setScrollSpeed()
         setMarkerList()
         observeStateChange()
-        
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -70,7 +68,9 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     }
     
    
-
+    override func viewDidAppear(_ animated: Bool) {
+        updateUseCount()
+    }
     
 
     fileprivate func setupView() {
@@ -237,6 +237,17 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         }, withCancel: nil)
     }
     
+    func updateUseCount() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        TeleDatabase.saveData(values: ["remoteLastUsed": Date()], uidChildren: nil)
+        let usedRemoteCount = ref.child("users").child(uid).child("usedRemoteCount")
+        usedRemoteCount.observeSingleEvent(of: .value, with: { snapshot in
+            var currentCount = snapshot.value as? Int ?? 0
+            currentCount += 1
+            usedRemoteCount.setValue(currentCount)
+        })
+    }
+    
     //MARK: - UIPickerView and UITextField Methods
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -269,18 +280,5 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
         markerInput.markerInputField.resignFirstResponder()
     }
     
-//    //MARK: - AdMob Methods
-//
-//    func createAndLoadInterstitial() -> GADInterstitial {
-//        //my app unit ID
-//        //ca-app-pub-7610437866891957/7350210908
-//        interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
-//        interstitial.delegate = self
-//        interstitial.load(GADRequest())
-//        return interstitial
-//    }
-//
-//    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
-//        interstitial = createAndLoadInterstitial()
-//    }
+
 }

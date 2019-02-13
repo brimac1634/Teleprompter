@@ -678,14 +678,9 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
     //MARK: - AdMob Method
     
     fileprivate func loadAd() {
-        if defaults.bool(forKey: "canSkipAds") == false {
-            print("cannot skip ads")
-            //ca-app-pub-7610437866891957/2341921646
-            GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
-                                                        withAdUnitID: "ca-app-pub-3940256099942544/1712485313")
-        } else {
-            print("can skip ads")
-        }
+        //ca-app-pub-7610437866891957/2341921646
+        GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
+                                                    withAdUnitID: "ca-app-pub-3940256099942544/1712485313")
     }
     
     fileprivate func setupAd() {
@@ -709,7 +704,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         print("can skip ads: ", defaults.bool(forKey: "canSkipAds"))
         IAPHandler.shared.fetchAvailableProducts()
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
-            print("purchasing")
             guard let strongSelf = self else{ return }
             if type == .purchased {
                 TeleDatabase.saveData(values: ["canSkipAds": true], uidChildren: nil)

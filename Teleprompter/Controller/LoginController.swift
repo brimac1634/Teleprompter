@@ -374,7 +374,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                         }
                         guard let home = self.homeController else {return}
                         home.defaults.set(false, forKey: "registrationSkipped")
-//                        home.defaults.set(canSkipAds, forKey: "canSkipAds")
+                        home.defaults.set(canSkipAds, forKey: "canSkipAds")
                         print("saved user successfully into Firebase DB")
                         self.loadingIndicator.stopAnimating()
                         UIApplication.shared.endIgnoringInteractionEvents()
