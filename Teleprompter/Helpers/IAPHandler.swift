@@ -68,7 +68,7 @@ class IAPHandler: NSObject {
     }
     
     // MARK: - RESTORE PURCHASE
-    func restorePurchase(){
+    func restorePurchase() {
         SKPaymentQueue.default().add(self)
         SKPaymentQueue.default().restoreCompletedTransactions()
     }
@@ -104,9 +104,6 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
         }
     }
     
-    func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
-        purchaseStatusBlock?(.restored)
-    }
     
     // MARK:- IAP PAYMENT QUEUE
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
@@ -125,6 +122,7 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
                 case .restored:
                     print("restored")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    purchaseStatusBlock?(.restored)
                     break
                     
                 default: break

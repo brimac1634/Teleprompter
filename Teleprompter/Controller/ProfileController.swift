@@ -216,7 +216,6 @@ class ProfileController: UIViewController {
     @objc func handleRestorePurchase() {
         if Reachability.isConnectedToNetwork() {
             IAPHandler.shared.restorePurchase()
-            self.present(Alerts.showAlert(title: "Purchases Restored", text: "Any purchases previously made have been restored"), animated: true, completion: nil)
         } else {
             self.present(Alerts.showAlert(title: "No Internet", text: "You must be connected to the internet in order to delete your user account."), animated: true, completion: nil)
         }
@@ -284,16 +283,22 @@ class ProfileController: UIViewController {
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
             guard let strongSelf = self else{ return }
             if type == .purchased {
-                TeleDatabase.saveData(values: ["canSkipAds": true], uidChildren: nil)
-                let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
-                let action = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
-                    
-                })
-                alertView.addAction(action)
-                strongSelf.present(alertView, animated: true, completion: nil)
-                strongSelf.homeController.defaults.set(true, forKey: "canSkipAds")
+                strongSelf.setCanSkipAds(type, strongSelf)
+            } else if type == .restored {
+                strongSelf.setCanSkipAds(type, strongSelf)
             }
         }
+    }
+    
+    fileprivate func setCanSkipAds(_ type: (IAPHandlerAlertType), _ strongSelf: ProfileController) {
+        TeleDatabase.saveData(values: ["canSkipAds": true], uidChildren: nil)
+        let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
+            
+        })
+        alertView.addAction(action)
+        strongSelf.present(alertView, animated: true, completion: nil)
+        strongSelf.homeController.defaults.set(true, forKey: "canSkipAds")
     }
     
 }
