@@ -99,6 +99,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         
         setupView()
         setupNavBar()
+        checkCanSkipAds()
         setupAd()
     }
     
@@ -696,6 +697,21 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
     func rewardBasedVideoAd(_ rewardBasedVideoAd: GADRewardBasedVideoAd, didRewardUserWith reward: GADAdReward) {
         let remoteController = RemoteController()
         navigationController?.pushViewController(remoteController, animated: true)
+    }
+    
+    private func checkCanSkipAds() {
+        guard Reachability.isConnectedToNetwork() else {return}
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
+        ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            if let value = snapshot.value as? [String: AnyObject] {
+                if let skipAds = value["canSkipAds"] {
+                    self.defaults.set(skipAds, forKey: "canSkipAds")
+                } else {
+                    self.defaults.set(false, forKey: "canSkipAds")
+                }
+            }
+        }, withCancel: nil)
     }
     
     //MARK: - IAP Methods

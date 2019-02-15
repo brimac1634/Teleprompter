@@ -304,9 +304,9 @@ class ControlBar: BaseView {
             groupedStack.bottomAnchor.constraint(equalTo: markerInput.topAnchor, constant: -32),
             ])
         
-        fontSizeSlider.value = 80
+        fontSizeSlider.value = 60
         lineSpacingSlider.value = 40
-        scrollSpeedSlider.value = 30
+        scrollSpeedSlider.value = 40
         mirrorModeSwitch.isOn = false
         arrowModeSwitch.isOn = false
         highlightModeSwitch.isOn = false

@@ -64,8 +64,8 @@ class ProfileController: UIViewController {
     lazy var restorePurchaseButton: BaseButton = {
         let btn = BaseButton()
         btn.setTitle("Restore Purchase", for: .normal)
-        btn.titleLabel?.textColor = UIColor.white
-        btn.backgroundColor = UIColor.netRoadshowBlue(a: 1)
+        btn.setTitleColor(UIColor.netRoadshowBlue(a: 1), for: .normal)
+        btn.backgroundColor = UIColor.netRoadshowGray(a: 1)
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.addTarget(self, action: #selector(handleRestorePurchase), for: .touchUpInside)
         return btn

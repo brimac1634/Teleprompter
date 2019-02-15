@@ -22,9 +22,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var textInput: String = ""
     var textColor: UIColor = UIColor.white
     var backgroundColor: UIColor = UIColor.black
-    var textSize: CGFloat = 80
+    var textSize: CGFloat = 60
     var lineSpacing: CGFloat = 40
-    var scrollSpeed: CGFloat = 30
+    var scrollSpeed: CGFloat = 40
     var mirrorIsOn: Bool = false
     var arrowIsOn: Bool = false
     var fadeIsOn: Bool = false
@@ -136,7 +136,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if defaults.bool(forKey: "fadeIsOn") {
+        if defaults.bool(forKey: "textSize") {
             loadDefaults()
         } else {
             print("no defaults found")
@@ -439,7 +439,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     }
     
     @objc func handleDefault() {
-        if defaults.bool(forKey: "fadeIsOn") {
+        if defaults.bool(forKey: "textSize") {
             loadDefaults()
         } else {
             let alert = UIAlertController(title: "No Defaults", message: "There are no default settings saved.", preferredStyle: .alert)
