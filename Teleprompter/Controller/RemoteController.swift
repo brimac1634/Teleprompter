@@ -174,6 +174,7 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     }
     
     fileprivate func jumpToMarker(marker: Int) {
+        guard !markerList.isEmpty else {return}
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let userRef = ref.child("users").child(uid)
         let values = ["jumpToMarker": marker]
