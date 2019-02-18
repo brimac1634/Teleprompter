@@ -215,9 +215,10 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
     //MARK: - Gesture Selectors
     
     @objc func handleProfile() {
-        if defaults.bool(forKey: "registrationSkipped") == true {
+        let currentUID = Auth.auth().currentUser?.uid
+        if defaults.bool(forKey: "registrationSkipped") == true || currentUID == nil {
             handleLogout()
-        } else if Auth.auth().currentUser?.uid != nil {
+        } else if currentUID != nil {
             let profileController = ProfileController()
             profileController.homeController = self
             navigationController?.pushViewController(profileController, animated: true)
@@ -709,6 +710,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
                     self.defaults.set(skipAds, forKey: "canSkipAds")
                 } else {
                     self.defaults.set(false, forKey: "canSkipAds")
+                    TeleDatabase.saveData(values: ["canSkipAds": false], uidChildren: nil)
+                    self.handleLogout()
                 }
             }
         }, withCancel: nil)

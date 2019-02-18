@@ -107,6 +107,11 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
             
             ])
         
+        let infoButton = UIBarButtonItem(image: UIImage(named: "info"), style: .plain, target: self, action: #selector(handleInfo))
+        infoButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+        
+        navigationItem.rightBarButtonItem = infoButton
+        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleResignMark)))
     }
     
@@ -138,6 +143,10 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
     
     @objc func handleResignMark() {
         markerInput.markerInputField.resignFirstResponder()
+    }
+    
+    @objc func handleInfo() {
+        self.present(Alerts.showAlert(title: "Remote Control", text: "Login to a second device with the same credentials and start the teleprompter. You can then remotely control the scrolling from this device. NOTE: Both devices must be connected to the internet."), animated: true, completion: nil)
     }
     
     //MARK: - Firebase Methods
