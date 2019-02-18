@@ -14,6 +14,7 @@ class ProfileController: UIViewController {
     
     var homeController: HomeController!
     var currentEmail: String = ""
+    var loadingIndicator: UIActivityIndicatorView!
     
     let logoView: UIImageView = {
         let image = UIImageView(image: UIImage(named: "NetRoadshowTeleprompterIcon"))
@@ -207,6 +208,7 @@ class ProfileController: UIViewController {
     
     @objc func handleRemoveAds() {
         if Reachability.isConnectedToNetwork() {
+            presentLoadIndicator()
             IAPHandler.shared.purchaseMyProduct(index: IAPHandler.shared.NON_CONSUMABLE_PURCHASE_PRODUCT_ID)
         } else {
             self.present(Alerts.showAlert(title: "No Internet", text: "You must be connected to the internet in order to delete your user account."), animated: true, completion: nil)
@@ -215,23 +217,27 @@ class ProfileController: UIViewController {
     
     @objc func handleRestorePurchase() {
         if Reachability.isConnectedToNetwork() {
+            presentLoadIndicator()
             IAPHandler.shared.restorePurchase()
         } else {
             self.present(Alerts.showAlert(title: "No Internet", text: "You must be connected to the internet in order to delete your user account."), animated: true, completion: nil)
         }
     }
     
+    fileprivate func presentLoadIndicator() {
+        loadingIndicator = UIActivityIndicatorView()
+        loadingIndicator.center = self.view.center
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.style = .gray
+        view.addSubview(loadingIndicator)
+        loadingIndicator.startAnimating()
+    }
+    
     //MARK: - Firebase Methods
     
     fileprivate func configureDatabase() {
         if Reachability.isConnectedToNetwork() {
-            let loadingIndicator = UIActivityIndicatorView()
-            loadingIndicator.center = self.view.center
-            loadingIndicator.hidesWhenStopped = true
-            loadingIndicator.style = .gray
-            view.addSubview(loadingIndicator)
-            loadingIndicator.startAnimating()
-            
+            presentLoadIndicator()
             guard let uid = Auth.auth().currentUser?.uid else {return}
             let ref = Database.database().reference(fromURL: "https://netroadshow-teleprompter.firebaseio.com/")
             ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
@@ -245,10 +251,10 @@ class ProfileController: UIViewController {
                     attributedString.append(NSAttributedString(string: currentUserString, attributes: [NSAttributedString.Key.foregroundColor: UIColor.netRoadshowBlue(a: 1), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 22), NSAttributedString.Key.paragraphStyle: paragraphStyle]))
                     self.userLabel.attributedText = attributedString
                     
-                    loadingIndicator.stopAnimating()
+                    self.loadingIndicator.stopAnimating()
                 } else {
                     self.displayNoUserFound()
-                    loadingIndicator.stopAnimating()
+                    self.loadingIndicator.stopAnimating()
                 }
             }, withCancel: nil)
         } else {
@@ -299,6 +305,7 @@ class ProfileController: UIViewController {
         alertView.addAction(action)
         strongSelf.present(alertView, animated: true, completion: nil)
         strongSelf.homeController.defaults.set(true, forKey: "canSkipAds")
+        loadingIndicator.stopAnimating()
     }
     
 }

@@ -48,7 +48,7 @@ class InfoPopUp: UIView {
     
     let firstTextView: BaseTextView = {
         let textView = BaseTextView()
-        textView.text = "Press the \"Add Mark\" button, or manually type \"####\" where you want to add a navigational break. This will allow you to skip to particular sections of your script easily and quickly."
+        textView.text = "Press the \"Add Mark\" button, or manually type \"####\" where you want to add a navigational point. This will allow you to skip to particular sections of your script easily and quickly."
         textView.textAlignment = .center
         textView.isUserInteractionEnabled = false
         return textView
@@ -70,6 +70,16 @@ class InfoPopUp: UIView {
         textView.textAlignment = .center
         textView.isUserInteractionEnabled = false
         return textView
+    }()
+    
+    let infoButton: BaseButton = {
+        let button = BaseButton()
+        let image = UIImage(named: "delete")?.withRenderingMode(.alwaysTemplate)
+        button.backgroundColor = .clear
+        button.setBackgroundImage(image, for: .normal)
+        button.tintColor = UIColor.white
+        button.addTarget(self, action: #selector(handleExit), for: .touchUpInside)
+        return button
     }()
     
     override init(frame: CGRect) {
@@ -95,6 +105,7 @@ class InfoPopUp: UIView {
         addSubview(popUp)
         popUp.addSubview(topLabel)
         popUp.addSubview(infoStack)
+        popUp.addSubview(infoButton)
         
         if ( UIDevice.current.model.range(of: "iPad") != nil) {
             NSLayoutConstraint.activate([
@@ -122,6 +133,11 @@ class InfoPopUp: UIView {
             topLabel.leadingAnchor.constraint(equalTo: popUp.leadingAnchor),
             topLabel.trailingAnchor.constraint(equalTo: popUp.trailingAnchor),
             topLabel.heightAnchor.constraint(equalToConstant: 45),
+            
+            infoButton.centerYAnchor.constraint(equalTo: topLabel.centerYAnchor),
+            infoButton.trailingAnchor.constraint(equalTo: topLabel.trailingAnchor, constant: -8),
+            infoButton.widthAnchor.constraint(equalToConstant: 28),
+            infoButton.heightAnchor.constraint(equalToConstant: 28),
             
             infoStack.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 16),
             infoStack.leadingAnchor.constraint(equalTo: popUp.leadingAnchor, constant: 16),
@@ -158,7 +174,13 @@ class InfoPopUp: UIView {
         }
     }
     
+    //MARK: - Gesture Methods
+    
     @objc func handleBackground() {
+        animatePopDown()
+    }
+    
+    @objc func handleExit() {
         animatePopDown()
     }
 }
