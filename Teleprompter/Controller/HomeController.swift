@@ -523,7 +523,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
                     script.scriptBody = scriptBody
                     self.realm.add(script)
                 }
-                let databaseValues: [String: Any] = ["scriptBody": scriptBody, "dateCreated": Date()]
                 self.topLabel.text = field.text
                 self.currentScriptName = field.text ?? ""
                 self.savedConfirmation()
@@ -683,7 +682,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         // real video code: ca-app-pub-7610437866891957/2341921646
         // test code: ca-app-pub-3940256099942544/1712485313
         GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
-                                                    withAdUnitID: "ca-app-pub-3940256099942544/1712485313")
+                                                    withAdUnitID: "ca-app-pub-7610437866891957/2341921646")
     }
     
     fileprivate func setupAd() {
