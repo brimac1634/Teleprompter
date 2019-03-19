@@ -238,8 +238,8 @@ class ProfileController: UIViewController, MFMailComposeViewControllerDelegate {
             mailVC.mailComposeDelegate = self
             mailVC.setToRecipients(["bmacpherson@netroadshow.com"])
             mailVC.setCcRecipients(["brimac1634@gmail.com"])
-            mailVC.setSubject("NRS Teleprompter Support: \(currentEmail)")
-            mailVC.setMessageBody("If you are experiencing difficulties with the teleprompter or remote, please explain the issue here and we will get back to you as soon as possible.", isHTML: false)
+            mailVC.setSubject("NRS Teleprompter Support - profile: \(currentEmail)")
+            mailVC.setMessageBody("If you are experiencing difficulties with the teleprompter or simply want to provide input, please explain the issue here and we will get back to you as soon as possible.", isHTML: false)
             self.present(mailVC, animated: true, completion: nil)
         } else {
             let alert = UIAlertController(title: "Support Email", message: "If you require support, please email a description of your issue to: Brimac1634@gmail.com", preferredStyle: .alert)
@@ -332,6 +332,15 @@ class ProfileController: UIViewController, MFMailComposeViewControllerDelegate {
         strongSelf.present(alertView, animated: true, completion: nil)
         strongSelf.homeController.defaults.set(true, forKey: "canSkipAds")
         loadingIndicator.stopAnimating()
+    }
+    
+    //MARK: - MFMailComposeViewController Method
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        self.dismiss(animated: true, completion: nil)
+        if result.rawValue == 2 {
+            self.present(Alerts.showAlert(title: "Thank You", text: "We will get in touch with you shortly"), animated: true, completion: nil)
+        }
     }
     
 }
