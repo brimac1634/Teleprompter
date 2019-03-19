@@ -34,6 +34,8 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var lastScale: CGFloat = 0
     var markerArray: [String] = []
     var scrollViewIsScrolling: Bool = false
+    var arrowConstant: CGFloat = 0
+    var arrowStart: CGFloat = 0
     
     var style: NSMutableParagraphStyle!
     var neatColorPicker: ChromaColorPicker!
@@ -416,8 +418,13 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     @objc func handleArrowPan(gesture: UIPanGestureRecognizer) {
         let point = gesture.location(in: view)
         guard arrowContainer.frame.contains(point) && arrowContainerLeading.isActive else {return}
-        let changeInY = gesture.translation(in: view).y - arrowContainerCenterY.constant
-        arrowContainerCenterY.constant += changeInY
+        let changeInY = (gesture.translation(in: view).y + arrowStart) - arrowConstant
+        arrowConstant = arrowConstant + changeInY
+        arrowContainerCenterY.constant = arrowConstant
+        
+        if gesture.state == .ended {
+            arrowStart = arrowConstant
+        }
     }
     
     

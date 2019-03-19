@@ -20,6 +20,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
     let realm = try! Realm()
     var ref: DatabaseReference!
     let defaults = UserDefaults.standard
+    var loadingIndicator: UIActivityIndicatorView!
     
     var usingIpad: Bool = true
     var textBoxIsEditing: Bool = false
@@ -248,6 +249,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
                     }))
                     alert.addAction(UIAlertAction(title: "Unlock for life", style: .default, handler: { (_) in
                         print("life")
+                        self.presentLoadIndicator()
                         IAPHandler.shared.purchaseMyProduct(index: IAPHandler.shared.NON_CONSUMABLE_PURCHASE_PRODUCT_ID)
                     }))
                     alert.addAction(UIAlertAction(title: "cancel", style: .cancel, handler: { (_) in
@@ -269,6 +271,15 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
             }
             
         }
+    }
+    
+    fileprivate func presentLoadIndicator() {
+        loadingIndicator = UIActivityIndicatorView()
+        loadingIndicator.center = self.view.center
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.style = .gray
+        view.addSubview(loadingIndicator)
+        loadingIndicator.startAnimating()
     }
     
     @objc func handleLogout() {
@@ -725,6 +736,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
             guard let strongSelf = self else{ return }
             if type == .purchased {
+                strongSelf.loadingIndicator.stopAnimating()
                 TeleDatabase.saveData(values: ["canSkipAds": true], uidChildren: nil)
                 let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
                 let action = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
@@ -734,6 +746,9 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
                 strongSelf.present(alertView, animated: true, completion: nil)
                 strongSelf.defaults.set(true, forKey: "canSkipAds")
                 print("defaults: ", strongSelf.defaults.bool(forKey: "canSkipAds"))
+            } else {
+                strongSelf.loadingIndicator.stopAnimating()
+                strongSelf.present(Alerts.showAlert(title: "Purchase Incomplete", text: "Your purchase was not completed"), animated: true, completion: nil)
             }
         }
         

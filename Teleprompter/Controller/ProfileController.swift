@@ -239,13 +239,16 @@ class ProfileController: UIViewController, MFMailComposeViewControllerDelegate {
             mailVC.setToRecipients(["bmacpherson@netroadshow.com"])
             mailVC.setCcRecipients(["brimac1634@gmail.com"])
             mailVC.setSubject("NRS Teleprompter Support - profile: \(currentEmail)")
-            mailVC.setMessageBody("If you are experiencing difficulties with the teleprompter or simply want to provide input, please explain the issue here and we will get back to you as soon as possible.", isHTML: false)
+            mailVC.setMessageBody(
+                "Name: \n Email: \(currentEmail) \n Message: If you are experiencing difficulties with the teleprompter or simply want to provide input, please explain the issue here and we will get back to you as soon as possible.", isHTML: false)
             self.present(mailVC, animated: true, completion: nil)
         } else {
             let alert = UIAlertController(title: "Support Email", message: "If you require support, please email a description of your issue to: Brimac1634@gmail.com", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Copy Email", style: .default, handler: { (_) in
                 UIPasteboard.general.string = "Brimac1634@gmail.com"
             }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alert.preferredAction = alert.actions[0]
             self.present(alert, animated: true, completion: nil)
         }
     }
@@ -313,11 +316,15 @@ class ProfileController: UIViewController, MFMailComposeViewControllerDelegate {
         guard homeController.defaults.bool(forKey: "canSkipAds") == false else {return}
         IAPHandler.shared.fetchAvailableProducts()
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
+            print("type", type)
             guard let strongSelf = self else{ return }
             if type == .purchased {
                 strongSelf.setCanSkipAds(type, strongSelf)
             } else if type == .restored {
                 strongSelf.setCanSkipAds(type, strongSelf)
+            } else {
+                strongSelf.loadingIndicator.stopAnimating()
+                strongSelf.present(Alerts.showAlert(title: "Purchase Incomplete", text: "Your purchase was not completed"), animated: true, completion: nil)
             }
         }
     }
