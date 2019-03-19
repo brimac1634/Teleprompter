@@ -682,7 +682,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         // real video code: ca-app-pub-7610437866891957/2341921646
         // test code: ca-app-pub-3940256099942544/1712485313
         GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
-                                                    withAdUnitID: "ca-app-pub-7610437866891957/2341921646")
+                                                    withAdUnitID: "ca-app-pub-3940256099942544/1712485313")
     }
     
     fileprivate func setupAd() {

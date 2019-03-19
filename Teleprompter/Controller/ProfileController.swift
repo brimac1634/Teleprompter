@@ -9,8 +9,9 @@
 import UIKit
 import Firebase
 import FirebaseDatabase
+import MessageUI
 
-class ProfileController: UIViewController {
+class ProfileController: UIViewController, MFMailComposeViewControllerDelegate {
     
     var homeController: HomeController!
     var currentEmail: String = ""
@@ -137,7 +138,14 @@ class ProfileController: UIViewController {
             restorePurchaseButton.heightAnchor.constraint(equalTo: logoutButton.heightAnchor)
             ])
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(handleDeleteAccount))
+
+        let deleteButton = UIBarButtonItem(image: UIImage(named: "waste"), style: .plain, target: self, action: #selector(handleDeleteAccount))
+        deleteButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+        
+        
+        let supportButton = UIBarButtonItem(image: UIImage(named: "support"), style: .plain, target: self, action: #selector(handleSupport))
+        supportButton.tintColor = UIColor.netRoadshowBlue(a: 1)
+        navigationItem.rightBarButtonItems = [deleteButton, supportButton]
     }
     
     //MARK: - Selector Methods
@@ -221,6 +229,24 @@ class ProfileController: UIViewController {
             IAPHandler.shared.restorePurchase()
         } else {
             self.present(Alerts.showAlert(title: "No Internet", text: "You must be connected to the internet in order to delete your user account."), animated: true, completion: nil)
+        }
+    }
+    
+    @objc func handleSupport() {
+        if MFMailComposeViewController.canSendMail() {
+            let mailVC = MFMailComposeViewController()
+            mailVC.mailComposeDelegate = self
+            mailVC.setToRecipients(["bmacpherson@netroadshow.com"])
+            mailVC.setCcRecipients(["brimac1634@gmail.com"])
+            mailVC.setSubject("NRS Teleprompter Support: \(currentEmail)")
+            mailVC.setMessageBody("If you are experiencing difficulties with the teleprompter or remote, please explain the issue here and we will get back to you as soon as possible.", isHTML: false)
+            self.present(mailVC, animated: true, completion: nil)
+        } else {
+            let alert = UIAlertController(title: "Support Email", message: "If you require support, please email a description of your issue to: Brimac1634@gmail.com", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Copy Email", style: .default, handler: { (_) in
+                UIPasteboard.general.string = "Brimac1634@gmail.com"
+            }))
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
