@@ -197,7 +197,6 @@ class ProfileController: UIViewController, MFMailComposeViewControllerDelegate {
             alert.addAction(UIAlertAction(title: "Reset", style: .default, handler: { (_) in
                 Auth.auth().sendPasswordReset(withEmail: self.currentEmail) { (error) in
                     if error != nil {
-                        print(error?.localizedDescription)
                         self.present(Alerts.showAlert(title: "Error", text: "There was an error while sending the password reset request. Please try again later."), animated: true, completion: nil)
                         return
                     } else {
