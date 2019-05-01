@@ -198,6 +198,7 @@
 				D28C16A321A529210012D84D /* Resources */,
 				82E632CC48690D233E765162 /* [CP] Embed Pods Frameworks */,
 				B1355B5D5F4668A0991C040D /* [CP] Copy Pods Resources */,
+				D24C88002279F64F002C0F43 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -329,6 +330,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Teleprompter/Pods-Teleprompter-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		D24C88002279F64F002C0F43 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/Fabric/run\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -496,6 +515,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Teleprompter/Teleprompter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = AY47KJ5YA8;
 				INFOPLIST_FILE = Teleprompter/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -517,6 +537,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Teleprompter/Teleprompter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = AY47KJ5YA8;
 				INFOPLIST_FILE = Teleprompter/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;

@@ -27,9 +27,9 @@ public class TeleDatabase {
             }
         }
         
+        userRef = ref.child("users").child(uid)
         
         if let nodes = uidChildren {
-            userRef = ref.child("users").child(uid)
             for node in nodes {
                 if node == "" {
                     userRef = userRef.childByAutoId()
@@ -37,8 +37,6 @@ public class TeleDatabase {
                    userRef = userRef.child(node)
                 }
             }
-        } else {
-            userRef = ref.child("users").child(uid)
         }
         userRef.updateChildValues(dataValues, withCompletionBlock: { (err, ref) in
             if err != nil {

@@ -162,7 +162,6 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
                 print(err ?? "")
                 return
             }
-            print("updated state of scroll")
         })
     }
     
@@ -177,7 +176,6 @@ class RemoteController: UIViewController, UIPickerViewDelegate, UIPickerViewData
                 print(err ?? "")
                 return
             }
-            print("updated state of scroll")
         })
         
     }

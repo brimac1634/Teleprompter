@@ -468,29 +468,29 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
 
     }
     
-    @objc func handleFontSize(sender: UISlider!) {
+    @objc func handleFontSize(sender: UISlider) {
         textSize = CGFloat(sender.value)
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
     }
     
-    @objc func handleLineSpacing(sender: UISlider!) {
+    @objc func handleLineSpacing(sender: UISlider) {
         lineSpacing = CGFloat(sender.value)
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
     }
     
-    @objc func handleScrollSpeed(sender: UISlider!) {
+    @objc func handleScrollSpeed(sender: UISlider) {
         scrollSpeed = CGFloat(sender.value)
         updateScrollSpeed()
         controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
     }
     
-    @objc func handleMirrorMode(sender: UISwitch!) {
+    @objc func handleMirrorMode(sender: UISwitch) {
         mirrorIsOn = sender.isOn
         textView.transform = sender.isOn ? CGAffineTransform.init(scaleX: 1, y: -1) : CGAffineTransform.init(scaleX: 1, y: 1)
         gradientView.transform = sender.isOn ? CGAffineTransform.init(scaleX: 1, y: -1) : CGAffineTransform.init(scaleX: 1, y: 1)
     }
     
-    @objc func handleArrowMode(sender: UISwitch!) {
+    @objc func handleArrowMode(sender: UISwitch) {
         arrowIsOn = sender.isOn
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.arrowContainerLeading.isActive = sender.isOn ? true : false
@@ -802,17 +802,17 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
                 }
 
             } else if key == "scrollSpeed" {
-                let valueChange = snapshot.value as! CGFloat
-                if valueChange != self.scrollSpeed {
-                    self.scrollSpeed = valueChange
+                let valueChange = snapshot.value as? CGFloat
+                guard let value = valueChange else {return}
+                if value != self.scrollSpeed {
+                    self.scrollSpeed = value
                     self.updateTimerWithNewSpeed()
-                    self.controlBar.scrollSpeedSlider.setValue(Float(valueChange), animated: true)
-                    self.controlBar.scrollSpeedLabel.text = "Scroll Speed: \(valueChange)"
+                    self.controlBar.scrollSpeedSlider.setValue(Float(value), animated: true)
+                    self.controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(value))"
                 }
             } else if key == "jumpToMarker" {
                 let valueChange = snapshot.value as! Int
                 self.jumpToMarker(row: valueChange)
-//                self.controlBar.markerInput.picker.selectRow(valueChange, inComponent: 0, animated: true)
             }
         }, withCancel: nil)
     }

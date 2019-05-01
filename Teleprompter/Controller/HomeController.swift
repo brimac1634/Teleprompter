@@ -302,15 +302,15 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
     
     @objc func handleStart() {
         if textBox.text?.count != 0 && textBox.text != "Type or paste your script here..." {
+            guard let text = textBox.text, let nav = navigationController else {return}
             let rollingTextController = RollingTextController()
-            guard let text = textBox.text else {return}
             let marker = "##"
             let separatedTextArray = text.components(separatedBy: marker)
             rollingTextController.markerArray = createMarkers(textBody: text, textArray: separatedTextArray)
             rollingTextController.textInput = text
             rollingTextController.view.backgroundColor = .black
-            navigationController?.isNavigationBarHidden = true
-            navigationController?.pushViewController(rollingTextController, animated: true)
+            nav.isNavigationBarHidden = true
+            nav.pushViewController(rollingTextController, animated: true)
         } else {
             noTextFoundAlert()
         }
