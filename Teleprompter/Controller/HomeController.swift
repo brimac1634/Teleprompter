@@ -26,6 +26,9 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
     var textBoxIsEditing: Bool = false
     var infoIsShowing: Bool = false
     
+    let VIDEO_CODE = "ca-app-pub-7610437866891957/2341921646"
+    let TEST_CODE = "ca-app-pub-3940256099942544/1712485313"
+    
     let topLabel: UILabel = {
         let label = UILabel()
         label.minimumScaleFactor = 0.5
@@ -690,10 +693,8 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
     //MARK: - AdMob Method
     
     fileprivate func loadAd() {
-        // real video code: ca-app-pub-7610437866891957/2341921646
-        // test code: ca-app-pub-3940256099942544/1712485313
         GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
-                                                    withAdUnitID: "ca-app-pub-3940256099942544/1712485313")
+                                                    withAdUnitID: TEST_CODE)
     }
     
     fileprivate func setupAd() {
