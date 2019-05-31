@@ -326,7 +326,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         if #available(iOS 11.0, *) {
             alert = UIAlertController(title: "Import Text", message: "Text can only be imported from .pdf, .txt, and .rtf files at this time.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (finished) in
-                let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.text", kUTTypeText as String, kUTTypeRTF as String, kUTTypePDF as String], in: UIDocumentPickerMode.import)
+                let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.text", kUTTypeText as String, kUTTypeRTF as String, kUTTypePDF as String, kUTTypePlainText as String], in: UIDocumentPickerMode.import)
                 documentPicker.delegate = self
                 self.present(documentPicker, animated: true, completion: nil)
             }))
@@ -462,7 +462,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
                 } else {
                     textBox.attributedText = documentContent
                 }
-                
             } else if url.pathExtension == "rtf" {
                 importRTF(fileURL: url)
             } else if url.pathExtension == "txt" {
@@ -475,7 +474,6 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
                 importTxt(fileURL: url)
             }
         }
-
     }
     
     //MARK: - Alert Methods
