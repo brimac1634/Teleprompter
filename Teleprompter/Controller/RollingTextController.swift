@@ -305,6 +305,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBar.fontSizeSlider.addTarget(self, action: #selector(handleFontSize(sender:)), for: .allEvents)
         controlBar.lineSpacingSlider.addTarget(self, action: #selector(handleLineSpacing(sender:)), for: .allEvents)
         controlBar.scrollSpeedSlider.addTarget(self, action: #selector(handleScrollSpeed(sender:)), for: .allEvents)
+        controlBar.scrollSpeedSlider.addTarget(self, action: #selector(speedDidEndSliding(notification:)), for: ([.touchUpInside,.touchUpOutside]))
         controlBar.mirrorModeSwitch.addTarget(self, action: #selector(handleMirrorMode(sender:)), for: .allEvents)
         controlBar.arrowModeSwitch.addTarget(self, action: #selector(handleArrowMode(sender:)), for: .allEvents)
         controlBar.highlightModeSwitch.addTarget(self, action: #selector(handleFadeMode(sender:)), for: .allEvents)
@@ -480,8 +481,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     
     @objc func handleScrollSpeed(sender: UISlider) {
         scrollSpeed = CGFloat(sender.value)
-        updateScrollSpeed()
         controlBar.scrollSpeedLabel.text = "Scroll Speed: \(Int(scrollSpeed))"
+    }
+    
+    @objc func speedDidEndSliding(notification: NSNotification) {
+        updateScrollSpeed()
     }
     
     @objc func handleMirrorMode(sender: UISwitch) {

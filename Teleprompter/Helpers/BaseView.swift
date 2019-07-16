@@ -42,7 +42,7 @@ class BaseButton: UIButton  {
             universalFontSize = 18
         }
         
-        self.layer.cornerRadius = 12
+        self.layer.cornerRadius = 4
         self.clipsToBounds = true
         self.translatesAutoresizingMaskIntoConstraints = false
         self.titleLabel?.font = UIFont.systemFont(ofSize: universalFontSize)

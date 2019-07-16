@@ -45,7 +45,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
         let box = BaseTextView()
         box.text = "Type or paste your script here..."
         box.textColor = UIColor.lightGray
-        box.layer.cornerRadius = 12
+        box.layer.cornerRadius = 4
         box.layer.borderWidth = 1
         box.layer.borderColor = UIColor.netRoadshowGray(a: 1).cgColor
         box.isEditable = true
@@ -692,7 +692,7 @@ class HomeController: UIViewController, UIDocumentPickerDelegate, GADRewardBased
     
     fileprivate func loadAd() {
         GADRewardBasedVideoAd.sharedInstance().load(GADRequest(),
-                                                    withAdUnitID: TEST_CODE)
+                                                    withAdUnitID: VIDEO_CODE)
     }
     
     fileprivate func setupAd() {

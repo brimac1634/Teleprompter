@@ -85,6 +85,7 @@ class ControlBar: BaseView {
     let scrollSpeedSlider: UISlider = {
         let slider = UISlider()
         slider.tintColor = UIColor.netRoadshowBlue(a: 1)
+        slider.isContinuous = false
         slider.minimumValue = 5
         slider.maximumValue = 150
         return slider
