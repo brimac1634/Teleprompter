@@ -147,7 +147,7 @@ class ControlBar: BaseView {
     
     let backgroundColorLabel: BaseLabel = {
         let label = BaseLabel()
-        label.text = "Background Color"
+        label.text = "Color Scheme"
         label.lineBreakMode = .byWordWrapping
         label.translatesAutoresizingMaskIntoConstraints = true
         return label
@@ -156,23 +156,6 @@ class ControlBar: BaseView {
     let backgroundColorButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .black
-        button.layer.cornerRadius = 3
-        button.clipsToBounds = true
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.netRoadshowDarkGray(a: 1).cgColor
-        return button
-    }()
-    
-    let textColorLabel: BaseLabel = {
-        let label = BaseLabel()
-        label.text = "Text Color"
-        label.translatesAutoresizingMaskIntoConstraints = true
-        return label
-    }()
-    
-    let textColorButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = .white
         button.layer.cornerRadius = 3
         button.clipsToBounds = true
         button.layer.borderWidth = 1
@@ -247,7 +230,7 @@ class ControlBar: BaseView {
         verticalStack2.distribution = .fillEqually
         verticalStack2.contentMode = .center
         
-        let verticalStack3 = UIStackView(arrangedSubviews: [backgroundColorLabel, backgroundColorButton, textColorLabel, textColorButton])
+        let verticalStack3 = UIStackView(arrangedSubviews: [backgroundColorLabel, backgroundColorButton])
         verticalStack3.axis = .vertical
         verticalStack3.spacing = 8
         verticalStack3.distribution = .fillEqually

@@ -7,18 +7,18 @@
 //
 
 import UIKit
-import ChromaColorPicker
 import Firebase
 import FirebaseDatabase
 
 
-class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGestureRecognizerDelegate, UITextViewDelegate {
+class RollingTextController: UIViewController, UIGestureRecognizerDelegate, UITextViewDelegate {
     
     var ref: DatabaseReference!
     
     let defaults = UserDefaults.standard
     var usingIpad: Bool = true
 
+    var isDarkMode: Bool = true
     var textInput: String = ""
     var textColor: UIColor = UIColor.white
     var backgroundColor: UIColor = UIColor.black
@@ -38,7 +38,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     var arrowStart: CGFloat = 0
     
     var style: NSMutableParagraphStyle!
-    var neatColorPicker: ChromaColorPicker!
     
     var controlBarLeading: NSLayoutConstraint!
     var controlBarTrailing: NSLayoutConstraint!
@@ -88,14 +87,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
     let arrowContainer: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    let shadeView: UIView = {
-        let view = UIView()
-        view.isUserInteractionEnabled = false
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -189,7 +180,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         arrowContainer.addSubview(arrow)
         view.addSubview(settingsButton)
         view.addSubview(controlBar)
-        view.addSubview(shadeView)
         gradientView.layer.addSublayer(gradient)
         
         controlBarLeading = controlBar.leadingAnchor.constraint(equalTo: view.leadingAnchor)
@@ -255,18 +245,11 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
             controlBar.heightAnchor.constraint(equalTo: view.heightAnchor),
             controlBar.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: controlPanelMultiplier),
             controlBar.topAnchor.constraint(equalTo: view.topAnchor),
-            controlBarTrailing,
-
-            shadeView.topAnchor.constraint(equalTo: view.topAnchor),
-            shadeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            shadeView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            shadeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            controlBarTrailing
             
             ])
         
         arrow.alpha = 1
-        view.bringSubviewToFront(shadeView)
-        shadeView.alpha = 0
         
         updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: textColor)
         updateViewStyle(scroll: scrollSpeed, mirror: mirrorIsOn, arrow: arrowIsOn, fade: fadeIsOn, backColor: backgroundColor)
@@ -295,8 +278,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         view.addGestureRecognizer(settingsTapGesture)
         view.addGestureRecognizer(arrowPanGesture)
         
-        let shadeViewGesture = UITapGestureRecognizer(target: self, action: #selector(handleShadeViewTap))
-        shadeView.addGestureRecognizer(shadeViewGesture)
         controlBar.backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBack)))
         
         controlBar.saveButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSave)))
@@ -309,8 +290,7 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         controlBar.mirrorModeSwitch.addTarget(self, action: #selector(handleMirrorMode(sender:)), for: .allEvents)
         controlBar.arrowModeSwitch.addTarget(self, action: #selector(handleArrowMode(sender:)), for: .allEvents)
         controlBar.highlightModeSwitch.addTarget(self, action: #selector(handleFadeMode(sender:)), for: .allEvents)
-        controlBar.backgroundColorButton.addTarget(self, action: #selector(handleBackgroundColor), for: .touchUpInside)
-        controlBar.textColorButton.addTarget(self, action: #selector(handleTextColor), for: .touchUpInside)
+        controlBar.backgroundColorButton.addTarget(self, action: #selector(handleColorScheme), for: .touchUpInside)
         controlBar.restartButton.addTarget(self, action: #selector(handleRestart), for: .touchUpInside)
     }
     
@@ -510,18 +490,9 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         
     }
     
-    @objc func handleBackgroundColor() {
-        backgroundColorChosen = true
-        displayColorPicker()
-    }
-    
-    @objc func handleTextColor() {
-        backgroundColorChosen = false
-        displayColorPicker()
-    }
-    
-    @objc func handleShadeViewTap() {
-        dismissColorPicker()
+    @objc func handleColorScheme() {
+        setColorStyle(darkMode: !isDarkMode)
+        isDarkMode = !isDarkMode
     }
     
     @objc func handleRestart() {
@@ -620,7 +591,6 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
 
         controlBar.fontSizeSlider.value = Float(fontSize)
         controlBar.lineSpacingSlider.value = Float(lineSpacing)
-        controlBar.textColorButton.backgroundColor = color
         controlBar.lineSpacingLabel.text = "Line Height: \(Int(lineSpacing))"
         controlBar.fontSizeLabel.text = "Font Size: \(Int(fontSize))"
     }
@@ -671,67 +641,20 @@ class RollingTextController: UIViewController, ChromaColorPickerDelegate, UIGest
         }
     }
     
-    //MARK: - Color Picker Delegate
+    //MARK: - Color Scheme
     
-    func colorPickerDidChooseColor(_ colorPicker: ChromaColorPicker, color: UIColor) {
-        if backgroundColorChosen {
-            view.backgroundColor = color
-            backgroundColor = color
-            controlBar.backgroundColorButton.backgroundColor = color
-        } else {
-            textColor = color
-            updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: color)
-            controlBar.textColorButton.backgroundColor = color
-            arrow.tintColor = color
-        }
-        
-        dismissColorPicker()
-    }
-    
-    func dismissColorPicker() {
-        arrowPanGesture.isEnabled = true
-        
-        shadeView.isUserInteractionEnabled = false
-        
-        guard let picker = neatColorPicker else {return}
-        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
-            self.shadeView.alpha = 0
-            picker.alpha = 0
-            picker.frame.origin.y = self.neatColorPicker.frame.origin.y - 50
-        }, completion: nil)
-        
-        neatColorPicker.removeFromSuperview()
+    @objc func setColorStyle(darkMode: Bool) {
+        let backColor = darkMode ? UIColor.black : UIColor.white
+        view.backgroundColor = backColor
+        backgroundColor = backColor
+        controlBar.backgroundColorButton.backgroundColor = backColor
+        gradient.colors = [backColor.withAlphaComponent(1).cgColor, backColor.withAlphaComponent(0).cgColor, backColor.withAlphaComponent(0).cgColor, backColor.withAlphaComponent(1).cgColor]
+        let accentColor = darkMode ? UIColor.white : UIColor.black
+        textColor = accentColor
+        updateTextStyle(lineSpacing: lineSpacing, fontSize: textSize, color: accentColor)
+        arrow.tintColor = accentColor
     }
 
-    func displayColorPicker() {
-        arrowPanGesture.isEnabled = false
-        
-        var width: CGFloat = 0
-        if controlPanelMultiplier >= 0.8 {
-            width = 300
-        } else {
-            width = 480
-        }
-        
-        let x = (view.frame.width / 2) - CGFloat(width / 2)
-        let y = (view.frame.height / 2) - CGFloat(width / 2)
-        neatColorPicker = ChromaColorPicker(frame: CGRect(x: x, y: y, width: width, height: width))
-        neatColorPicker.delegate = self
-        neatColorPicker.padding = 5
-        neatColorPicker.stroke = 3
-        neatColorPicker.hexLabel.textColor = UIColor.white
-        neatColorPicker.hexLabel.alpha = 0
-        neatColorPicker.alpha = 0
-        neatColorPicker.frame.origin.y = neatColorPicker.frame.origin.y + 50
-        view.addSubview(neatColorPicker)
-        shadeView.isUserInteractionEnabled = true
-        
-        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
-            self.shadeView.alpha = 1
-            self.neatColorPicker.alpha = 1
-            self.neatColorPicker.frame.origin.y = self.neatColorPicker.frame.origin.y - 50
-        }, completion: nil)
-    }
     
     //MARK: - Load Defaults
     

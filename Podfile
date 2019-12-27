@@ -7,7 +7,6 @@ target 'Teleprompter' do
 
   # Pods for Teleprompter
 
-pod 'ChromaColorPicker'
 pod 'RealmSwift'
 pod 'Firebase/Core'
 pod 'Firebase/Database'
